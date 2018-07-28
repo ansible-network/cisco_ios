@@ -1,0 +1,152 @@
+---
+- name: validate required var is set
+  fail:
+    msg: "missing required argument: ios_config_text"
+  when: ios_config_text is undefined or not ios_config_text
+
+- name: check if old checkpoint file exists on device
+  cli:
+    command: dir
+  register: ios_dir_listing
+
+- name: remove old checkpoint file from device
+  cli:
+    command: "delete /force flash://{{ ios_config_checkpoint_filename }}"
+  when: ios_config_checkpoint_filename in ios_dir_listing.stdout
+
+- name: checkpoint existing configuration for rollback
+  ios_command_local:
+    commands:
+      - command: "copy running-config flash:{{ ios_config_checkpoint_filename }}"
+        prompt: ["? "]
+        answer: "{{ ios_config_checkpoint_filename }}"
+  when: ios_config_rollback_enabled
+
+- name: load configuration onto target device
+  block:
+    - name: create temp working dir
+      file:
+        path: "{{ ios_config_working_dir }}"
+        state: directory
+      run_once: true
+      check_mode: false
+
+      # always set check mode to false here as this task needs to always run
+      # in order to fully execute the task list.
+    - name: template source config
+      copy:
+        content: "{{ ios_config_text }}"
+        dest: "{{ ios_config_working_dir }}/{{ ios_config_temp_config_file }}"
+      check_mode: false
+
+    - name: load configuration file onto target device
+      block:
+        - name: enable the ios scp server
+          cli:
+            command: "{{ line }}"
+          loop:
+            - configure terminal
+            - ip scp server enable
+            - end
+          loop_control:
+            loop_var: line
+
+        - name: remove old config file from device
+          cli:
+            command: "delete /force flash:/{{ ios_config_temp_config_file }}"
+          when: ios_config_temp_config_file in ios_dir_listing.stdout
+
+        - name: copy configuration to device
+          net_put:
+            src: "{{ ios_config_working_dir }}/{{ ios_config_temp_config_file }}"
+            dest: "flash:/{{ ios_config_temp_config_file }}"
+
+        - name: generate ios diff
+          cli:
+            command: "show archive config differences flash:{{ ios_config_checkpoint_filename }} flash:{{ ios_config_temp_config_file }}"
+          register: ios_config_diff
+
+        - name: display config diff
+          debug:
+            msg: "{{ ios_config_diff.stdout.splitlines() }}"
+
+        - name: replace current active configuration
+          cli:
+            command: "config replace flash:/{{ ios_config_temp_config_file }} force"
+          when: not ansible_check_mode and ios_config_replace
+          changed_when: ios_config_diff.stdout
+
+        - name: merge current active configuration
+          cli:
+            command: "copy flash:/{{ ios_config_temp_config_file }} force"
+          when: not ansible_check_mode and not ios_config_replace
+          changed_when: ios_config_diff.stdout
+
+        - name: remove uploaded configuration
+          cli:
+            command: "delete /force flash:/{{ ios_config_temp_config_file }}"
+          when: ios_config_remove_temp_files
+
+        - name: remove temp working dir
+          file:
+            path: "{{ ios_config_working_dir }}"
+            state: absent
+          run_once: true
+          when: ios_config_remove_temp_files
+
+      rescue:
+        - name: remove uploaded configuration
+          cli:
+            command: "delete /force flash:/{{ ios_config_temp_config_file }}"
+          when: ios_config_remove_temp_files
+
+        - name: remove temp working dir
+          file:
+            path: "{{ ios_config_working_dir }}"
+            state: absent
+          run_once: true
+          when: ios_config_remove_temp_files
+
+        - name: set host failed
+          fail:
+            msg: "error loading configuration onto target device"
+
+  rescue:
+    - name: display message
+      debug:
+        msg: "error configuring device, starting rollback"
+      when: ios_config_rollback_enabled
+
+    - name: configuration rollback pre hook
+      include_tasks: "{{ ios_configuration_rollback_pre_hook }}"
+      when: ios_configuration_rollback_pre_hook is defined and ios_config_rollback_enabled
+
+    - name: rollback configuration
+      ios_command_local:
+        commands:
+          - command: "copy flash:/{{ ios_config_checkpoint_filename }} running-config"
+            prompt: ["? "]
+            answer: "running-config"
+
+    - name: remove configuration checkpoint file
+      cli:
+        command: "delete /force flash:/{{ ios_config_checkpoint_filename }}"
+      when: ios_config_remove_temp_files
+
+    - name: configuration rollback post hook
+      include_tasks: "{{ ios_configuration_rollback_post_hook }}"
+      when: ios_configuration_rollback_post_hook is defined and ios_config_rollback_enabled
+
+    - name: display message
+      debug:
+        msg: "successfully completed configuration rollback"
+      when: ios_config_rollback_enabled
+
+    - name: fail host due to config load error
+      fail:
+        msg: "error loading configuration onto target device"
+
+- name: remove configuration checkpoint file
+  cli:
+    command: "delete /force flash:/{{ ios_config_checkpoint_filename }}"
+  when: ios_config_rollback_enabled and ios_config_remove_temp_files

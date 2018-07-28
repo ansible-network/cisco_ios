@@ -1,0 +1,8 @@
+---
+- name: load config file contents
+  set_fact:
+    ios_config_text: "{{ lookup('config_template', ios_config_file) | join('\n') }}"
+  when: ios_config_file is defined
+
+- name: invoke configure
+  include_tasks: configure.yaml
