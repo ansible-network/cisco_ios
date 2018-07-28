@@ -40,7 +40,7 @@
             value: "{{ item.status == 'Idle' }}"
           - key: asn
             value: "{{ item.asn }}"
-  register: bgp_neighbors
+  register: bgp_summary
   loop: "{{ neighbors }}"
   export: true
 export_as: dict
