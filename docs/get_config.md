@@ -59,7 +59,7 @@ below.
 ## How to add additional parsers
 
 The configuration facts are returned by this function are parsed using the
-parsers in the `parser_templates/config' folder.  To add a new parser, simply
+parsers in the `parser_templates/config` folder.  To add a new parser, simply
 create a PR and add the new parser to the folder.  Once merged, the
 `get_config` function will automatically use the new parser.
 
