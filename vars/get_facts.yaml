@@ -19,6 +19,6 @@ interfaces:
   command: show interface
   parser: show_interfaces.yaml
   
-bgp_neighbors:
+bgp_summary:
   command: show ip bgp summary
   parser: show_ip_bgp_summary.yaml  
