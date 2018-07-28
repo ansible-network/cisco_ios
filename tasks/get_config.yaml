@@ -1,0 +1,14 @@
+---
+- name: validate required connection is configured
+  fail:
+    msg: "expected connection value to be set to network_cli, got {{ ansible_connection }}"
+  when: ansible_connection != 'network_cli'
+
+- name: run command and return configuration
+  cli:
+    command: "{{ ios_config_source[source | default('running')] }}"
+  register: configuration
+
+- name: set the configuration fact
+  set_fact:
+    configuration: "{{ configuration.stdout }}"

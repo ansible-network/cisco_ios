@@ -1,0 +1,4 @@
+---
+- name: role noop
+  debug:
+    msg: "{{ role_path }}"

@@ -1,0 +1,31 @@
+---
+# tasks file for ansible-network.cisco_ios
+#
+- name: set the role version
+  set_fact:
+    ansible_network_ios_version: "devel"
+
+- name: display the role version to stdout
+  debug:
+    msg: "ansible_network.ios version {{ ansible_network_ios_version }}"
+
+- name: validate ansible_network_os == 'ios'
+  fail:
+    msg: this role only works with arista ios devices
+  when: ansible_network_os != 'ios'
+
+- name: set role supported functions
+  set_fact:
+    ios_functions:
+      - get_facts
+      - get_config
+      - load_config
+      - noop
+
+- name: validate the requested function is supported
+  fail:
+    msg: "invalid function specified, expected one of {{ ios_functions }}, got {{ function }}"
+  when: function | default('noop') not in ios_functions
+
+- name: include function specific tasks and run
+  include_tasks: "{{ function  | default('noop') }}.yaml"
