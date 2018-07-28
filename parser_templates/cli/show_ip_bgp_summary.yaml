@@ -1,0 +1,46 @@
+---
+
+- name: show_ip_bgp_summary
+  parser_metadata:
+    version: 1.0
+    command: show ip bgp summary
+    network_os: ios
+
+- name: match sections
+  pattern_match:
+    regex: "Neighbor.+"
+    match_all: yes
+    match_greedy: yes
+  register: context
+  export: yes
+
+- name: match lines
+  pattern_match:
+    regex: "\\d.+"
+    match_all: yes
+    match_greedy: yes
+    content: "{{ context.0 }}"
+  register: lines
+
+
+- name: match neighbors
+  pattern_match:
+    regex: "^(?P<ip>[0-9a-f.]+)\\s+(?P<version>\\d+)\\s+(?P<asn>\\d+)\\s+(?P<msgrcvd>\\d+)\\s+(?P<msgsent>\\d+)\\s+(?P<tblver>\\d+)\\s+(?P<inq>\\d+)\\s+(?P<outq>\\d+)\\s+(?P<timer>[0-9:]+)\\s+(?P<status>.+)\\s*"
+    content: "{{ item }}"
+  loop: "{{ lines }}"
+  register: neighbors
+
+
+- name: template entries
+  json_template:
+    template:
+      - key: "{{ item.ip }}"
+        object:
+          - key: idle
+            value: "{{ item.status == 'Idle' }}"
+          - key: asn
+            value: "{{ item.asn }}"
+  register: bgp_neighbors
+  loop: "{{ neighbors }}"
+  export: true
+export_as: dict
