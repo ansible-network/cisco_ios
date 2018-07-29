@@ -15,3 +15,6 @@ ios_config_rollback_enabled: "{{ rollback | default(True) }}"
 ios_config_source:
   running: show running-config
   startup: show startup-config
+
+ios_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
+ios_get_facts_subset: "{{ subset | default(['default']) }}"
