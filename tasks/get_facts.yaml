@@ -7,15 +7,13 @@
 - name: collect platform capabilities as facts
   ios_capabilities:
 
-- name: load command variables
-  include_vars:
-    name: commands
-    file: get_facts.yaml
-
 - name: run command and parse output
   include_tasks: run_cli.yaml
   vars:
-    ios_command: "{{ item.value.command }}"
-    ios_parser: "cli/{{ item.value.parser }}"
-  loop: "{{ lookup('dict', commands) }}"
-  when: item.key in subset | default(item.key) or subset in ['*', 'all']
+    ios_command: "{{ item.command }}"
+    ios_parser: "cli/{{ item.parser }}"
+    ios_parser_engine: "{{ item.engine | default('command_parser') }}"
+    ios_run_cli_command_pre_hook: "{{ item.pre_hook | default(None) }}"
+    ios_run_cli_command_post_hook: "{{ item.post_hook | default(None) }}"
+  loop: "{{ lookup('file', ios_get_facts_command_map) | from_yaml }}"
+  when: ios_get_facts_subset |  intersect(item.groups)
