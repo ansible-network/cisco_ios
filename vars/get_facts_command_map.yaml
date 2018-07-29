@@ -1,0 +1,27 @@
+---
+# This file is used to map show commands to parser templates.  When this file
+# is processed, the command is issued on the target device and the output is
+# passed to the parser to be converted to Ansible facts.  The parser file
+# should be located in `parser_templates/cli`.
+#
+# Each entry in this file supports the following keys:
+#
+#   * command - the cli command to execute on the target device
+#   * parser - the filename of the parser relative to parse_templates/cli
+#   * engine - one of `command_parser` (default) or `textfsm_parser`
+#   * groups - a list of one or more groups the commadn belongs to
+#   * pre_hook - path to the set of tasks to execute before running the command
+#   * post_hook - path to the set of tasks to execute after running the command
+#
+# Please see the [documentation](https://github.com/ansible-network/cisco_ios/blob/devel/tasks/get_facts.yaml) for more details.
+#
+- command: show version
+  parser: show_version.yaml
+  groups:
+    - default
+
+- command: show interface
+  parser: show_interfaces.yaml
+  groups:
+    - default
+    - interfaces

@@ -1,8 +1,13 @@
 ---
+- name: run cli command pre hook
+  include_tasks: "{{ ios_run_cli_command_pre_hook }}"
+  when: ios_run_cli_command_pre_hook is defined and ios_run_cli_command_pre_hook
+
 - name: run command and parse output
   cli:
     command: "{{ ios_command }}"
     parser: "{{ parser }}"
+    engine: "{{ ios_parser_engine | default(None) }}"
   with_first_found:
     - files:
         - "{{ ios_parser }}"
@@ -13,3 +18,7 @@
         - "{{ role_path }}/parser_templates"
   loop_control:
     loop_var: parser
+
+- name: run cli command post hook
+  include_tasks: "{{ ios_run_cli_command_post_hook }}"
+  when: ios_run_cli_command_post_hook is defined and ios_run_cli_command_post_hook
