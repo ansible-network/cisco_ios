@@ -10,16 +10,31 @@
     regex: ", Version (\\S+),"
   register: version
 
+- name: match model
+  pattern_match:
+    regex: "cisco (.+) \\("
+  register: model
+
 - name: parse hostname
   pattern_match:
     regex: "^(\\S+) uptime is"
   register: hostname
 
-- name: parse image file
+- name: match image
   pattern_match:
-    regex: "System image file is \"(\\S+)\""
+    regex: "^System image file is (\\S+)"
   register: image
 
+- name: match uptime
+  pattern_match:
+    regex: "uptime is (.+)"
+  register: uptime
+
+- name: match configuration register
+  pattern_match:
+    regex: "register is (.+)"
+  register: confreg
+  
 - name: build ios system state facts
   json_template:
     template:
@@ -29,8 +44,13 @@
         value: "{{ hostname.matches.0 }}"
       - key: image_file
         value: "{{ image.matches.0 }}"
+      - key: model
+        value: "{{ model.matches.0 }}"
+      - key: uptime
+        value: "{{ uptime.matches.0 }}"
+      - key: configuration_register
+        value: "{{ confreg.matches.0 }}"
   register: system
   export: yes
-  extend: cisco_ios
-
+  extend: cisco_ios  
 
