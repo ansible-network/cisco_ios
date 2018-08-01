@@ -11,6 +11,8 @@ ios_config_temp_config_file: "tmp_{{ inventory_hostname_short }}"
 ios_config_checkpoint_filename: chk_ansible
 ios_config_remove_temp_files: "{{ remove_temp_files | default(True) }}"
 ios_config_rollback_enabled: "{{ rollback | default(True) }}"
+ios_config_use_terminal: True
+ios_config_active_config: cfg_ansible
 
 ios_config_source:
   running: show running-config
