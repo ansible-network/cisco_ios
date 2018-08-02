@@ -44,3 +44,4 @@
   loop: "{{ neighbors }}"
   export: true
   export_as: dict
+  extend: cisco_ios
