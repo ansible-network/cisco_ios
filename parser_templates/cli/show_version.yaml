@@ -52,5 +52,5 @@
         value: "{{ confreg.matches.0 }}"
   register: system
   export: yes
-  extend: cisco_ios  
+  
 
