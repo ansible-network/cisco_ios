@@ -82,6 +82,7 @@
   register: interfaces
   export: yes
   export_as: dict
+  extend: cisco_ios
   json_template:
     template:
       - key: "{{ item.name.matches.0 }}"
