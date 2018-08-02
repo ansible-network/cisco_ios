@@ -51,6 +51,8 @@
       - key: configuration_register
         value: "{{ confreg.matches.0 }}"
   register: system
-  export: yes
+  export: true
+  export_as: dict
+  extend: cisco_ios
   
 
