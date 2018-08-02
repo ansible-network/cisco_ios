@@ -25,3 +25,8 @@
   groups:
     - default
     - interfaces
+    
+- command: show ip bgp summary
+  parser: show_ip_bgp_summary.yaml
+  groups:
+    - bgp    
