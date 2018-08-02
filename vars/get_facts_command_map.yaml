@@ -30,3 +30,8 @@
   parser: show_ip_bgp_summary.yaml
   groups:
     - bgp    
+
+- command: show ip prefix-list
+  parser: show_ip_prefix_list.yaml
+  groups:
+    - prefix-list 
