@@ -148,6 +148,7 @@ The default value is `all`
 * default
 * interfaces
 * bgp
+* prefix-list
 
 ### ios_get_facts_command_map
 
