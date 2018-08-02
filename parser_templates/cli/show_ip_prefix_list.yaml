@@ -68,6 +68,7 @@
   loop: "{{ entries }}"
   export: yes
   export_as: dict
+  extend: cisco_ios
   register: prefix_list_dict
 
 - name: template acl and prefix
