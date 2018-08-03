@@ -43,4 +43,5 @@
   register: bgp_summary
   loop: "{{ neighbors }}"
   export: true
-export_as: dict
+  export_as: dict
+  extend: cisco_ios

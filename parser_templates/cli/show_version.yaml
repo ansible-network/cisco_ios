@@ -5,7 +5,7 @@
     command: show version
     network_os: ios
 
-- name: parse softare version
+- name: match softare version
   pattern_match:
     regex: ", Version (\\S+),"
   register: version
@@ -15,7 +15,7 @@
     regex: "cisco (.+) \\("
   register: model
 
-- name: parse hostname
+- name: match hostname
   pattern_match:
     regex: "^(\\S+) uptime is"
   register: hostname
@@ -51,6 +51,8 @@
       - key: configuration_register
         value: "{{ confreg.matches.0 }}"
   register: system
-  export: yes
-  extend: cisco_ios  
+  export: true
+  export_as: dict
+  extend: cisco_ios
+  
 
