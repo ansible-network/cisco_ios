@@ -1,0 +1,87 @@
+---
+- name: match sections
+  pattern_match:
+    regex: "^ip"
+    match_all: yes
+    match_greedy: yes
+  register: context
+
+- name: match prefix values
+  pattern_group:
+    - name: match name
+      pattern_match:
+        regex: "ip prefix-list (?P<acl_name>.+): (\\d+) entries"
+        content: "{{ item }}"
+      register: name
+
+    - name: match entries
+      pattern_match:
+        regex: "seq (\\d+) (permit|deny) (\\S+)(?: (le|ge) (\\d+))*"
+        content: "{{ item }}"
+        match_all: yes
+      register: entry
+  loop: "{{ context }}"
+  register: entries
+
+- name: template entries
+  json_template:
+    template:
+      - key: name
+        value: "{{ item.name.acl_name }}"
+      - key: entries
+        elements:
+          - key: sequence
+            value: "{{ it.matches.0 }}"
+          - key: action
+            value: "{{ it.matches.1 }}"
+          - key: prefix
+            value: "{{ it.matches.2 }}"
+          - key: operator
+            value: "{{ it.matches.4 }}"
+          - key: length
+            value: "{{ it.matches.5 }}"
+        repeat_for: "{{ item.entry }}"
+        repeat_var: it
+  register: prefix_list_list
+  export: yes
+  loop: "{{ entries }}"
+
+- name: template entries
+  json_template:
+    template:
+      - key: "{{ item.name.acl_name }}"
+        object:
+          - key: entries
+            elements:
+              - key: sequence
+                value: "{{ it.matches.0 }}"
+              - key: action
+                value: "{{ it.matches.1 }}"
+              - key: prefix
+                value: "{{ it.matches.2 }}"
+              - key: operator
+                value: "{{ it.matches.3 }}"
+              - key: length
+                value: "{{ it.matches.4 }}"
+            repeat_for: "{{ item.entry }}"
+            repeat_var: it
+  loop: "{{ entries }}"
+  export: yes
+  export_as: dict
+  extend: cisco_ios
+  register: prefix_list_dict
+
+- name: template acl and prefix
+  json_template:
+    template:
+      - key: acl
+        elements:
+          - key: acl_name
+            value: "{{ item.name.acl_name }}"
+          - key: prefix
+            value: "{{ it.matches.2 }}"
+        repeat_for: "{{ item.entry }}"
+        repeat_var: it
+  register: prefix_list_basic
+  export: yes
+  loop: "{{ entries }}"
