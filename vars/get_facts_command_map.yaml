@@ -25,13 +25,18 @@
   groups:
     - default
     - interfaces
-    
+
 - command: show ip bgp summary
   parser: show_ip_bgp_summary.yaml
   groups:
-    - bgp    
+    - bgp
 
 - command: show ip prefix-list
   parser: show_ip_prefix_list.yaml
   groups:
-    - prefix-list 
+    - prefix-list
+
+- command: show lldp neighbors detail
+  parser: show_lldp_neighbors_detail.yaml
+  groups:
+    - lldp
