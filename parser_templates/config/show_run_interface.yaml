@@ -1,10 +1,4 @@
 ---
-- name: parser meta data
-  parser_metadata:
-    version: 1.0
-    command: show run | beg interface
-    network_os: ios
-
 - name: match sections
   pattern_match:
     regex: "interface"
@@ -71,7 +65,7 @@
   register: interface-config
   export: yes
   export_as: dict
-  extend: cisco_ios
+  extend: cisco_ios.config
   json_template:
     template:
     - key: "{{ item.name.matches.0 }}"
