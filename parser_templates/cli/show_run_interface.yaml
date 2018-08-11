@@ -36,6 +36,7 @@
   - name: match ip_address
     pattern_match:
       regex: "ip address (.*)"
+      match_all: yes
       content: "{{ item }}"
     register: ip_address
   loop: "{{ section }}"
