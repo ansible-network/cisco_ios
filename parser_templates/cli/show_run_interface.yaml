@@ -43,7 +43,7 @@
 
 - name: template interface values
   loop: "{{ values }}"
-  register: interfaces
+  register: interface-config
   export: yes
   export_as: dict
   json_template:
