@@ -26,6 +26,12 @@
     - default
     - interfaces
 
+- command: show run | begin interface
+  parser: show_run_interface.yaml
+  groups:
+    - default
+    - interface-config
+
 - command: show ip bgp summary
   parser: show_ip_bgp_summary.yaml
   groups:

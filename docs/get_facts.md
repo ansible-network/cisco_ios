@@ -147,6 +147,7 @@ The default value is `all`
 
 * default
 * interfaces
+* interface-config
 * bgp
 * prefix-list
 
