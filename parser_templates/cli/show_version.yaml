@@ -34,7 +34,7 @@
   pattern_match:
     regex: "register is (.+)"
   register: confreg
-  
+
 - name: build ios system state facts
   json_template:
     template:
@@ -54,5 +54,3 @@
   export: true
   export_as: dict
   extend: cisco_ios
-  
-
