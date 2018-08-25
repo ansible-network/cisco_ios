@@ -44,7 +44,7 @@
             value: "{{ item.timer }}"
           - key: ip_version
             value: "{{ item.version }}"
-  register: bgp_neighbors
+  register: ip_bgp_summary
   loop: "{{ neighbors }}"
   export: true
   export_as: dict
