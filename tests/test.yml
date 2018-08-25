@@ -1,5 +1,31 @@
----
 - hosts: localhost
-  remote_user: root
+  vars:
+    ansible_network_os: ios
   roles:
-    - ansible-network.cisco_ios
+    - "{{ playbook_dir }}/../../ansible-network.network-engine"
+
+  tasks:
+    - name: parse `show ip bgp summary`
+      command_parser:
+        file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
+        content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/03.14.00.S.txt') }}"
+      register: result
+
+    - name: set fact dictionary path
+      set_fact:
+        facts: "{{ ansible_facts['cisco_ios'] }}"
+
+    - name: test `show ip bgp summary` parser
+      assert:
+        that: 
+          - "'bgp_neighbors' in facts"
+          - "'10.15.17.2' in facts['bgp_neighbors']"
+          - "facts['bgp_neighbors']['10.15.17.2']['state_pfxrcd'] == 1125"
+          - "facts['bgp_neighbors']['10.15.17.2']['asn'] == 64785"
+          - "facts['bgp_neighbors']['10.15.17.2']['ip_version'] == 4"
+          - "facts['bgp_neighbors']['10.15.17.2']['timer'] == '7w1d'"
+          - "'10.1.19.2' in facts['bgp_neighbors']"
+          - "facts['bgp_neighbors']['10.1.19.2']['state_pfxrcd'] == 'Active'"
+          - "facts['bgp_neighbors']['10.1.19.2']['asn'] == 1234"
+          - "facts['bgp_neighbors']['10.1.19.2']['ip_version'] == 4"
+          - "'{{ facts['bgp_neighbors']['10.1.19.2']['timer'] | string }}' == '00:00:30'"

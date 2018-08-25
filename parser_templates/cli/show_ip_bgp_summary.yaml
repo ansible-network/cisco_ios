@@ -36,14 +36,14 @@
     template:
       - key: "{{ item.ip }}"
         object:
-          - key: state_prefix_rx
+          - key: state_pfxrcd
             value: "{{ item.state }}"
           - key: asn
             value: "{{ item.asn }}"
           - key: timer
             value: "{{ item.timer }}"
           - key: ip_version
-            value: "{{ version }}"
+            value: "{{ item.version }}"
   register: bgp_neighbors
   loop: "{{ neighbors }}"
   export: true
