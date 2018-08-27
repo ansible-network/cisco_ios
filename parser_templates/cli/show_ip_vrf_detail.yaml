@@ -5,33 +5,31 @@
     version: 1.0
     command: show ip vrf detail
     network_os: ios
-    
+
 - name: match vrf sections
   register: sections
   pattern_match:
     regex: "^VRF \\S+; default RD"
     match_all: true
     match_greedy: true
-  export: true
 
 - name: match vrf values
   loop: "{{ sections }}"
   register: vrfs
-  export: true
   pattern_group:
-   
+
     - name: match name
       pattern_match:
         regex: "^VRF (\\S+); default RD"
         content: "{{ item }}"
       register: name
-    
+
     - name: match description
       pattern_match:
         regex: "^  Description: (.*)\\n"
         content: "{{ item }}"
       register: description
-    
+
     - name: match route distinguisher
       pattern_match:
         regex: ".*; default RD (\\d+:\\d+)"
@@ -51,7 +49,6 @@
   loop_control:
     loop_var: route_target_list
   register: vrfs_export_rt
-  export: true
   pattern_group:
 
     - name: match route targets
@@ -70,7 +67,6 @@
 
 - name: build a new dict
   register: vrf_export_route_targets
-  export: true
   export_as: dict
   loop: "{{ vrfs_export_rt }}"
   loop_control:
@@ -78,14 +74,14 @@
   json_template:
     template:
       - key: "{{ vrf_loop.name.0 }}"
-        elements: "{{ susan.matches }}" 
+        elements: "{{ nested_item.matches }}"
         repeat_for: "{{ vrf_loop.export_rt }}"
-        repeat_var: susan
+        repeat_var: nested_item
 
 - name: combine all vrfs
   set_vars:
-    my_dict: "{{ ({}| combine(*vrf_export_route_targets)) }}"
-  
+    combined_dict: "{{ ({}| combine(*vrf_export_route_targets)) }}"
+
 - name: template entries
   register: ip_vrf_detail
   loop: "{{ vrfs }}"
@@ -103,20 +99,4 @@
           - key: rd
             value: "{{ item.rd.matches.0 }}"
           - key: export_rt
-            value: "{{ my_dict[item.name.matches.0] }}"
-
-#- name: add export route targets
-#  register: export_rt
-#  extend: cisco_ios.ip_vrf_detail
-#  export: true
-#  loop: "{{ vrfs_export_rt }}"
-#  loop_control:
-#    loop_var: vrf_loop
-#  json_template:
-#    template:
-#      - key: export_rt
-#        value: "boo"
-##        value: "{{ vrf_loop.export_rt.0.matches }}"
-#        elements: "{{ susan.matches }}" 
-#        repeat_for: "{{ vrf_loop.export_rt }}"
-#        repeat_var: susan
+            value: "{{ combined_dict[item.name.matches.0] }}"

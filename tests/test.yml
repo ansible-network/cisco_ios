@@ -12,7 +12,7 @@
 
     - name: test `show ip bgp summary` parser
       assert:
-        that: 
+        that:
           - "'ip_bgp_summary' in facts"
           - "'10.15.17.2' in facts['ip_bgp_summary']"
           - "facts['ip_bgp_summary']['10.15.17.2']['state_pfxrcd'] == 1125"
@@ -36,10 +36,6 @@
         file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"
         content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_vrf_detail/12.2(33)SXH5.txt') }}"
       register: result
-
-    - name: debug
-      debug:
-       var: facts
 
     - name: test `show ip vrf detail`
       assert:
