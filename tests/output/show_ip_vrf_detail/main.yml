@@ -11,6 +11,11 @@
       - "'ABC' in facts['ip_vrf_detail']"
       - "facts['ip_vrf_detail']['ABC']['rd'] == '65000:12'"
       - "facts['ip_vrf_detail']['ABC']['description'] == 'ABC VPN'"
+      - "facts['ip_vrf_detail']['ABC']['export_rt'] == ['65000:12']"
+      - "facts['ip_vrf_detail']['ABC']['import_rt'] == ['65000:12']"
+      - "facts['ip_vrf_detail']['Def']['export_rt'] == ['65000:13','65000:120','65000:130','123:123']"
+      - "facts['ip_vrf_detail']['Def']['import_rt'] == ['65000:13','65000:14']"
+      - "facts['ip_vrf_detail']['Def']['interfaces'] == ['Vl190','Vl193','Lo10','Vl85','Vl194','Vl19','Vl191','Te7/3.194']"
 
 - name: all tests complete
   debug:

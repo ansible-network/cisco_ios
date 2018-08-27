@@ -24,7 +24,7 @@ VRF Table ID = 1
    RT:65000:13             RT:65000:120            RT:65000:130
    RT:123:123
   Import VPN route-target communities
-    RT:65000:13
+    RT:65000:13            RT:65000:14
   No import route-map
   No export route-map
   VRF label distribution protocol: not configured
