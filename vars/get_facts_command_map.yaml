@@ -18,17 +18,20 @@
 - command: show version
   parser: show_version.yaml
   groups:
+    - all
     - default
 
 - command: show interface
   parser: show_interfaces.yaml
   groups:
+    - all
     - default
     - interfaces
 
 - command: show ip bgp summary
   parser: show_ip_bgp_summary.yaml
   groups:
+    - all
     - bgp
 
 - command: show ip prefix-list
@@ -39,4 +42,5 @@
 - command: show lldp neighbors detail
   parser: show_lldp_neighbors_detail.yaml
   groups:
+    - all
     - lldp
