@@ -1,0 +1,90 @@
+---
+- name: match sections
+  pattern_match:
+    regex: "interface"
+    match_all: yes
+    match_greedy: yes
+  register: section
+
+- name: match interface config values
+  pattern_group:
+  - name: match name
+    pattern_match:
+      regex: "interface (.*)"
+      content: "{{ item }}"
+    register: name
+
+  - name: match description
+    pattern_match:
+      regex: "description (.*)"
+      content: "{{ item }}"
+    register: description
+
+  - name: match admin state
+    pattern_match:
+      regex: "(shutdown)"
+      content: "{{ item }}"
+    register: enabled
+
+  - name: match ip_helper
+    pattern_match:
+      regex: "ip helper-address (.*)"
+      match_all: yes
+      content: "{{ item }}"
+    register: ip_helper
+
+  - name: match cdp enable
+    pattern_match:
+      regex: "(no) cdp enable"
+      content: "{{ item }}"
+    register: cdp_enable
+
+  - name: match speed
+    pattern_match:
+      regex: 'speed (.+)'
+      content: "{{ item }}"
+    register: speed
+
+  - name: match duplex
+    pattern_match:
+      regex: 'duplex (.+)'
+      content: "{{ item }}"
+    register: duplex
+
+  - name: match ip_address
+    pattern_match:
+      regex: "ip address (.*)"
+      match_all: yes
+      content: "{{ item }}"
+    register: ip_address
+  loop: "{{ section }}"
+  register: values
+
+- name: template interface values
+  loop: "{{ values }}"
+  register: interface-config
+  export: yes
+  export_as: dict
+  extend: cisco_ios.config
+  json_template:
+    template:
+    - key: "{{ item.name.matches.0 }}"
+      object:
+        - key: name
+          value: "{{ item.name.matches.0 }}"
+        - key: ip_addess
+          value: "{{ item.ip_address | map(attribute='matches') | list }}"
+        - key: description
+          value: "{{ item.description.matches.0 }}"
+        - key: ip_helper
+          value: "{{ item.ip_helper | map(attribute='matches') | list }}"
+        - key: enabled
+          value: "{{ not item.enabled.matches }}"
+        - key: mtu
+          value: "{{ item.mtu.matches.0 }}"
+        - key: speed
+          value: "{{ item.speed.matches.0 }}"
+        - key: duplex
+          value: "{{ item.duplex.matches.0 }}"
+        - key: cdp
+          value: "{{ not item.cdp_enable.matches }}"

@@ -34,11 +34,6 @@
     - all
     - bgp
 
-- command: show ip prefix-list
-  parser: show_ip_prefix_list.yaml
-  groups:
-    - prefix-list
-
 - command: show lldp neighbors detail
   parser: show_lldp_neighbors_detail.yaml
   groups:

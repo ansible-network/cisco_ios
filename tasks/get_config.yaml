@@ -12,3 +12,8 @@
 - name: set the configuration fact
   set_fact:
     configuration: "{{ configuration.stdout }}"
+    
+- name: parse system configuration
+  command_parser:
+    dir: "{{ role_path }}/parser_templates/config"
+    content: "{{ configuration }}"    
