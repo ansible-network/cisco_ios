@@ -1,0 +1,2 @@
+- name: Run provider add host initiator tasks
+  include_tasks: "{{ role_path }}/tasks/cloud_vpn/providers/{{ cloud_vpn_initiator_provider }}/initiator/add_host.yaml"

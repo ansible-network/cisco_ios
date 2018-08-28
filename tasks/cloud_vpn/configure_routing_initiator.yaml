@@ -1,0 +1,2 @@
+- name: Run provider configure routing initiator tasks
+  include_tasks: "{{ role_path }}/tasks/cloud_vpn/providers/{{ cloud_vpn_initiator_provider }}/initiator/configure_routing.yaml"
