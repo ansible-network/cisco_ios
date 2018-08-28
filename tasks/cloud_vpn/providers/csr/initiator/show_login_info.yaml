@@ -1,0 +1,6 @@
+---
+
+- name: Show initiator IP and user
+  debug:
+    msg: "Initiator can be reached at {{ cloud_vpn_initiator_user}}@{{ cloud_vpn_initiator_public_ip }}"
+  when: cloud_vpn_initiator_user is defined

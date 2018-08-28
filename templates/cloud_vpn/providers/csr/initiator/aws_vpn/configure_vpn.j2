@@ -1,0 +1,115 @@
+crypto isakmp policy 200
+  encryption aes 128
+  authentication pre-share
+  group 2
+  lifetime 28800
+  hash sha
+exit
+
+crypto keyring {{ cloud_vpn_name }}-0
+  local-address {{ cloud_vpn_initiator_outside_interface }}
+  pre-shared-key address {{ cloud_vpn_responder_public_ip }} key {{ cloud_vpn_psk }}
+exit
+
+crypto isakmp profile {{ cloud_vpn_name }}-0
+  local-address {{ cloud_vpn_initiator_outside_interface }}
+  match identity address {{ cloud_vpn_responder_public_ip }}
+  keyring {{ cloud_vpn_name }}-0
+exit
+
+crypto ipsec transform-set {{ cloud_vpn_name }}-0 esp-aes 128 esp-sha-hmac
+  mode tunnel
+exit
+
+crypto ipsec profile {{ cloud_vpn_name }}-0
+  set pfs group2
+  set security-association lifetime seconds 3600
+  set transform-set {{ cloud_vpn_name }}-0
+exit
+
+crypto ipsec df-bit clear
+
+crypto isakmp keepalive 10 10 on-demand
+
+crypto ipsec security-association replay window-size 128
+
+crypto ipsec fragmentation before-encryption
+
+interface Tunnel1
+  ip address {{ cloud_vpn_initiator_tunnel_ip }} 255.255.255.252
+  ip virtual-reassembly
+  tunnel source {{ cloud_vpn_initiator_outside_interface }}
+  tunnel destination {{ cloud_vpn_responder_public_ip }}
+  tunnel mode ipsec ipv4
+  tunnel protection ipsec profile {{ cloud_vpn_name }}-0
+  ! This option causes the router to reduce the Maximum Segment Size of
+  ! TCP packets to prevent packet fragmentation.
+  ip tcp adjust-mss 1379
+  no shutdown
+exit
+
+ip sla 100
+   icmp-echo {{ cloud_vpn_responder_tunnel_ip }} source-interface Tunnel1
+   timeout 5000
+   frequency 5
+exit
+ip sla schedule 100  life forever start-time now
+track 100 ip sla 100 reachability
+
+crypto isakmp policy 201
+  encryption aes 128
+  authentication pre-share
+  group 2
+  lifetime 28800
+  hash sha
+exit
+
+crypto keyring {{ cloud_vpn_name }}-1
+  local-address {{ cloud_vpn_initiator_outside_interface }}
+  pre-shared-key address {{ cloud_vpn_responder_failover_ip }} key {{ cloud_vpn_psk }}
+exit
+
+crypto isakmp profile {{ cloud_vpn_name }}-1
+  local-address {{ cloud_vpn_initiator_outside_interface }}
+  match identity address {{ cloud_vpn_responder_failover_ip }}
+  keyring {{ cloud_vpn_name }}-1
+exit
+
+crypto ipsec transform-set {{ cloud_vpn_name }}-1 esp-aes 128 esp-sha-hmac
+  mode tunnel
+exit
+
+crypto ipsec profile {{ cloud_vpn_name }}-1
+  set pfs group2
+  set security-association lifetime seconds 3600
+  set transform-set {{ cloud_vpn_name }}-1
+exit
+
+crypto ipsec df-bit clear
+
+crypto isakmp keepalive 10 10 on-demand
+
+crypto ipsec security-association replay window-size 128
+
+crypto ipsec fragmentation before-encryption
+
+interface Tunnel2
+  ip address {{ cloud_vpn_initiator_tunnel_failover_ip }} 255.255.255.252
+  ip virtual-reassembly
+  tunnel source {{ cloud_vpn_initiator_outside_interface }}
+  tunnel destination {{ cloud_vpn_responder_failover_ip }}
+  tunnel mode ipsec ipv4
+  tunnel protection ipsec profile {{ cloud_vpn_name }}-1
+  ! This option causes the router to reduce the Maximum Segment Size of
+  ! TCP packets to prevent packet fragmentation.
+  ip tcp adjust-mss 1379
+  no shutdown
+exit
+
+ip sla 200
+   icmp-echo {{ cloud_vpn_responder_tunnel_failover_ip }} source-interface Tunnel2
+   timeout 5000
+   frequency 5
+exit
+ip sla schedule 200  life forever start-time now
+track 200 ip sla 200 reachability

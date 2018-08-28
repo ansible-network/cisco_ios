@@ -1,0 +1,6 @@
+---
+
+- name: Push VPN configuration to CSR device
+  ios_config:
+    src: "cloud_vpn/providers/csr/initiator/{{ cloud_vpn_responder_provider }}/configure_vpn.j2"
+  delegate_to: initiator

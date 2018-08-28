@@ -1,0 +1,13 @@
+---
+
+- name: Set ansible_connection fact to 'network_cli'
+  set_fact:
+    cloud_vpn_initiator_ansible_connection: network_cli
+
+- name: Set initiator user fact to 'ec2-user' if not defined
+  set_fact:
+    cloud_vpn_initiator_user: "{{ cloud_vpn_initiator_user | default('ec2-user') }}"
+
+- name: Set initiator outside interface fact to 'GigabitEthernet1' if not defined
+  set_fact:
+    cloud_vpn_initiator_outside_interface: "{{ cloud_vpn_initiator_outside_interface | default('GigabitEthernet1') }}"
