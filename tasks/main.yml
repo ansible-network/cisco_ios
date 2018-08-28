@@ -11,7 +11,7 @@
 
 - name: validate ansible_network_os == 'ios'
   fail:
-    msg: this role only works with arista ios devices
+    msg: this role only works with cisco ios devices
   when: ansible_network_os != 'ios'
 
 - name: set role supported functions

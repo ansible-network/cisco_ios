@@ -12,35 +12,39 @@
     match_all: yes
     match_greedy: yes
   register: context
-  export: yes
+  export: false
 
 - name: match lines
   pattern_match:
-    regex: "\\d.+"
+    regex: "^[0-9a-f.]+"
     match_all: yes
     match_greedy: yes
     content: "{{ context.0 }}"
   register: lines
-
+  export: false
 
 - name: match neighbors
   pattern_match:
-    regex: "^(?P<ip>[0-9a-f.]+)\\s+(?P<version>\\d+)\\s+(?P<asn>\\d+)\\s+(?P<msgrcvd>\\d+)\\s+(?P<msgsent>\\d+)\\s+(?P<tblver>\\d+)\\s+(?P<inq>\\d+)\\s+(?P<outq>\\d+)\\s+(?P<timer>[0-9:]+)\\s+(?P<status>.+)\\s*"
+    regex: "(?P<ip>[0-9a-f.]+)\\s+(?P<version>\\d+)\\s+(?P<asn>\\d+)\\s+(?P<msgrcvd>\\d+)\\s+(?P<msgsent>\\d+)\\s+(?P<tblver>\\d+)\\s+(?P<inq>\\d+)\\s+(?P<outq>\\d+)\\s+(?P<timer>\\S+)\\s+(?P<state>\\S+)"
     content: "{{ item }}"
   loop: "{{ lines }}"
   register: neighbors
-
+  export: false
 
 - name: template entries
   json_template:
     template:
       - key: "{{ item.ip }}"
         object:
-          - key: idle
-            value: "{{ item.status == 'Idle' }}"
+          - key: state_pfxrcd
+            value: "{{ item.state }}"
           - key: asn
             value: "{{ item.asn }}"
-  register: bgp_summary
+          - key: timer
+            value: "{{ item.timer }}"
+          - key: ip_version
+            value: "{{ item.version }}"
+  register: ip_bgp_summary
   loop: "{{ neighbors }}"
   export: true
   export_as: dict
