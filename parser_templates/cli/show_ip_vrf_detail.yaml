@@ -6,16 +6,16 @@
     command: show ip vrf detail
     network_os: ios
 
-- name: match vrf sections
-  register: sections
+- name: match vrf section
+  register: section
   pattern_match:
     regex: "^VRF \\S+; default RD"
     match_all: true
     match_greedy: true
 
 - name: match vrf values
-  loop: "{{ sections }}"
-  register: vrfs
+  loop: "{{ section }}"
+  register: vrf
   pattern_group:
 
     - name: match name
@@ -38,53 +38,95 @@
 
     - name: match export route target section
       pattern_match:
-        regex: "^  Export VPN route-target communities\\n(.*\\s+.*\\s+)^  Import VPN"
+        regex: "^  Export VPN route-target communities([\\s\\S]*)^  Import VPN"
         content: "{{ item }}"
         match_all: true
         match_greedy: false
       register: export_rt_section
 
-- name: match export route targets
-  loop: "{{ vrfs }}"
-  loop_control:
-    loop_var: route_target_list
-  register: vrfs_export_rt
-  pattern_group:
-
-    - name: match route targets
+    - name: match import route target section
       pattern_match:
-        regex: "\\s+RT:(\\d+:\\d+)"
-        content: "{{ route_target_list.export_rt_section.0.matches }}"
+        regex: "^  Import VPN route-target communities([\\s\\S]*)import route-map"
+        content: "{{ item }}"
         match_all: true
-      register: export_rt
+        match_greedy: false
+      register: import_rt_section
+
+    - name: match interface section
+      pattern_match:
+        regex: "^  Interfaces:([\\s\\S]*)VRF Table ID"
+        content: "{{ item }}"
+        match_all: true
+        match_greedy: false
+      register: interface_section
+
+- name: match vrf nested values
+  loop: "{{ vrf }}"
+  loop_control:
+    loop_var: vrf_item
+  register: vrf_nested
+  pattern_group:
 
     - name: match vrf name
       pattern_match:
         regex: "(.*)"
-        content: "{{ route_target_list.name.matches.0 }}"
+        content: "{{ vrf_item.name.matches.0 }}"
         match_greedy: true
       register: name
 
-- name: build a new dict
-  register: vrf_export_route_targets
+    - name: match export route targets
+      pattern_match:
+        regex: "\\s+RT:(\\d+:\\d+)"
+        content: "{{ vrf_item.export_rt_section.0.matches }}"
+        match_all: true
+      register: export_rt
+
+    - name: match import route targets
+      pattern_match:
+        regex: "\\s+RT:(\\d+:\\d+)"
+        content: "{{ vrf_item.import_rt_section.0.matches }}"
+        match_all: true
+      register: import_rt
+
+    - name: match interfaces
+      pattern_match:
+        regex: "([\\s\\S]*)"
+        content: "{{ vrf_item.interface_section.0.matches }}"
+        match_all: true
+      register: interface
+
+- name: build a dict for nested values with name as key
+  register: vrf_nested_values
+  export: true
   export_as: dict
-  loop: "{{ vrfs_export_rt }}"
+  loop: "{{ vrf_nested }}"
   loop_control:
-    loop_var: vrf_loop
+    loop_var: vrf_nested_item
   json_template:
     template:
-      - key: "{{ vrf_loop.name.0 }}"
-        elements: "{{ nested_item.matches }}"
-        repeat_for: "{{ vrf_loop.export_rt }}"
-        repeat_var: nested_item
+      - key: "{{ vrf_nested_item.name.0 }}"
+        object:
+          - key: export_rt
+            elements: "{{ nested_item.matches }}"
+            repeat_for: "{{ vrf_nested_item.export_rt }}"
+            repeat_var: nested_item
+          - key: import_rt
+            elements: "{{ nested_item.matches }}"
+            repeat_for: "{{ vrf_nested_item.import_rt }}"
+            repeat_var: nested_item
+          - key: interface
+            elements: "{{ nested_item.matches }}"
+            repeat_for: "{{ vrf_nested_item.interface }}"
+            repeat_var: nested_item
 
-- name: combine all vrfs
+- name: ensure vrf_nested_values is a DICT
+  export: true
   set_vars:
-    combined_dict: "{{ ({}| combine(*vrf_export_route_targets)) }}"
+    dict_vrf_nested_values: "{{ ({}| combine(*vrf_nested_values)) }}"
 
-- name: template entries
+- name: template export json object
   register: ip_vrf_detail
-  loop: "{{ vrfs }}"
+  loop: "{{ vrf }}"
   export: true
   export_as: dict
   extend: cisco_ios
@@ -99,4 +141,9 @@
           - key: rd
             value: "{{ item.rd.matches.0 }}"
           - key: export_rt
-            value: "{{ combined_dict[item.name.matches.0] }}"
+            value: "{{ dict_vrf_nested_values[item.name.matches.0].export_rt }}"
+          - key: import_rt
+            value: "{{ dict_vrf_nested_values[item.name.matches.0].import_rt }}"
+          - key: interfaces
+            value: "{{ dict_vrf_nested_values[item.name.matches.0].interface }}"
+
