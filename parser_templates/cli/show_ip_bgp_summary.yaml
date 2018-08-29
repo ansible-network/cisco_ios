@@ -7,31 +7,33 @@
     network_os: ios
 
 - name: match sections
+  register: context
   pattern_match:
     regex: "Neighbor.+"
     match_all: yes
     match_greedy: yes
-  register: context
-  export: false
 
 - name: match lines
+  register: lines
   pattern_match:
     regex: "^[0-9a-f.]+"
+    content: "{{ context.0 }}"
     match_all: yes
     match_greedy: yes
-    content: "{{ context.0 }}"
-  register: lines
-  export: false
 
 - name: match neighbors
+  register: neighbors
+  loop: "{{ lines }}"
   pattern_match:
     regex: "(?P<ip>[0-9a-f.]+)\\s+(?P<version>\\d+)\\s+(?P<asn>\\d+)\\s+(?P<msgrcvd>\\d+)\\s+(?P<msgsent>\\d+)\\s+(?P<tblver>\\d+)\\s+(?P<inq>\\d+)\\s+(?P<outq>\\d+)\\s+(?P<timer>\\S+)\\s+(?P<state>\\S+)"
     content: "{{ item }}"
-  loop: "{{ lines }}"
-  register: neighbors
-  export: false
 
 - name: template entries
+  register: ip_bgp_summary
+  loop: "{{ neighbors }}"
+  export: true
+  export_as: dict
+  extend: cisco_ios
   json_template:
     template:
       - key: "{{ item.ip }}"
@@ -44,8 +46,3 @@
             value: "{{ item.timer }}"
           - key: ip_version
             value: "{{ item.version }}"
-  register: ip_bgp_summary
-  loop: "{{ neighbors }}"
-  export: true
-  export_as: dict
-  extend: cisco_ios

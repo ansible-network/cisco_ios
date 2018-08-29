@@ -1,0 +1,47 @@
+VRF ABC; default RD 65000:12; default VPNID <not set>
+  Description: ABC VPN
+  Interfaces:
+    Te7/3.16
+VRF Table ID = 45
+  Export VPN route-target communities
+    RT:65000:12
+  Import VPN route-target communities
+    RT:65000:12
+  No import route-map
+  No export route-map
+  VRF label distribution protocol: not configured
+  VRF label allocation mode: per-prefix
+    vrf-conn-aggr for connected and BGP aggregates (Label 1706)
+
+VRF Def; default RD 65000:13; default VPNID <not set>
+  Description: Def VPN
+  Interfaces:
+    Vl190                   Vl193                   Lo10
+    Vl85                    Vl194                   Vl19
+    Vl191                   Te7/3.194
+VRF Table ID = 1
+  Export VPN route-target communities
+   RT:65000:13             RT:65000:120            RT:65000:130
+   RT:123:123
+  Import VPN route-target communities
+    RT:65000:13            RT:65000:14
+  No import route-map
+  No export route-map
+  VRF label distribution protocol: not configured
+  VRF label allocation mode: per-prefix
+    vrf-conn-aggr for connected and BGP aggregates (Label 16)
+
+VRF XYzzz0-1-9; default RD 65111:100; default VPNID <not set>
+  Description: A random description
+  Interfaces:
+    Vl777                    Gi7/3.30
+VRF Table ID = 6
+  Export VPN route-target communities
+    RT:65000:100
+  Import VPN route-target communities
+    RT:65000:100
+  No import route-map
+  No export route-map
+  VRF label distribution protocol: not configured
+  VRF label allocation mode: per-prefix
+    vrf-conn-aggr for connected and BGP aggregates (Label 1446)
