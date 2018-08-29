@@ -90,14 +90,13 @@
 
     - name: match interfaces
       pattern_match:
-        regex: "([\\s\\S]*)"
+        regex: "[\\s|\\\n]+(\\S*)[\\s|\\n]"
         content: "{{ vrf_item.interface_section.0.matches }}"
         match_all: true
       register: interface
 
 - name: build a dict for nested values with name as key
   register: vrf_nested_values
-  export: true
   export_as: dict
   loop: "{{ vrf_nested }}"
   loop_control:
@@ -120,7 +119,6 @@
             repeat_var: nested_item
 
 - name: ensure vrf_nested_values is a DICT
-  export: true
   set_vars:
     dict_vrf_nested_values: "{{ ({}| combine(*vrf_nested_values)) }}"
 
