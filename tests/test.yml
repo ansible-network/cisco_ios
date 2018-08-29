@@ -10,37 +10,5 @@
     - name: Include tests for `show ip bgp summary`
       include_tasks: output/show_ip_bgp_summary/main.yml
 
-    - name: test `show ip bgp summary` parser
-      assert:
-        that:
-          - "'ip_bgp_summary' in facts"
-          - "'10.15.17.2' in facts['ip_bgp_summary']"
-          - "facts['ip_bgp_summary']['10.15.17.2']['state_pfxrcd'] == 1125"
-          - "facts['ip_bgp_summary']['10.15.17.2']['asn'] == 64785"
-          - "facts['ip_bgp_summary']['10.15.17.2']['ip_version'] == 4"
-          - "facts['ip_bgp_summary']['10.15.17.2']['timer'] == '7w1d'"
-          - "'10.1.19.2' in facts['ip_bgp_summary']"
-          - "facts['ip_bgp_summary']['10.1.19.2']['state_pfxrcd'] == 'Active'"
-          - "facts['ip_bgp_summary']['10.1.19.2']['asn'] == 1234"
-          - "facts['ip_bgp_summary']['10.1.19.2']['ip_version'] == 4"
-          - "'{{ facts['ip_bgp_summary']['10.1.19.2']['timer'] | string }}' == '00:00:30'"
-          - "'72.31.0.13' in facts['ip_bgp_summary']"
-          - "facts['ip_bgp_summary']['72.31.0.13']['state_pfxrcd'] == 'Idle'"
-          - "facts['ip_bgp_summary']['72.31.0.13']['asn'] == 65004"
-          - "facts['ip_bgp_summary']['72.31.0.13']['ip_version'] == 4"
-          - "'{{ facts['ip_bgp_summary']['72.31.0.13']['timer'] | string }}' == '00:00:45'"
-
-
-    - name: parse `show ip vrf detail`
-      command_parser:
-        file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"
-        content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_vrf_detail/12.2(33)SXH5.txt') }}"
-      register: result
-
-    - name: test `show ip vrf detail`
-      assert:
-        that:
-          - "'ip_vrf_detail' in facts"
-          - "'ABC' in facts['ip_vrf_detail']"
-          - "facts['ip_vrf_detail']['ABC']['rd'] == '65000:12'"
-          - "facts['ip_vrf_detail']['ABC']['description'] == 'ABC VPN'"
+    - name: Include tests for `show ip vrf detail`
+      include_tasks: output/show_ip_vrf_detail/main.yml

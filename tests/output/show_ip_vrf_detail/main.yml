@@ -1,0 +1,17 @@
+- name: parse `show ip vrf detail`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_vrf_detail/12.2(33)SXH5.txt') }}"
+  register: result
+
+- name: test `show ip vrf detail`
+  assert:
+    that:
+      - "'ip_vrf_detail' in facts"
+      - "'ABC' in facts['ip_vrf_detail']"
+      - "facts['ip_vrf_detail']['ABC']['rd'] == '65000:12'"
+      - "facts['ip_vrf_detail']['ABC']['description'] == 'ABC VPN'"
+
+- name: all tests complete
+  debug:
+    msg: "All tests for `show ip vrf detail` passed"
