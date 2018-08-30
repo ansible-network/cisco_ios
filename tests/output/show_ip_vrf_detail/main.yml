@@ -1,3 +1,5 @@
+### IOS 12.2(33)SXH5
+
 - name: parse `show ip vrf detail`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"

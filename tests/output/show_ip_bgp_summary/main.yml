@@ -1,5 +1,21 @@
 ---
 
+### BGP not active
+
+- name: not active - parse `show ip bgp summary`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/bgp_not_active.txt') }}"
+  register: result
+
+- name: not active - test `show ip bgp summary` parser
+  assert:
+    that:
+      - "cisco_ios['ip_bgp_summary']['process_state'] == 'not active'"
+
+- name: clear facts
+  meta: clear_facts
+
 ### IOS-XE 03.14.00.S
 
 - name: 03.14.00.S.txt - parse `show ip bgp summary`
