@@ -1,0 +1,90 @@
+---
+
+### BGP not active
+
+- name: not active - parse `show ip bgp summary`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/bgp_not_active.txt') }}"
+  register: result
+
+- name: not active - test `show ip bgp summary` parser
+  assert:
+    that:
+      - "cisco_ios['ip_bgp_summary']['process_state'] == 'not active'"
+
+- name: clear facts
+  meta: clear_facts
+
+### IOS-XE 03.14.00.S
+
+- name: 03.14.00.S.txt - parse `show ip bgp summary`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/03.14.00.S.txt') }}"
+  register: result
+
+- name: 03.14.00.S.txt - test `show ip bgp summary` parser
+  assert:
+    that:
+      - "'ip_bgp_summary' in cisco_ios"
+      - "'10.15.17.2' in cisco_ios['ip_bgp_summary']"
+      - "cisco_ios['ip_bgp_summary']['10.15.17.2']['state_pfxrcd'] == 1125"
+      - "cisco_ios['ip_bgp_summary']['10.15.17.2']['asn'] == 64785"
+      - "cisco_ios['ip_bgp_summary']['10.15.17.2']['ip_version'] == 4"
+      - "cisco_ios['ip_bgp_summary']['10.15.17.2']['timer'] == '7w1d'"
+      - "'10.1.19.2' in cisco_ios['ip_bgp_summary']"
+      - "cisco_ios['ip_bgp_summary']['10.1.19.2']['state_pfxrcd'] == 'Active'"
+      - "cisco_ios['ip_bgp_summary']['10.1.19.2']['asn'] == 1234"
+      - "cisco_ios['ip_bgp_summary']['10.1.19.2']['ip_version'] == 4"
+      - "'{{ cisco_ios['ip_bgp_summary']['10.1.19.2']['timer'] | string }}' == '00:00:30'"
+      - "'72.31.0.13' in cisco_ios['ip_bgp_summary']"
+      - "cisco_ios['ip_bgp_summary']['72.31.0.13']['state_pfxrcd'] == 'Idle'"
+      - "cisco_ios['ip_bgp_summary']['72.31.0.13']['asn'] == 65004"
+      - "cisco_ios['ip_bgp_summary']['72.31.0.13']['ip_version'] == 4"
+      - "'{{ cisco_ios['ip_bgp_summary']['72.31.0.13']['timer'] | string }}' == '10:32:44'"
+
+### IOS 15.1(2)T5.txt
+
+- name: 15.1(2)T5.txt - parse `show ip bgp summary`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/15.1(2)T5.txt') }}"
+  register: result
+
+- name: 15.1(2)T5.txt - test `show ip bgp summary` parser
+  assert:
+    that:
+      - "'ip_bgp_summary' in cisco_ios"
+      - "'10.29.19.70' in cisco_ios['ip_bgp_summary']"
+      - "cisco_ios['ip_bgp_summary']['10.29.19.70']['state_pfxrcd'] == 1385"
+      - "cisco_ios['ip_bgp_summary']['10.29.19.70']['asn'] == 7474"
+      - "cisco_ios['ip_bgp_summary']['10.29.19.70']['ip_version'] == 4"
+      - "cisco_ios['ip_bgp_summary']['10.29.19.70']['timer'] == '4d22h'"
+
+### IOS 12.2(33)SXH5.txt
+
+- name: 12.2(33)SXH5.txt - parse `show ip bgp summary`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/12.2(33)SXH5.txt') }}"
+  register: result
+
+- name: 12.2(33)SXH5.txt - test `show ip bgp summary` parser
+  assert:
+    that:
+      - "'ip_bgp_summary' in cisco_ios"
+      - "'172.31.32.10' in cisco_ios['ip_bgp_summary']"
+      - "cisco_ios['ip_bgp_summary']['172.31.32.10']['state_pfxrcd'] == 114"
+      - "cisco_ios['ip_bgp_summary']['172.31.32.10']['asn'] == 64910"
+      - "cisco_ios['ip_bgp_summary']['172.31.32.10']['ip_version'] == 4"
+      - "cisco_ios['ip_bgp_summary']['172.31.32.10']['timer'] == '23w5d'"
+      - "'172.16.32.1' in cisco_ios['ip_bgp_summary']"
+      - "cisco_ios['ip_bgp_summary']['172.16.32.1']['state_pfxrcd'] == 136"
+      - "cisco_ios['ip_bgp_summary']['172.16.32.1']['asn'] == 65123"
+      - "cisco_ios['ip_bgp_summary']['172.16.32.1']['ip_version'] == 4"
+      - "'{{ cisco_ios['ip_bgp_summary']['172.16.32.1']['timer'] | string }}' == '28w5d'"
+
+- name: all tests complete
+  debug:
+    msg: "All tests for `show ip bgp summary` passed"
