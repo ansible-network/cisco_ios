@@ -12,7 +12,5 @@ BGP activity 18292/15523 prefixes, 74591/69053 paths, scan interval 60 secs
 
 Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
 10.15.17.2      4        64785  748767  766529    79501    0    0 7w1d         1125
-172.31.3.17     4        65530  795592  739710    79501    0    0 7w1d         1641
 10.1.19.2       4        1234        0       0        1    0    0 00:00:30 Active
-72.31.0.13      4        65004       0       0        1    0    0 00:00:45 Idle
-72.31.0.130     4        65530    8027    6488     2287    0    0 10:32:44     1644
+72.31.0.13      4        65004       0       0        1    0    0 10:32:44 Idle

@@ -1,0 +1,16 @@
+BGP router identifier 172.16.32.1, local AS number 65123
+BGP table version is 3317, main routing table version 3317
+140 network entries using 16380 bytes of memory
+276 path entries using 14352 bytes of memory
+1184/12 BGP path/bestpath attribute entries using 165760 bytes of memory
+108 BGP AS-PATH entries using 2832 bytes of memory
+84 BGP community entries using 2016 bytes of memory
+74 BGP extended community entries using 1920 bytes of memory
+0 BGP route-map cache entries using 0 bytes of memory
+0 BGP filter-list cache entries using 0 bytes of memory
+BGP using 203260 total bytes of memory
+BGP activity 2362466/2358636 prefixes, 9381389/9370747 paths, scan interval 60 secs
+
+Neighbor        V    AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+172.31.32.10    4 64910 5784429 5675902     3317    0    0 23w5d         114
+172.16.32.1     4 65123 6281459 6288574     3317    0    0 28w5d         136

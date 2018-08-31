@@ -1,0 +1,34 @@
+### IOS 12.2(33)SXH5
+
+- name: parse `show ip vrf detail`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_vrf_detail/12.2(33)SXH5.txt') }}"
+  register: result
+
+- name: test `show ip vrf detail`
+  assert:
+    that:
+      - "'ip_vrf_detail' in cisco_ios"
+      - "'ABC' in cisco_ios['ip_vrf_detail']"
+      - "cisco_ios['ip_vrf_detail']['ABC']['rd'] == '65000:12'"
+      - "cisco_ios['ip_vrf_detail']['ABC']['description'] == 'ABC VPN'"
+      - "cisco_ios['ip_vrf_detail']['ABC']['export_rt'] == ['65000:12']"
+      - "cisco_ios['ip_vrf_detail']['ABC']['import_rt'] == ['65000:12']"
+      - "cisco_ios['ip_vrf_detail']['ABC']['interfaces'] == ['Te7/3.16']"
+      - "'Def' in cisco_ios['ip_vrf_detail']"
+      - "cisco_ios['ip_vrf_detail']['Def']['rd'] == '65000:13'"
+      - "cisco_ios['ip_vrf_detail']['Def']['description'] == 'Def VPN'"
+      - "cisco_ios['ip_vrf_detail']['Def']['export_rt'] == ['65000:13','65000:120','65000:130','123:123']"
+      - "cisco_ios['ip_vrf_detail']['Def']['import_rt'] == ['65000:13','65000:14']"
+      - "cisco_ios['ip_vrf_detail']['Def']['interfaces'] == ['Vl190','Vl193','Lo10','Vl85','Vl194','Vl19','Vl191','Te7/3.194']"
+      - "'XYzzz0-1-9' in cisco_ios['ip_vrf_detail']"
+      - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['rd'] == '65111:100'"
+      - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['description'] == 'A random description'"
+      - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['export_rt'] == ['65000:100']"
+      - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['import_rt'] == ['65000:100']"
+      - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['interfaces'] == ['Vl777','Gi7/3.30']"
+
+- name: all tests complete
+  debug:
+    msg: "All tests for `show ip vrf detail` passed"

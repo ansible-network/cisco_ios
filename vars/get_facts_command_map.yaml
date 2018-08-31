@@ -39,3 +39,10 @@
   groups:
     - all
     - lldp
+
+- command: show ip vrf detail
+  parser: show_ip_vrf_detail.yaml
+  groups:
+    - all
+    - vrf
+

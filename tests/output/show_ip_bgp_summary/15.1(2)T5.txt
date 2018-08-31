@@ -1,0 +1,14 @@
+BGP router identifier 10.29.19.69, local AS number 65312
+BGP table version is 8405, main routing table version 8405
+1390 network entries using 189040 bytes of memory
+1390 path entries using 72280 bytes of memory
+1016/1016 BGP path/bestpath attribute entries using 125984 bytes of memory
+1008 BGP AS-PATH entries using 24516 bytes of memory
+2 BGP extended community entries using 48 bytes of memory
+0 BGP route-map cache entries using 0 bytes of memory
+0 BGP filter-list cache entries using 0 bytes of memory
+BGP using 411868 total bytes of memory
+BGP activity 3131/1741 prefixes, 4889/3499 paths, scan interval 60 secs
+
+Neighbor        V           AS MsgRcvd MsgSent   TblVer  InQ OutQ Up/Down  State/PfxRcd
+10.29.19.70     4         7474   78662   72306     8405    0    0 4d22h        1385
