@@ -8,18 +8,15 @@
 
 - name: match not active
   register: not_active
-  export: true
   pattern_match:
     regex: "BGP not active"
     match_all: true
 
 - name: set_vars bgp state active
-  export: true
   set_vars:
     process_state: "active"
 
 - name: set_vars bgp state not active
-  export: true
   set_vars:
     process_state: "not active"
   when: "not_active.0.matches == 'BGP not active'"
@@ -42,34 +39,12 @@
   when: process_state == 'active'
 
 - name: match neighbors
-  register: neighbors
+  register: matched_neighbors
   loop: "{{ lines }}"
   pattern_match:
     regex: "(?P<ip>[0-9a-f.]+)\\s+(?P<version>\\d+)\\s+(?P<asn>\\d+)\\s+(?P<msgrcvd>\\d+)\\s+(?P<msgsent>\\d+)\\s+(?P<tblver>\\d+)\\s+(?P<inq>\\d+)\\s+(?P<outq>\\d+)\\s+(?P<timer>\\S+)\\s+(?P<state>\\S+)"
     content: "{{ item }}"
   when: process_state == 'active'
-
-- name: template entries
-  register: ip_bgp_summary
-  loop: "{{ neighbors }}"
-  export: true
-  export_as: dict
-  extend: cisco_ios
-  when: process_state == 'active'
-  json_template:
-    template:
-      - key: "process_state"
-        value: "active"
-      - key: "{{ item.ip }}"
-        object:
-          - key: state_pfxrcd
-            value: "{{ item.state }}"
-          - key: asn
-            value: "{{ item.asn }}"
-          - key: timer
-            value: "{{ item.timer }}"
-          - key: ip_version
-            value: "{{ item.version }}"
 
 - name: template entries
   register: ip_bgp_summary
@@ -81,3 +56,35 @@
     template:
       - key: "process_state"
         value: "not active"
+
+- name: template entries
+  register: ip_bgp_summary
+  export: true
+  export_as: dict
+  extend: cisco_ios
+  when: process_state == 'active'
+  json_template:
+    template:
+      - key: "process_state"
+        value: "active"
+
+- name: template entries
+  register: neighbors
+  loop: "{{ matched_neighbors }}"
+  export: true
+  export_as: dict
+  extend: cisco_ios.ip_bgp_summary
+  when: process_state == 'active'
+  json_template:
+    template:
+      - key: "{{ item.ip }}"
+        object:
+          - key: state_pfxrcd
+            value: "{{ item.state }}"
+          - key: asn
+            value: "{{ item.asn }}"
+          - key: timer
+            value: "{{ item.timer }}"
+          - key: ip_version
+            value: "{{ item.version }}"
+
