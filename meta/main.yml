@@ -32,6 +32,4 @@ galaxy_info:
     - ios
 
 dependencies:
-  - src: https://github.com/ansible-network/network-engine.git
-    version: devel
-    name: ansible-network.network-engine
+  - ansible-network.network-engine
