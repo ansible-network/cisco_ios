@@ -48,7 +48,6 @@
 
 - name: template entries
   register: ip_bgp_summary
-  export: true
   export_as: dict
   extend: cisco_ios
   when: process_state == 'not active'
@@ -59,7 +58,6 @@
 
 - name: template entries
   register: ip_bgp_summary
-  export: true
   export_as: dict
   extend: cisco_ios
   when: process_state == 'active'
