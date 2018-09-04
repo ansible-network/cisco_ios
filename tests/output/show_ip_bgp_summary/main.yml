@@ -43,6 +43,9 @@
       - "bgp_nbr['72.31.0.13']['ip_version'] == 4"
       - "'{{ bgp_nbr['72.31.0.13']['timer'] | string }}' == '10:32:44'"
 
+- name: clear facts
+  meta: clear_facts
+
 ### IOS 15.1(2)T5.txt
 
 - name: 15.1(2)T5.txt - parse `show ip bgp summary`
@@ -59,6 +62,9 @@
       - "bgp_nbr['10.29.19.70']['asn'] == 7474"
       - "bgp_nbr['10.29.19.70']['ip_version'] == 4"
       - "bgp_nbr['10.29.19.70']['timer'] == '4d22h'"
+
+- name: clear facts
+  meta: clear_facts
 
 ### IOS 12.2(33)SXH5.txt
 
@@ -81,6 +87,11 @@
       - "bgp_nbr['172.16.32.1']['asn'] == 65123"
       - "bgp_nbr['172.16.32.1']['ip_version'] == 4"
       - "'{{ bgp_nbr['172.16.32.1']['timer'] | string }}' == '28w5d'"
+
+- name: clear facts
+  meta: clear_facts
+
+### Done
 
 - name: all tests complete
   debug:

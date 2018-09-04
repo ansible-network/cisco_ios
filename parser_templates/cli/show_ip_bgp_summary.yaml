@@ -46,27 +46,17 @@
     content: "{{ item }}"
   when: process_state == 'active'
 
-- name: template entries
+- name: template bgp process state
   register: ip_bgp_summary
+  export: true
   export_as: dict
   extend: cisco_ios
-  when: process_state == 'not active'
   json_template:
     template:
       - key: "process_state"
-        value: "not active"
+        value: "{{ process_state }}"
 
-- name: template entries
-  register: ip_bgp_summary
-  export_as: dict
-  extend: cisco_ios
-  when: process_state == 'active'
-  json_template:
-    template:
-      - key: "process_state"
-        value: "active"
-
-- name: template entries
+- name: template neighbor entries
   register: neighbors
   loop: "{{ matched_neighbors }}"
   export: true
@@ -85,4 +75,3 @@
             value: "{{ item.timer }}"
           - key: ip_version
             value: "{{ item.version }}"
-
