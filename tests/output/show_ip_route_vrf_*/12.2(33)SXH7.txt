@@ -1,0 +1,59 @@
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route
+
+Gateway of last resort is 10.50.190.7 to network 0.0.0.0
+
+     10.0.0.0/8 is variably subnetted, 138 subnets, 6 masks
+O E2    10.110.196.128/27
+           [110/120] via 10.22.254.70, 1d13h, TenGigabitEthernet4/3
+B       10.10.106.0/24 [20/0] via 10.50.190.7, 1d15h
+B       10.10.10.0/24 [20/0] via 10.50.190.7, 7w0d
+B       10.10.40.40/29 [20/0] via 10.50.190.7, 7w0d
+B       10.10.40.48/29 [20/0] via 10.50.190.7, 7w0d
+B       10.10.219.0/24 [20/0] via 10.50.190.7, 7w0d
+B       10.10.91.0/24 [20/0] via 10.50.190.7, 7w0d
+B       10.10.40.56/29 [20/0] via 10.50.190.7, 7w0d
+O E2    10.110.196.160/27
+           [110/120] via 10.22.254.70, 1d13h, TenGigabitEthernet4/3
+B       10.10.232.0/24 [20/0] via 10.50.190.7, 1d13h
+B       10.10.200.0/21 [20/0] via 10.50.190.7, 7w0d
+B       10.10.168.0/21 [20/0] via 10.50.190.7, 7w0d
+B       10.10.136.0/21 [20/0] via 10.50.190.7, 7w0d
+
+Routing Table: ABC
+Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route
+
+Gateway of last resort is 10.20.190.33 to network 0.0.0.0
+
+     192.168.22.0/32 is subnetted, 4 subnets
+D       192.168.22.2
+           [90/128512] via 10.122.254.70, 2w6d, TenGigabitEthernet3/3
+D       192.168.22.3
+           [90/128512] via 10.122.254.9, 2w6d, TenGigabitEthernet3/1
+C       192.168.22.1 is directly connected, Loopback1
+D       192.168.22.4
+           [90/128768] via 10.122.254.70, 2w6d, TenGigabitEthernet3/3
+           [90/128768] via 10.122.254.9, 2w6d, TenGigabitEthernet3/1
+     10.0.0.0/8 is variably subnetted, 13 subnets, 3 masks
+D       10.20.190.40/29
+           [90/768] via 10.122.254.70, 2w6d, TenGigabitEthernet3/3
+C       10.122.252.0/24 is directly connected, Vlan849
+D       10.122.254.32/29
+           [90/768] via 10.122.254.70, 2w6d, TenGigabitEthernet3/3
+C       10.122.254.8/29 is directly connected, TenGigabitEthernet3/1
+S       10.44.126.1/32 [1/0] via 10.44.127.22
+B       10.106.1.0/24 [20/0] via 10.20.190.33, 7w0d
+     192.168.51.0/29 is subnetted, 1 subnets
+C       164.112.253.0 is directly connected, Vlan848
+B*   0.0.0.0/0 [20/0] via 10.20.190.33, 1d16h
