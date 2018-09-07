@@ -1,0 +1,15 @@
+---
+
+- name: show_ip_route_vrf_all
+  parser_metadata:
+    version: 1.0
+    command: "show ip route vrf *"
+    network_os: ios
+
+- name: match vpn-instances
+  export: true
+  register: vpn_instance_sections
+  pattern_match:
+    regex: "(Routing Table:.*\\nCodes:|Codes:)"
+    match_all: True
+    match_greedy: True

@@ -1,0 +1,15 @@
+### IOS 12.2(33)SXH78
+
+- name: 12.2(33)SXH7 - parse `show ip route vrf *`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_route_vrf_all.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_route_vrf_all/12.2(33)SXH7.txt') }}"
+  register: result
+
+### IOS-XE 03.14.00.S
+
+- name: 03.14.00.S - parse `show ip route vrf *`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_route_vrf_all.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_route_vrf_all/03.14.00.S.txt') }}"
+  register: result
