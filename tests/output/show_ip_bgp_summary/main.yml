@@ -11,7 +11,7 @@
 - name: not active - test `show ip bgp summary` parser
   assert:
     that:
-      - "cisco_ios['ip_bgp_summary']['process_state'] == 'not active'"
+      - cisco_ios['ip_bgp_summary']['process_state'] == 'not active'
 
 - name: clear facts
   meta: clear_facts
@@ -30,17 +30,17 @@
       - "'10.15.17.2' in bgp_nbr"
       - "'10.1.19.2' in bgp_nbr"
       - "'72.31.0.13' in bgp_nbr"
-      - "bgp_nbr['10.15.17.2']['state_pfxrcd'] == 1125"
-      - "bgp_nbr['10.15.17.2']['asn'] == 64785"
-      - "bgp_nbr['10.15.17.2']['ip_version'] == 4"
-      - "bgp_nbr['10.15.17.2']['timer'] == '7w1d'"
-      - "bgp_nbr['10.1.19.2']['state_pfxrcd'] == 'Active'"
-      - "bgp_nbr['10.1.19.2']['asn'] == 1234"
-      - "bgp_nbr['10.1.19.2']['ip_version'] == 4"
+      - bgp_nbr['10.15.17.2']['state_pfxrcd'] == 1125
+      - bgp_nbr['10.15.17.2']['asn'] == 64785
+      - bgp_nbr['10.15.17.2']['ip_version'] == 4
+      - bgp_nbr['10.15.17.2']['timer'] == '7w1d'
+      - bgp_nbr['10.1.19.2']['state_pfxrcd'] == 'Active'
+      - bgp_nbr['10.1.19.2']['asn'] == 1234
+      - bgp_nbr['10.1.19.2']['ip_version'] == 4
       - "'{{ bgp_nbr['10.1.19.2']['timer'] | string }}' == '00:00:30'"
-      - "bgp_nbr['72.31.0.13']['state_pfxrcd'] == 'Idle'"
-      - "bgp_nbr['72.31.0.13']['asn'] == 65004"
-      - "bgp_nbr['72.31.0.13']['ip_version'] == 4"
+      - bgp_nbr['72.31.0.13']['state_pfxrcd'] == 'Idle'
+      - bgp_nbr['72.31.0.13']['asn'] == 65004
+      - bgp_nbr['72.31.0.13']['ip_version'] == 4
       - "'{{ bgp_nbr['72.31.0.13']['timer'] | string }}' == '10:32:44'"
 
 - name: clear facts
@@ -58,10 +58,10 @@
   assert:
     that:
       - "'10.29.19.70' in bgp_nbr"
-      - "bgp_nbr['10.29.19.70']['state_pfxrcd'] == 1385"
-      - "bgp_nbr['10.29.19.70']['asn'] == 7474"
-      - "bgp_nbr['10.29.19.70']['ip_version'] == 4"
-      - "bgp_nbr['10.29.19.70']['timer'] == '4d22h'"
+      - bgp_nbr['10.29.19.70']['state_pfxrcd'] == 1385
+      - bgp_nbr['10.29.19.70']['asn'] == 7474
+      - bgp_nbr['10.29.19.70']['ip_version'] == 4
+      - bgp_nbr['10.29.19.70']['timer'] == '4d22h'
 
 - name: clear facts
   meta: clear_facts
@@ -79,13 +79,13 @@
     that:
       - "'172.31.32.10' in bgp_nbr"
       - "'172.16.32.1' in bgp_nbr"
-      - "bgp_nbr['172.31.32.10']['state_pfxrcd'] == 114"
-      - "bgp_nbr['172.31.32.10']['asn'] == 64910"
-      - "bgp_nbr['172.31.32.10']['ip_version'] == 4"
-      - "bgp_nbr['172.31.32.10']['timer'] == '23w5d'"
-      - "bgp_nbr['172.16.32.1']['state_pfxrcd'] == 136"
-      - "bgp_nbr['172.16.32.1']['asn'] == 65123"
-      - "bgp_nbr['172.16.32.1']['ip_version'] == 4"
+      - bgp_nbr['172.31.32.10']['state_pfxrcd'] == 114
+      - bgp_nbr['172.31.32.10']['asn'] == 64910
+      - bgp_nbr['172.31.32.10']['ip_version'] == 4
+      - bgp_nbr['172.31.32.10']['timer'] == '23w5d'
+      - bgp_nbr['172.16.32.1']['state_pfxrcd'] == 136
+      - bgp_nbr['172.16.32.1']['asn'] == 65123
+      - bgp_nbr['172.16.32.1']['ip_version'] == 4
       - "'{{ bgp_nbr['172.16.32.1']['timer'] | string }}' == '28w5d'"
 
 - name: clear facts
