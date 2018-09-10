@@ -2,6 +2,7 @@
 
 ---
 - hosts: localhost
+  gather_facts: false
   vars:
     ansible_network_os: ios
   roles:

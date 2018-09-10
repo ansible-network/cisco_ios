@@ -6,10 +6,58 @@
     command: "show ip route vrf *"
     network_os: ios
 
-- name: match vpn-instances
-  export: true
-  register: vpn_instance_sections
+- name: match vpn-instance section
+  register: section
   pattern_match:
     regex: "(Routing Table:.*\\nCodes:|Codes:)"
     match_all: True
     match_greedy: True
+
+- name: match routing table
+  export: true
+  loop: "{{ section }}"
+  register: vpn_instance
+  pattern_group:
+
+    - name: match vpn instance name
+      pattern_match:
+        regex: "Routing Table: (\\S+)$"
+        content: "{{ item }}"
+      register: name
+
+    - name: match route section
+      pattern_match:
+        regex: "Gateway of last resort.*\\n(.*)"
+        content: "{{ item }}"
+        match_all: True
+        match_greedy: true
+      register: route_section
+
+    - name: match prefixes
+      pattern_match:
+        regex: "^(?P<prot>L|C|S|R|M|B|D|EX|O|IA|N1|N2|E1|E2|i|su|L1|L2|ia|U|o|P|H|l|a)(?P<prot_args>\\s|\\*|\\+\\|\\%)\\s+(?P<prefix>\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})(?P<mask>|\\/\\d{,2})(?:|\\s+\\[(?P<metric>\\d+/\\d+)\\]) (?P<source>is directly connected, (?P<next_hop_int>\\S+$)|is a summary, \\S+, (?P<next_hop_int_sum>\\S+$)|via (?P<next_hop_nbr>\\S+)(?:, |$))"
+        content: "{{ item.route_section.0.matches }}"
+        match_all: true
+      register: prefixes
+
+- name: template vpn-instances
+  register: ip_route_vrf_all
+  extend: cisco_ios
+  export: True
+  export_as: dict
+  loop: "{{ vpn_instance }}"
+  loop_control:
+    loop_var: vpn_instance_item
+  json_template:
+    template:
+      - key: "{{ vpn_instance_item.name.matches.0 | default('DEFAULT') }}"
+        object:
+          - key: name
+            value: "{{ vpn_instance_item.name.matches.0 | default('DEFAULT') }}"
+          - key: prefixes
+            object: 
+              - key: "{{ nested_item }}"
+                value: "{{ nested_item.prefix }}"
+                repeat_for: "{{ vpn_instance_item.prefixes }}"
+                repeat_var: nested_item
+
