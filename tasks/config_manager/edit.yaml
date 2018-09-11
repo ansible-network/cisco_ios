@@ -1,0 +1,118 @@
+---
+- name: validate required var is set
+  fail:
+    msg: "missing required argument: ios_config_includes"
+  when: ios_config_includes is undefined
+
+# check if any reminents are left over from a previous run and remove them
+# prior to starting the configuration tasks.
+- name: check if stale temporarary files exist on target device
+  cli:
+    command: dir
+  register: ios_dir_listing
+
+- name: remove temporary files from target device
+  cli:
+    command: "delete /force flash:/{{ filename }}"
+  when: ios_config_remove_temp_files and filename in ios_dir_listing.stdout
+  loop:
+    - "{{ ios_config_active_config }}"
+    - "{{ ios_config_checkpoint_filename }}"
+  loop_control:
+    loop_var: filename
+
+# copy the current running-config to the local flash disk on the target device.
+# This will be used both for restoring the current config if a failure happens
+# as well as performing a configuration diff once the new config has been
+# loaded.
+- name: create a checkpoint of the current running-config
+  ios_command:
+    commands:
+      - command: "copy running-config flash:{{ ios_config_checkpoint_filename }}"
+        prompt: ["? "]
+        answer: "{{ ios_config_checkpoint_filename }}"
+
+- name: configure the target device
+  block:
+    # iterate over the set of includes to configure the device
+    - name: iterate over configuration tasks
+      include_tasks: "{{ item }}"
+      loop: "{{ ios_config_includes }}"
+
+  rescue:
+      # since the host has failed during the configuration load, the role by
+      # default will initiate a restore sequence.  the restore sequence will
+      # load the previous running-config with the replace option enabled.
+    - name: display message
+      debug:
+        msg: "error configuring device, starting rollback"
+      when: ios_config_rollback_enabled
+
+    - name: configuration rollback pre hook
+      include_tasks: "{{ ios_configuration_rollback_pre_hook }}"
+      when: ios_configuration_rollback_pre_hook is defined and ios_config_rollback_enabled
+
+    - name: rollback configuration
+      cli:
+        command: "config replace flash:/{{ ios_config_checkpoint_filename}} force"
+      when: ios_config_rollback_enabled
+
+    - name: remove configuration checkpoint file
+      cli:
+        command: "delete /force flash:/{{ ios_config_checkpoint_filename }}"
+      when: ios_config_remove_temp_files
+
+    - name: configuration rollback post hook
+      include_tasks: "{{ ios_configuration_rollback_post_hook }}"
+      when: ios_configuration_rollback_post_hook is defined and ios_config_rollback_enabled
+
+    - name: display message
+      debug:
+        msg: "successfully completed configuration rollback"
+      when: ios_config_rollback_enabled
+
+    - name: fail host due to config load error
+      fail:
+        msg: "error loading configuration onto target device"
+
+  when: not ansible_check_mode
+
+# copy the updated running-config to the local flash device to be used to
+# generate a configuration diff between the before and after
+# running-configurations.
+- name: copy running-config to active config
+  ios_command:
+    commands:
+      - command: "copy running-config flash:{{ ios_config_active_config }}"
+        prompt: ["? "]
+        answer: "{{ ios_config_active_config }}"
+
+# generate the configuration diff and display the diff to stdout.  only set
+# changed if there are lines in the diff that have changed
+- name: generate ios diff
+  cli:
+    command: "show archive config differences flash:{{ ios_config_checkpoint_filename }} flash:{{ ios_config_active_config }}"
+  register: ios_config_diff
+  changed_when: "'No changes were found' not in ios_config_diff.stdout"
+
+- name: display config diff
+  debug:
+    msg: "{{ ios_config_diff.stdout.splitlines() }}"
+  when: not ansible_check_mode
+
+# refresh the list of files currently on the target network device flash
+# drive and remote all temp files
+- name: update local directory listing
+  cli:
+    command: dir
+  register: ios_dir_listing
+
+- name: remove remote temp files from flash
+  cli:
+    command: "delete /force flash:/{{ filename }}"
+  loop:
+    - "{{ ios_config_active_config }}"
+    - "{{ ios_config_checkpoint_filename }}"
+  loop_control:
+    loop_var: filename
+  when: ios_config_remove_temp_files and filename in ios_dir_listing.stdout
