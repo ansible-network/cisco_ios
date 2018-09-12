@@ -1,22 +1,23 @@
 ---
-
 - name: show_ip_route_vrf_all
   parser_metadata:
     version: 1.0
     command: "show ip route vrf *"
     network_os: ios
 
-- name: match vpn-instance section
-  register: section
+# Caveat: This parser only returns the first next hop, for prefixes with multiple possible destinations.
+
+- name: match vrf section
+  register: vrf_section
   pattern_match:
-    regex: "(Routing Table:.*\\nCodes:|Codes:)"
+    regex: "^Routing Table:"
     match_all: True
     match_greedy: True
 
-- name: match routing table
-  export: true
-  loop: "{{ section }}"
-  register: vpn_instance
+- name: match routing table values
+  export: True
+  loop: "{{ vrf_section }}"
+  register: vrf
   pattern_group:
 
     - name: match vpn instance name
@@ -27,37 +28,45 @@
 
     - name: match route section
       pattern_match:
-        regex: "Gateway of last resort.*\\n(.*)"
+        regex: "Gateway of last resort"
         content: "{{ item }}"
         match_all: True
-        match_greedy: true
+        match_greedy: True
       register: route_section
 
     - name: match prefixes
       pattern_match:
         regex: "^(?P<prot>L|C|S|R|M|B|D|EX|O|IA|N1|N2|E1|E2|i|su|L1|L2|ia|U|o|P|H|l|a)(?P<prot_args>\\s|\\*|\\+\\|\\%)\\s+(?P<prefix>\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})(?P<mask>|\\/\\d{,2})(?:|\\s+\\[(?P<metric>\\d+/\\d+)\\]) (?P<source>is directly connected, (?P<next_hop_int>\\S+$)|is a summary, \\S+, (?P<next_hop_int_sum>\\S+$)|via (?P<next_hop_nbr>\\S+)(?:, |$))"
-        content: "{{ item.route_section.0.matches }}"
+        content: "{{ vpn_nested_item.route_section }}"
         match_all: true
       register: prefixes
 
 - name: template vpn-instances
-  register: ip_route_vrf_all
-  extend: cisco_ios
+  register: vrf
+  extend: cisco_ios.network_instance.DEFAULT
   export: True
   export_as: dict
-  loop: "{{ vpn_instance }}"
+  loop: "{{ vrf }}"
   loop_control:
-    loop_var: vpn_instance_item
+    loop_var: vrf_item
   json_template:
     template:
-      - key: "{{ vpn_instance_item.name.matches.0 | default('DEFAULT') }}"
+      - key: "{{ vrf_item.name.matches.0 }}"
         object:
           - key: name
-            value: "{{ vpn_instance_item.name.matches.0 | default('DEFAULT') }}"
+            value: "{{ vrf_item.name.matches.0 }}"
           - key: prefixes
-            object: 
-              - key: "{{ nested_item }}"
-                value: "{{ nested_item.prefix }}"
-                repeat_for: "{{ vpn_instance_item.prefixes }}"
-                repeat_var: nested_item
-
+            repeat_for: "{{ vrf_item.prefixes }}"
+            repeat_var: nested_item
+            object: "{{
+              {
+                nested_item.prefix+nested_item.mask: 
+                {
+                  'subnet': nested_item.prefix, 
+                  'mask': nested_item.mask,
+                  'protocol': nested_item.prot | expand_routing_protocol_name,
+                  'dist_metric': nested_item.metric,
+                  'next_hop': ([nested_item.next_hop_nbr]+[nested_item.next_hop_int, nested_item.next_hop_int_sum]) | reject('equalto', '') | list
+                }
+              }
+            }}"

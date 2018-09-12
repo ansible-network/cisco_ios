@@ -9,10 +9,9 @@
 - name: test `show ip vrf detail`
   assert:
     that:
-      - "'ip_vrf_detail' in cisco_ios"
-      - "'ABC' in cisco_ios['ip_vrf_detail']"
-      - "cisco_ios['ip_vrf_detail']['ABC']['rd'] == '65000:12'"
-      - "cisco_ios['ip_vrf_detail']['ABC']['description'] == 'ABC VPN'"
+      - "'ABC' in vrfs"
+      - "vrfs.ABC.rd == '65000:12'"
+      - "vrfs.ABC.description == 'ABC VPN'"
       - "cisco_ios['ip_vrf_detail']['ABC']['export_rt'] == ['65000:12']"
       - "cisco_ios['ip_vrf_detail']['ABC']['import_rt'] == ['65000:12']"
       - "cisco_ios['ip_vrf_detail']['ABC']['interfaces'] == ['Te7/3.16']"
@@ -28,6 +27,8 @@
       - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['export_rt'] == ['65000:100']"
       - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['import_rt'] == ['65000:100']"
       - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['interfaces'] == ['Vl777','Gi7/3.30']"
+  vars:
+    vrfs: "{{ cisco_ios.network_instance.DEFAULT.vrf }}"
 
 - name: all tests complete
   debug:
