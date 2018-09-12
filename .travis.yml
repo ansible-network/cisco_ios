@@ -21,6 +21,9 @@ install:
   # Create ansible.cfg with correct roles_path
   - printf '[defaults]\nroles_path=../\nfilter_plugins=../filter_plugins' >ansible.cfg
 
+  # Install network-engine
+  - ansible-galaxy install ansible-network.network-engine
+
 script:
   # Basic role syntax check
   - ansible-playbook tests/test.yaml -i tests/inventory --syntax-check
