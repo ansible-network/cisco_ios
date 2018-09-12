@@ -1,0 +1,31 @@
+#!/usr/bin/env ansible-playbook
+
+---
+- hosts: localhost
+  gather_facts: false
+  vars:
+    ansible_network_os: ios
+  roles:
+    - "{{ playbook_dir }}/../../ansible-network.network-engine"
+
+  tasks:
+
+    - name: Include tests for `show ip route`
+      include_tasks: output/cli/show_ip_route/main.yaml
+      vars:
+        DEFAULT: "{{ cisco_ios['network_instance']['DEFAULT']['vrf']['DEFAULT'] }}"
+
+    - name: Include tests for `show ip route vrf *`
+      include_tasks: output/cli/show_ip_route_vrf_all/main.yaml
+      vars:
+        vrfs: "{{ cisco_ios['network_instance']['DEFAULT']['vrf'] }}"
+
+    - name: Include tests for `show ip bgp summary`
+      include_tasks: output/cli/show_ip_bgp_summary/main.yaml
+      vars:
+        bgp: "{{ cisco_ios['network_instance']['DEFAULT']['vrf']['DEFAULT']['protocols']['bgp'] }}"
+
+    - name: Include tests for `show ip vrf detail`
+      include_tasks: output/cli/show_ip_vrf_detail/main.yaml
+      vars:
+        vrfs: "{{ cisco_ios['network_instance']['DEFAULT']['vrf'] }}"

@@ -123,11 +123,11 @@
     dict_vrf_nested_values: "{{ ({}| combine(*vrf_nested_values)) }}"
 
 - name: template export json object
-  register: ip_vrf_detail
-  loop: "{{ vrf }}"
+  register: vrf
+  extend: cisco_ios.network_instance.DEFAULT
   export: true
   export_as: dict
-  extend: cisco_ios
+  loop: "{{ vrf }}"
   json_template:
     template:
       - key: "{{ item.name.matches.0 }}"
