@@ -146,9 +146,11 @@ The default value is `all`
 #### Current supported values for subset are
 
 * default
+* all
 * interfaces
 * bgp
 * lldp
+* routing
 
 ### ios_get_facts_command_map
 

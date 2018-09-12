@@ -1,0 +1,33 @@
+### IOS 12.2(33)SXH78
+
+- name: 12.2(33)SXH7 - parse `show ip route`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_route.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_route/12.2(33)SXH7.txt') }}"
+  register: result
+
+- name: test `show ip route`
+  assert:
+    that:
+      - "'routing_table' in DEFAULT"
+      - "'{{ DEFAULT['routing_table']['10.10.106.0/24']['next_hop'][0] | string }}' == '10.50.190.7'"
+
+### IOS-XE 03.14.00.S
+
+- name: 03.14.00.S - parse `show ip route`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_route.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_route/03.14.00.S.txt') }}"
+  register: result
+
+- name: test `show ip route`
+  assert:
+    that:
+      - "'routing_table' in DEFAULT"
+      - DEFAULT['routing_table']['0.0.0.0/0']['protocol'] == 'bgp'
+
+### Done
+
+- name: all tests complete
+  debug:
+    msg: "All tests for `show ip route` passed"

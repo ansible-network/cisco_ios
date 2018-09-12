@@ -15,7 +15,6 @@
     match_greedy: True
 
 - name: match routing table values
-  export: True
   loop: "{{ vrf_section }}"
   register: vrf
   pattern_group:
@@ -55,14 +54,14 @@
         object:
           - key: name
             value: "{{ vrf_item.name.matches.0 }}"
-          - key: prefixes
+          - key: routing_table
             repeat_for: "{{ vrf_item.prefixes }}"
             repeat_var: nested_item
             object: "{{
               {
-                nested_item.prefix+nested_item.mask: 
+                nested_item.prefix+nested_item.mask:
                 {
-                  'subnet': nested_item.prefix, 
+                  'subnet': nested_item.prefix,
                   'mask': nested_item.mask,
                   'protocol': nested_item.prot | expand_routing_protocol_name,
                   'dist_metric': nested_item.metric,
