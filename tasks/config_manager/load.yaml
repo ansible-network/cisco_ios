@@ -1,0 +1,239 @@
+---
+- name: load config file contents
+  set_fact:
+    ios_config_text: "{{ lookup('config_template', ios_config_file) | join('\n') }}"
+  when: ios_config_file != ''
+
+- name: validate required var is set
+  fail:
+    msg: "missing required argument: ios_config_text"
+  when: ios_config_text is undefined or not ios_config_text
+
+# check if any reminents are left over from a previous run and remove them
+# prior to starting the configuration tasks.
+- name: check if stale temporarary files exist on target device
+  cli:
+    command: dir
+  register: ios_dir_listing
+
+- name: remove temporary files from target device
+  cli:
+    command: "delete /force flash:/{{ filename }}"
+  when: ios_config_remove_temp_files and filename in ios_dir_listing.stdout
+  loop:
+    - "{{ ios_config_active_config }}"
+    - "{{ ios_config_checkpoint_filename }}"
+    - "{{ ios_config_temp_config_file }}"
+  loop_control:
+    loop_var: filename
+
+# copy the current running-config to the local flash disk on the target device.
+# This will be used both for restoring the current config if a failure happens
+# as well as performing a configuration diff once the new config has been
+# loaded.
+- name: create a checkpoint of the current running-config
+  ios_command:
+    commands:
+      - command: "copy running-config flash:{{ ios_config_checkpoint_filename }}"
+        prompt: ["? "]
+        answer: "{{ ios_config_checkpoint_filename }}"
+
+# these next two tasks are responsible for taking the provided configuration,
+# templating it and preparing it for loading onto the target device
+- name: create temp working dir
+  file:
+    path: "{{ ios_config_working_dir }}"
+    state: directory
+  run_once: true
+  check_mode: false
+  changed_when: False
+
+# always set check mode to false here as this task needs to always run
+# in order to fully execute the task list.
+- name: template source config
+  copy:
+    content: "{{ ios_config_text }}"
+    dest: "{{ ios_config_working_dir }}/{{ ios_config_temp_config_file }}"
+  check_mode: false
+  changed_when: False
+
+# in order to transfer the configuration files to the target network
+# device, the scp server feature must be enabled in the current
+# running-config
+- name: enable the ios scp server
+  cli:
+    command: "{{ line }}"
+  loop:
+    - configure terminal
+    - ip scp server enable
+    - end
+  loop_control:
+    loop_var: line
+
+# copy the templates configuration to the target device using scp and
+# store the file on the device local flash drive
+- name: copy configuration to device
+  net_put:
+    src: "{{ ios_config_working_dir }}/{{ ios_config_temp_config_file }}"
+    dest: "flash:/{{ ios_config_temp_config_file }}"
+  changed_when: False
+
+# if running in check mode, the configuration should not be loaded on
+# the target device because that could have undesired results, so
+# just print a warning message here.
+- name: display message due to check mode
+  debug:
+    msg: not loading configuration due to check mode
+  when: ansible_check_mode
+
+# the block of tasks here are repsonsible for loading the configuration onto
+# the target device.  There are one of three options here controlled by role
+# variables:
+#
+#  * replace config - use the copy command with replace
+#  * merge config - use the copy command (merge)
+#  * load config - enter config mode and push the config lines
+#
+- name: load configuration onto target device
+  block:
+    - name: replace current active configuration
+      cli:
+        command: "config replace flash:/{{ ios_config_temp_config_file }} force"
+      when: ios_config_replace
+
+    - name: merge with current active configuration
+      cli:
+        command: "copy flash:/{{ ios_config_temp_config_file }} force"
+      when: not ios_config_replace and not ios_config_use_terminal
+
+    - name: load configuration lines into target device
+      block:
+        - name: enter configuration mode
+          cli:
+            command: "configure terminal"
+
+        - name: load configuration lines into target device
+          cli:
+            command: "{{ line }}"
+          loop: "{{ ios_config_text | to_lines }}"
+          loop_control:
+            loop_var: line
+          when: line != 'end'
+
+        - name: exit configuration mode
+          cli:
+            command: end
+
+      rescue:
+        - name: exit configuration mode
+          cli:
+            command: end
+
+        - name: set host failed
+          fail:
+            msg: "error loading configuration lines"
+      when: ios_config_use_terminal and not ios_config_replace
+
+  rescue:
+      # since the host has failed during the configuration load, the role by
+      # default will initiate a restore sequence.  the restore sequence will
+      # load the previous running-config with the replace option enabled.
+    - name: display message
+      debug:
+        msg: "error configuring device, starting rollback"
+      when: ios_config_rollback_enabled
+
+    - name: configuration rollback pre hook
+      include_tasks: "{{ ios_configuration_rollback_pre_hook }}"
+      when: ios_configuration_rollback_pre_hook is defined and ios_config_rollback_enabled
+
+    - name: rollback configuration
+      cli:
+        command: "config replace flash:/{{ ios_config_temp_config_file }} force"
+      when: ios_config_rollback_enabled
+
+    - name: remove configuration checkpoint file
+      cli:
+        command: "delete /force flash:/{{ ios_config_checkpoint_filename }}"
+      when: ios_config_remove_temp_files
+
+    - name: configuration rollback post hook
+      include_tasks: "{{ ios_configuration_rollback_post_hook }}"
+      when: ios_configuration_rollback_post_hook is defined and ios_config_rollback_enabled
+
+    - name: remove remote temp files
+      cli:
+        command: "delete /force flash:/{{ filename }}"
+      loop:
+        - "{{ ios_config_temp_config_file }}"
+        - "{{ ios_config_checkpoint_filename }}"
+      loop_control:
+        loop_var: filename
+      when: ios_config_remove_temp_files
+
+    - name: remove local temp working dir
+      file:
+        path: "{{ ios_config_working_dir }}"
+        state: absent
+      run_once: true
+      when: ios_config_remove_temp_files
+
+    - name: display message
+      debug:
+        msg: "successfully completed configuration rollback"
+      when: ios_config_rollback_enabled
+
+    - name: fail host due to config load error
+      fail:
+        msg: "error loading configuration onto target device"
+
+  when: not ansible_check_mode
+
+# copy the updated running-config to the local flash device to be used to
+# generate a configuration diff between the before and after
+# running-configurations.
+- name: copy running-config to active config
+  ios_command:
+    commands:
+      - command: "copy running-config flash:{{ ios_config_active_config }}"
+        prompt: ["? "]
+        answer: "{{ ios_config_active_config }}"
+
+# generate the configuration diff and display the diff to stdout.  only set
+# changed if there are lines in the diff that have changed
+- name: generate ios diff
+  cli:
+    command: "show archive config differences flash:{{ ios_config_checkpoint_filename }} flash:{{ ios_config_active_config }}"
+  register: ios_config_diff
+  changed_when: "'No changes were found' not in ios_config_diff.stdout"
+
+- name: display config diff
+  debug:
+    msg: "{{ ios_config_diff.stdout.splitlines() }}"
+  when: not ansible_check_mode
+
+# refresh the list of files currently on the target network device flash
+# drive and remote all temp files
+- name: update local directory listing
+  cli:
+    command: dir
+  register: ios_dir_listing
+
+- name: remove remote temp files from flash
+  cli:
+    command: "delete /force flash:/{{ filename }}"
+  loop:
+    - "{{ ios_config_active_config }}"
+    - "{{ ios_config_checkpoint_filename }}"
+    - "{{ ios_config_temp_config_file }}"
+  loop_control:
+    loop_var: filename
+  when: ios_config_remove_temp_files and filename in ios_dir_listing.stdout
+
+- name: remove local temp working dir
+  file:
+    path: "{{ ios_config_working_dir }}"
+    state: absent
+  run_once: true
+  when: ios_config_remove_temp_files
+  changed_when: False
