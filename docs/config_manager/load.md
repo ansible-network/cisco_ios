@@ -1,10 +1,10 @@
 # Load configuration onto device
-The `load_config` function will take a Cisco IOS configuration file and load it
+The `config_manager/load` function will take a Cisco IOS configuration file and load it
 onto the device.  This function supports either merging the configuration with
 the current active configuration or replacing the current active configuration
 with the provided configuration file.  
 
-The `load_config` function will return the full configuration diff in the
+The `config_manager/load` function will return the full configuration diff in the
 `ios_diff` fact.
 
 NOTE: When performing a configuration replace function be sure to specify the
@@ -13,17 +13,17 @@ reconnect to your IOS device after the configuration has been loaded.
 
 ## How to load and merge a configuration
 Loading and merging a configuration file is the default operation for the
-`load_config` function.  It will take the contents of a Cisco IOS configuration
+`config_manager/load` function.  It will take the contents of a Cisco IOS configuration
 file and merge it with the current device active configurations.
 
-Below is an example of calling the `load_config` function from the playbook.
+Below is an example of calling the `config_manager/load` function from the playbook.
 
 ```
 - hosts: cisco_ios
 
   roles:
     - name ansible_network.cisco_ios
-      function: load_config
+      function: config_manager/load
       config_file: files/ios.cfg
 ```
 
@@ -31,7 +31,7 @@ The above playbook will load the specified configuration file onto each device
 in the `cisco_ios` host group.
 
 ## How to replace the current active configuration
-The `load_config` function also supports replacing the current active
+The `config_manager/load` function also supports replacing the current active
 configuration with the configuration file located on the Ansible controller.
 In order to replace the device's active configuration, set the value of the
 `config_replace` setting to `True`.
@@ -41,13 +41,13 @@ In order to replace the device's active configuration, set the value of the
 
   roles:
     - name ansible_network.cisco_ios
-      function: load_config
+      function: config_manager/load
       config_file: files/ios.cfg
       replace: yes
 ```
 
 ## How to load configuration text
-The `load_config` function also supports passing the configuration text
+The `config_manager/load` function also supports passing the configuration text
 directly into the task list for loading onto the target device instead of
 having to provide a file name. 
 
@@ -59,7 +59,7 @@ argument instead such as below.
 
   roles:
     - name ansible_network.cisco_ios
-      function: load_config
+      function: config_manager/load
       config_text: "{{ lookup('file', 'ios01.cfg') }}"
       replace: yes
 ```
@@ -67,7 +67,7 @@ argument instead such as below.
 
 
 ## Implement using tasks
-The `load_config` function can also be implemented in the `tasks` for execution
+The `config_manager/load` function can also be implemented in the `tasks` for execution
 during the play run using either the `include_role` or `import_role` modules as
 shown below.
 
@@ -76,9 +76,9 @@ shown below.
 
   tasks:
     - name: load configuration onto ios device
-      import_role:
+      include_role:
         name: ansible_network.cisco_ios
-        tasks_from: load_config
+        tasks_from: config_manager/load
       vars:
         config_file: files/ios.cfg
         replace: yes
