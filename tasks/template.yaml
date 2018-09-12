@@ -1,0 +1,19 @@
+---
+- name: load the current configuration from the device
+  include_tasks: get.yaml
+
+- name: show the current configuration
+  debug:
+    var: cisco_ios.config
+
+
+- name: iterate over config templates
+  block:
+    - name: generate the device configuration
+      set_fact:
+        ios_config_text: "{{ lookup('config_template', 'templates/config_manager/main.j2') | join('\n') }}"
+
+    - name: display the generated configuration
+      debug:
+        msg: "{{ ios_config_text.split('\n') }}"
+  delegate_to: localhost
