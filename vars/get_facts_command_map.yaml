@@ -47,8 +47,14 @@
     - vrf
     - routing
 
+- command: show ip route
+  parser: show_ip_route.yaml
+  groups:
+    - all
+    - routing
+
 - command: show ip route vrf *
-  parser: show_ip_route_vrf_star.yaml
+  parser: show_ip_route_vrf_all.yaml
   groups:
     - all
     - routing
