@@ -29,15 +29,17 @@
   ios_command:
     commands:
       - command: "copy running-config flash:{{ ios_config_checkpoint_filename }}"
-        prompt: ["? "]
+        prompt: ["\\? "]
         answer: "{{ ios_config_checkpoint_filename }}"
 
 - name: configure the target device
   block:
     # iterate over the set of includes to configure the device
     - name: iterate over configuration tasks
-      include_tasks: "{{ item }}"
+      include_tasks: "{{ task }}"
       loop: "{{ ios_config_includes }}"
+      loop_control:
+        loop_var: task
 
   rescue:
       # since the host has failed during the configuration load, the role by
