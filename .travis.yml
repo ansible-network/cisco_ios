@@ -19,7 +19,7 @@ install:
   - ansible --version
 
   # Create ansible.cfg with correct roles_path
-  - printf '[defaults]\nroles_path=../\nfilter_plugins=../filter_plugins' >ansible.cfg
+  - printf '[defaults]\nroles_path=../\nstdout_callback=debug' >ansible.cfg
 
   # Install network-engine
   - ansible-galaxy install ansible-network.network-engine
