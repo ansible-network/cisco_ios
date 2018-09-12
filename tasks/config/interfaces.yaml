@@ -1,0 +1,10 @@
+---
+- name: configure vrf definitions
+  ios_interface_local:
+    name: "{{ item.key }}"
+    description: "{{ item.value.description | default(omit) }}"
+    enabled: "{{ item.value.enabled | default(omit) }}"
+    ipv4: "{{ item.value.ipv4 | default(omit) }}"
+    state: "{{ item.value.state | default(omit) }}"
+  with_dict: "{{ interfaces.config }}"
+  when: interfaces.config is defined
