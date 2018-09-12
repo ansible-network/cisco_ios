@@ -12,6 +12,9 @@ addons:
     - python-pip
 
 install:
+  # where am i?
+  - pwd
+
   # Install ansible
   - pip install ansible
 
@@ -24,6 +27,8 @@ install:
   # Install network-engine
   - ansible-galaxy install ansible-network.network-engine
 
+  # ansible config
+  - ansible-config dump | grep FILTER_PLUGIN
 script:
   # Basic role syntax check
   - ansible-playbook tests/test.yaml -i tests/inventory
