@@ -8,7 +8,7 @@
   ios_capabilities:
 
 - name: run command and parse output
-  include_tasks: run_cli.yaml
+  include_tasks: includes/run_cli.yaml
   vars:
     ios_command: "{{ item.command }}"
     ios_parser: "cli/{{ item.parser }}"
