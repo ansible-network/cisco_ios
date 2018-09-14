@@ -1,4 +1,7 @@
 ---
+- name: initialize function
+  include_tasks: includes/init.yaml
+
 - name: load config file contents
   set_fact:
     ios_config_text: "{{ lookup('config_template', ios_config_file) | join('\n') }}"
