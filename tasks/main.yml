@@ -10,6 +10,7 @@
       - get_facts
       - config_manager/get
       - config_manager/load
+      - config_manager/save
       - noop
 
 - name: validate the requested function is supported
