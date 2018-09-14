@@ -29,6 +29,11 @@
       - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['import_rt'] == ['65000:100']"
       - "cisco_ios['ip_vrf_detail']['XYzzz0-1-9']['interfaces'] == ['Vl777','Gi7/3.30']"
 
+- name: clear facts
+  meta: clear_facts
+
+### Done
+
 - name: all tests complete
   debug:
     msg: "All tests for `show ip vrf detail` passed"
