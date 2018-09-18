@@ -1,6 +1,0 @@
----
-- name: include state specific tasks for cisco ios
-  include_tasks: tasks/config_manager/edit.yaml
-  vars:
-    ios_config_includes:
-      - "includes/l3vpn/{{ l3vpn_state | default('present') }}.yaml"
