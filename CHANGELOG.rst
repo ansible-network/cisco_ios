@@ -8,14 +8,13 @@ devel
 New Functions
 -------------
 
-- NEW `get_facts` for collecting facts from nxos devices
-- NEW `get_config` facts to return the active configuration as parsed facts
-- NEW `load_config` loads configuration onto remote device
+- NEW `get_facts` retrive and parse facts from cisco ios devices
+- NEW `config_manager/get` support for config_manager get function
+- NEW `config_manager/load` support for config_manager load function
+- NEW `config_manager/save` support for config_manager save function
 
 
 Major Changes
 -------------
 
 - Initial release of the `cisco_ios` role.
-- NEW facts subset `system`
-- NEW facts subset `hostname`

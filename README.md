@@ -24,6 +24,9 @@ the function in an Ansible playbook.
 * config_manager/get [[source]](https://github.com/ansible-network/cisco_ios/blob/devel/tasks/config_manager/get.yaml) [[docs]](https://github.com/ansible-network/cisco_ios/blob/devel/docs/config_manager/get.md)
 * config_manager/load [[source]](https://github.com/ansible-network/cisco_ios/blob/devel/tasks/config_manager/load.yaml) [[docs]](https://github.com/ansible-network/cisco_ios/blob/devel/docs/config_manager/loadload.md)
 
+### Cloud VPN
+* cloud_vpn/configure_vpn_initiator [[source]](https://github.com/ansible-network/cisco_ios/blob/devel/tasks/cloud_vpn/configure_vpn_initiator.yaml) [[docs]](https://github.com/ansible-network/cisco_ios/blob/devel/docs/cloud_vpn/configure_vpn_initiator.md)
+* cloud_vpn/configure_routing_initiator [[source]](https://github.com/ansible-network/cisco_ios/blob/devel/tasks/cloud_vpn/configure_routing_initiator.yaml) [[docs]](https://github.com/ansible-network/cisco_ios/blob/devel/docs/cloud_vpn/configure_routing_initiator.md)
 
 ## License
 
@@ -31,4 +34,4 @@ GPLv3
 
 ## Author Information
 
-Ansible Network Communite
+Ansible Network Community
