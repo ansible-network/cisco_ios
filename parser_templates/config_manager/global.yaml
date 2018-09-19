@@ -1,0 +1,23 @@
+---
+- name: parse hostname
+  pattern_match:
+    regex: "hostname (.+)"
+  register: hostname
+
+- name: parse domain-name
+  pattern_match:
+    regex: "ip domain-name (.+)"
+  register: domain_name
+
+- name: parse ip routing
+  pattern_match:
+    regex: "(ip routing)"
+  register: routing
+
+- name: set global config facts
+  set_vars:
+    hostname: "{{ hostname.matches.0 }}"
+    domain_name: "{{ domain_name.matches.0 }}"
+    routing: "{{ routing.matches.0 is defined }}"
+  export: yes
+  extend: cisco_ios.config

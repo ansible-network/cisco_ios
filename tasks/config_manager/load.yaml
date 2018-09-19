@@ -1,4 +1,12 @@
 ---
+- name: initialize function
+  include_tasks: includes/init.yaml
+
+- name: load config file contents
+  set_fact:
+    ios_config_text: "{{ lookup('config_template', ios_config_file) | join('\n') }}"
+  when: ios_config_file != ''
+
 - name: validate required var is set
   fail:
     msg: "missing required argument: ios_config_text"
@@ -32,7 +40,6 @@
       - command: "copy running-config flash:{{ ios_config_checkpoint_filename }}"
         prompt: ["? "]
         answer: "{{ ios_config_checkpoint_filename }}"
-
 
 # these next two tasks are responsible for taking the provided configuration,
 # templating it and preparing it for loading onto the target device

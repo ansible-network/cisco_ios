@@ -1,0 +1,19 @@
+---
+- name: set role basic facts
+  set_fact:
+    ansible_network_ios_path: "{{ role_path }}"
+    ansible_network_ios_version: "2.6.0"
+
+- name: display the role version to stdout
+  debug:
+    msg: "ansible_network.cisco_ios version is {{ ansible_network_ios_version }}"
+
+- name: validate ansible_network_os == 'ios'
+  fail:
+    msg: "expected ansible_network_os to be `ios`, got `{{ ansible_network_os }}`"
+  when: ansible_network_os != 'ios'
+
+- name: validate ansible_connection == 'network_cli'
+  fail:
+    msg: "expected ansible_network to be `network_cli`, got `{{ ansible_connection }}`"
+  when: ansible_connection != 'network_cli'
