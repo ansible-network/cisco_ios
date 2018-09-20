@@ -2,6 +2,9 @@
 - name: initialize function
   include_tasks: includes/init.yaml
 
+- name: Convert higher layer args to provider specific args
+  include_tasks: includes/args_adapter.yaml
+
 - name: load config file contents
   set_fact:
     ios_config_text: "{{ lookup('config_template', ios_config_file) | join('\n') }}"
