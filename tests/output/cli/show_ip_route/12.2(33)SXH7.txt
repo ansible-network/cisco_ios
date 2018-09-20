@@ -8,6 +8,7 @@ Codes: C - connected, S - static, R - RIP, M - mobile, B - BGP
 
 Gateway of last resort is 10.50.190.7 to network 0.0.0.0
 
+B*      0.0.0.0/0 [200/0] via 10.50.190.7, 7w0d
      10.0.0.0/8 is variably subnetted, 138 subnets, 6 masks
 O E2    10.110.196.128/27
            [110/120] via 10.22.254.70, 1d13h, TenGigabitEthernet4/3

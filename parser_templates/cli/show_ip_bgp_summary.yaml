@@ -47,7 +47,7 @@
   when: process_state == 'active'
 
 - name: template bgp values
-  extend: cisco_ios.network_instance.DEFAULT.vrf.DEFAULT.protocols
+  extend: cisco_ios.vrf.DEFAULT.protocols
   register: bgp
   export: true
   export_as: dict
@@ -57,7 +57,7 @@
         value: "{{ process_state }}"
 
 - name: template bgp neighbor entries
-  extend: cisco_ios.network_instance.DEFAULT.vrf.DEFAULT.protocols.bgp
+  extend: cisco_ios.vrf.DEFAULT.protocols.bgp
   register: neighbors
   export: true
   export_as: dict

@@ -6,11 +6,13 @@
     content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_route/12.2(33)SXH7.txt') }}"
   register: result
 
-- name: test `show ip route`
+- name: 12.2(33)SXH7 - test `show ip route`
   assert:
     that:
       - "'routing_table' in DEFAULT"
       - "'{{ DEFAULT['routing_table']['10.10.106.0/24']['next_hop'][0] | string }}' == '10.50.190.7'"
+      - DEFAULT['routing_table']['10.110.196.160/27']['protocol'] == ospf
+      - "'{{ DEFAULT['routing_table']['10.110.196.160/27']['next_hop'][0] | string }}' == '10.22.254.70'"
 
 ### IOS-XE 03.14.00.S
 
@@ -20,7 +22,7 @@
     content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_route/03.14.00.S.txt') }}"
   register: result
 
-- name: test `show ip route`
+- name: 03.14.00.S - test `show ip route`
   assert:
     that:
       - "'routing_table' in DEFAULT"

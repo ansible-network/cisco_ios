@@ -124,7 +124,7 @@
 
 - name: template export json object
   register: vrf
-  extend: cisco_ios.network_instance.DEFAULT
+  extend: cisco_ios
   export: true
   export_as: dict
   loop: "{{ vrf }}"
