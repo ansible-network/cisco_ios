@@ -137,7 +137,7 @@ Defines the subset of facts to collection when the `get_facts` function is
 called.  This value must be a list value and contain only the sub keys for the
 facts you wish to return.
 
-The default value is `all`
+The default value is `default`
 
 #### Aliases
 
