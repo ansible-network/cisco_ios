@@ -2,6 +2,9 @@
 - name: initialize function
   include_tasks: includes/init.yaml
 
+- name: Convert higher layer args to provider specific args
+  include_tasks: includes/args_adapter.yaml
+
 - name: load config file contents
   set_fact:
     ios_config_text: "{{ lookup('config_template', ios_config_file) | join('\n') }}"
@@ -152,13 +155,8 @@
 
     - name: rollback configuration
       cli:
-        command: "config replace flash:/{{ ios_config_temp_config_file }} force"
+        command: "config replace flash:/{{ ios_config_checkpoint_filename }} force"
       when: ios_config_rollback_enabled
-
-    - name: remove configuration checkpoint file
-      cli:
-        command: "delete /force flash:/{{ ios_config_checkpoint_filename }}"
-      when: ios_config_remove_temp_files
 
     - name: configuration rollback post hook
       include_tasks: "{{ ios_configuration_rollback_post_hook }}"
