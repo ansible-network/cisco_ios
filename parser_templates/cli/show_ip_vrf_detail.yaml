@@ -9,7 +9,7 @@
 - name: match vrf section
   register: section
   pattern_match:
-    regex: "^VRF \\S+; default RD"
+    regex: "^VRF \\S+ .*; default RD"
     match_all: true
     match_greedy: true
 
