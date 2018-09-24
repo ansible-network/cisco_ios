@@ -1,0 +1,15 @@
+- hosts: localhost
+  vars:
+    ansible_network_os: ios
+  roles:
+    - "{{ playbook_dir }}/../../../ansible-network.network-engine"
+
+  tasks:
+
+    - name: Include tests for `show ip bgp summary`
+      include_tasks: show_ip_bgp_summary/main.yml
+      vars:
+        bgp_nbr: "{{ cisco_ios['ip_bgp_summary']['neighbors'] }}"
+
+    - name: Include tests for `show ip vrf detail`
+      include_tasks: show_ip_vrf_detail/main.yml

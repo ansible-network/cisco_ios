@@ -4,8 +4,8 @@
 
 - name: not active - parse `show ip bgp summary`
   command_parser:
-    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/bgp_not_active.txt') }}"
+    file: "{{ playbook_dir }}/../../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/show_ip_bgp_summary/bgp_not_active.txt') }}"
   register: result
 
 - name: not active - test `show ip bgp summary` parser
@@ -20,8 +20,8 @@
 
 - name: 03.14.00.S.txt - parse `show ip bgp summary`
   command_parser:
-    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/03.14.00.S.txt') }}"
+    file: "{{ playbook_dir }}/../../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/show_ip_bgp_summary/03.14.00.S.txt') }}"
   register: result
 
 - name: 03.14.00.S.txt - test `show ip bgp summary` parser
@@ -50,8 +50,8 @@
 
 - name: 15.1(2)T5.txt - parse `show ip bgp summary`
   command_parser:
-    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/15.1(2)T5.txt') }}"
+    file: "{{ playbook_dir }}/../../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/show_ip_bgp_summary/15.1(2)T5.txt') }}"
   register: result
 
 - name: 15.1(2)T5.txt - test `show ip bgp summary` parser
@@ -70,8 +70,8 @@
 
 - name: 12.2(33)SXH5.txt - parse `show ip bgp summary`
   command_parser:
-    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/12.2(33)SXH5.txt') }}"
+    file: "{{ playbook_dir }}/../../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/show_ip_bgp_summary/12.2(33)SXH5.txt') }}"
   register: result
 
 - name: 12.2(33)SXH5.txt - test `show ip bgp summary` parser
