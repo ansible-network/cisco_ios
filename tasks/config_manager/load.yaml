@@ -2,18 +2,15 @@
 - name: initialize function
   include_tasks: includes/init.yaml
 
-- name: Convert higher layer args to provider specific args
-  include_tasks: includes/args_adapter.yaml
-
-- name: load config file contents
+- name: load config file contexts (if necessary)
   set_fact:
-    ios_config_text: "{{ lookup('config_template', ios_config_file) | join('\n') }}"
-  when: ios_config_file != ''
+    config_manager_text: "{{ lookup('config_template', config_manager_file) | join('\n') }}"
+  when: config_manager_file is defined
 
-- name: validate required var is set
+- name: validate config_manager_text is defined
   fail:
-    msg: "missing required argument: ios_config_text"
-  when: ios_config_text is undefined or not ios_config_text
+    msg: "missing required arg: config_manager_text"
+  when: config_manager_text is undefined
 
 # check if any reminents are left over from a previous run and remove them
 # prior to starting the configuration tasks.
@@ -41,7 +38,7 @@
   ios_command:
     commands:
       - command: "copy running-config flash:{{ ios_config_checkpoint_filename }}"
-        prompt: ["? "]
+        prompt: ["\\? "]
         answer: "{{ ios_config_checkpoint_filename }}"
 
 # these next two tasks are responsible for taking the provided configuration,
@@ -58,7 +55,7 @@
 # in order to fully execute the task list.
 - name: template source config
   copy:
-    content: "{{ ios_config_text }}"
+    content: "{{ config_manager_text }}"
     dest: "{{ ios_config_working_dir }}/{{ ios_config_temp_config_file }}"
   check_mode: false
   changed_when: False
@@ -121,10 +118,17 @@
         - name: load configuration lines into target device
           cli:
             command: "{{ line }}"
-          loop: "{{ ios_config_text | to_lines }}"
+          loop: "{{ config_manager_text | to_lines }}"
           loop_control:
             loop_var: line
           when: line != 'end'
+          register: ios_config_output
+
+        - name: fail any lines that generated an error
+          fail:
+            msg: "failed to apply configuration: {{ item.line }}"
+          when: item is not skipped and item.stdout | length > 0 and item.stdout[0] == '%'
+          loop: "{{ ios_config_output.results }}"
 
         - name: exit configuration mode
           cli:
@@ -197,7 +201,7 @@
   ios_command:
     commands:
       - command: "copy running-config flash:{{ ios_config_active_config }}"
-        prompt: ["? "]
+        prompt: ["\\? "]
         answer: "{{ ios_config_active_config }}"
 
 # generate the configuration diff and display the diff to stdout.  only set
