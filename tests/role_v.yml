@@ -1,0 +1,7 @@
+---
+- hosts: csr01
+  gather_facts: no
+  tasks:
+    - include_role:
+        name: "{{ playbook_dir }}/../../ansible-network.cisco_ios"
+        tasks_from: verify_dependant_role_version.yaml
