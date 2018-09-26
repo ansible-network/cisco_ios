@@ -1,7 +1,0 @@
----
-- name: verify dependant role version
-  verify_role_version:
-    role_path: "{{ role_path }}"
-    min_version: 2.6.5
-
-

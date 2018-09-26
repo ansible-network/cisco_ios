@@ -20,6 +20,7 @@ __metaclass__ = type
 import os
 import yaml
 import copy
+import re
 
 from ansible.module_utils._text import to_text
 from ansible.errors import AnsibleError
@@ -36,9 +37,6 @@ except ImportError:
     from ansible.utils.display import Display
     display = Display()
 
-import q
-import traceback
-
 class ActionModule(ActionBase):
 
     def run(self, tmp=None, task_vars=None):
@@ -49,8 +47,6 @@ class ActionModule(ActionBase):
         try:
             role_path = self._task.args.get('role_path')
             role_root_dir = os.path.split(role_path)[0]
-            q(role_root_dir)
-            q(C.DEFAULT_ROLES_PATH)
         except KeyError as exc:
             return {'failed': True, 'msg': 'missing required argument: %s' % exc}
 
@@ -58,7 +54,7 @@ class ActionModule(ActionBase):
         max_version = self._task.args.get('max_version')
 
         # Get dependancy version dict if not encoded in meta
-        depends_dict = self._task.args.get('depends_dict')
+        depends_dict = self._task.args.get('depends_map')
 
         try:
             self._depends = self._get_role_dependencies(role_path)
@@ -69,10 +65,8 @@ class ActionModule(ActionBase):
                 result['failed'] = True
                 result['msg'] = msg
                 return result
-
             default_roles_path = copy.copy(C.DEFAULT_ROLES_PATH)
             default_roles_path.append(role_root_dir)
-            q(C.DEFAULT_ROLES_PATH)
             (rc, msg) = self._find_dependant_role_version(self._depends,
                                                       default_roles_path)
             if rc == 'Error':
@@ -85,13 +79,10 @@ class ActionModule(ActionBase):
             elif rc == 'Success':
                 result['changed'] = False
                 result['msg'] = msg
-
         except Exception as exc:
             result['failed'] = True
             result['msg'] = ('Exception received : %s' % exc)
-            traceback.print_exc()
 
-        result['changed'] = False 
         return result
 
     def _get_role_dependencies(self, role_path):
@@ -127,18 +118,16 @@ class ActionModule(ActionBase):
         # First preferrence is to find role in defined C.default_roles_path
         for roles in dep_role_list:
             for r_path in search_role_path:
-                q(r_path, roles['name'])
                 dep_role_path = os.path.join(r_path, roles['name'])
                 if os.path.exists(dep_role_path):
                     found = True
                     install_ver = self._get_role_version(dep_role_path)
                     if install_ver == 'unknown':
-                        msg = "role: %s installed version is unknown " \
-                              "please check manually if you downloded it from scm" % roles['name']
+                        msg = "WARNING! : role: %s installed version is unknown " \
+                              "please check version if you downloded it from scm" % roles['name']
                         return ("Warning", msg)
-                       
                     if install_ver < roles['version']:
-                       msg = "role: %s installed version :%s is less than " \
+                       msg = "Error! : role: %s installed version :%s is less than " \
                              "required version: %s" % ( roles['name'],
                               install_ver, roles['version'] )
                        return ("Error" , msg)
@@ -147,7 +136,7 @@ class ActionModule(ActionBase):
                       % (roles['name'], search_role_path)
                 return ("Error", msg)
 
-        return ("Success", 'All dependent roles meets min version requirements')
+        return ("Success", 'Success: All dependent roles meet min version requirements')
                   
 
     def _check_depends(self, depends, depends_dict):
@@ -158,14 +147,26 @@ class ActionModule(ActionBase):
         else:
             depends_list = depends
         for dep in depends_list:
-            if dep['version'] == None:
-               for in_depends in depends_dict:
-                   if in_depends['name'] == dep['name']:
-                       if in_depends['version'] is None:
-                           msg = 'min_version for role_name: %s is Unknown' % dep['name']
-                           return (False, msg)
-                       else:
-                           dep['version'] = in_depends['version']
+           if dep['version'] and depends_dict is None:
+               # Nothing to be done. Use veriosn from meta
+               return (True, '')
+           if dep['version'] is None and depends_dict is None:
+               msg = "could not find min version from meta for dependant role : %s" \
+                     " you can pass this info as depends_map arg e.g." \
+                     "depends_map: - name: %s \n version: 2.6.5" \
+                     % (dep['name'], dep['name'])
+               return (False, msg)
+           for in_depends in depends_dict:
+               if in_depends['name'] == dep['name']:
+                   if in_depends['version'] is None:
+                       msg = 'min_version for role_name: %s is Unknown' % dep['name']
+                       return (False, msg)
+                   else:
+                       ver = to_text(in_depends['version'])
+                       # if version is defined without 'v<>' add 'v' for
+                       # compliance with galaxy versioning
+                       galaxy_compliant_ver = re.sub(r'^(\d+\..*)', r'v\1', ver)
+                       dep['version'] = galaxy_compliant_ver
         return (True, '')
 
 
