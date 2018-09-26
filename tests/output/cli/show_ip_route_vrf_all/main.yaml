@@ -6,11 +6,14 @@
     content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_route_vrf_all/12.2(33)SXH7.txt') }}"
   register: result
 
-- name: test `show ip route vrf *`
+- name: 12.2(33)SXH7 - test `show ip route vrf *`
   assert:
     that:
+      - "'ABC' in vrfs"
+      - "'routing_table' in vrfs.ABC"
+      - vrfs.ABC['routing_table']['0.0.0.0/0']['next_hop'][0] == '10.20.190.33'
+      - "'DEFAULT' in vrfs"
       - "'routing_table' in vrfs.DEFAULT"
-      - "'{{ vrfs.DEFAULT['routing_table']['10.10.106.0/24']['next_hop'][0] | string }}' == '10.50.190.7'"
 
 ### IOS-XE 03.14.00.S
 
@@ -20,7 +23,7 @@
     content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_route_vrf_all/03.14.00.S.txt') }}"
   register: result
 
-- name: test `show ip route`
+- name: 03.14.00.S - test `show ip route`
   assert:
     that:
       - "'routing_table' in vrfs.DEFAULT"

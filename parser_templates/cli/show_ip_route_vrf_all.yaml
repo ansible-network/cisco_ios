@@ -8,11 +8,10 @@
 # Caveat: This parser only returns the first next hop, for prefixes with multiple possible destinations.
 
 - name: match vrf section
+  export: True
   register: vrf_section
   pattern_match:
-    regex: "^Routing Table:"
-    match_all: True
-    match_greedy: True
+    regex: "(.*)"
 
 - name: match routing table values
   loop: "{{ vrf_section }}"
