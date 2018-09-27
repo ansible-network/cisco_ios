@@ -50,9 +50,9 @@ class UserManager:
     def generate_existing_users(self):
         match = re.findall(r'(?:^(?:u|\s{2}u))sername (\S+)', self.__user_config_data, re.M)
         if not match:
-            return list()
+            return []
 
-        existing_users = list()
+        existing_users = []
 
         for user in set(match):
             regex = r'username %s .+$' % user
@@ -86,7 +86,9 @@ class UserManager:
         have = self.generate_existing_users()
         filtered_users = [x for x in want if x not in have]
 
-        return filtered_users
+        changed = True if len(filtered_users) > 0 else False
+
+        return changed, filtered_users
 
 
 class ActionModule(ActionBase):
@@ -103,6 +105,6 @@ class ActionModule(ActionBase):
         except KeyError as exc:
             return {'failed': True, 'msg': 'missing required argument: %s' % exc}
 
-        result['stdout'] = UserManager(new_users, user_config_data).filter_users()
+        result['changed'], result['stdout'] = UserManager(new_users, user_config_data).filter_users()
 
         return result

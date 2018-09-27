@@ -1,4 +1,10 @@
 ---
+- name: "check if user(s) to configure is provided"
+  fail:
+    msg: "no user provided to configure"
+  when:  users is not defined
+  delegate_to: localhost
+
 - name: "check for required fact - name"
   fail:
     msg: "missing required fact: name"
@@ -8,15 +14,17 @@
     loop_var: user
   delegate_to: localhost
 
-- name: "display input"
-  debug:
-    var: users
-  delegate_to: localhost
-
 - name: "fetch existing user account details"
-  cli:
-    command: show running-config | section user
-  register: user_config
+  block:
+    - name: "fetch user config with section"
+      cli:
+        command: show running-config | section user
+      register: user_config
+  rescue:
+    - name: "fallback fetching full running-config"
+      cli:
+        command: show running-config
+      register: user_config
 
 - name: "filter out users through user_manager"
   ios_user_manager:
