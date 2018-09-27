@@ -7,38 +7,35 @@
   loop_control:
     loop_var: user
   delegate_to: localhost
- 
-- name: "fetch user account details"
+
+- name: "display input"
+  debug:
+    var: users
+  delegate_to: localhost
+
+- name: "fetch existing user account details"
   cli:
     command: show running-config | section user
-  register: user_details
-   
-- name: "generate existing user(s) facts as JSON"
-  command_parser:
-    file: "{{ role_path}}/parser_templates/cli/show_user_account.yaml"
-    content: "{{ user_details.stdout }}"
+  register: user_config
 
-- name: "show existing user information"
-  debug:
-    var: user_account_facts
- 
-#- name: "filter out users that need to be configured"
-#  set_fact:
-#    users: "{{ users | difference(user_account_facts) }}"
-
-- name: "filter users & calculate MD5 fingerprint of sshkeys if supplied"
-  ios_sshkey_fingerprint:
-    users: "{{ users | difference(user_account_facts) }}"
+- name: "filter out users through user_manager"
+  ios_user_manager:
+    new_users: "{{ users }}"
+    user_config: "{{ user_config.stdout }}"
   register: filtered_users
+  delegate_to: localhost
  
-- name: "display users to configure"
+- name: "set users to be configured"
   set_fact:
-    users: "{{ filtered_users.users }}"
-   
+    users: "{{ filtered_users.stdout }}"
+  delegate_to: localhost
+
 - name: "fetch template for configuring user(s)"
   set_fact:
-    ios_config_file: 'configure_user.j2'
+    config_manager_file: 'configure_user.j2'
   when: users
+  delegate_to: localhost
 
 - include_tasks: config_manager/load.yaml
   when: users
+  delegate_to: localhost

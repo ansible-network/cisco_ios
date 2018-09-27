@@ -2,6 +2,8 @@
 
 {% if user.state is defined and user.state == 'absent' %}
 no username {{ user.name }}
+ip ssh pubkey-chain
+no username {{ user.name }}
 
 {% else %}
 {% if user.password is not defined %}
@@ -18,6 +20,11 @@ username {{ user.name }} privilege {{ user.privilege|string }}
 username {{ user.name }} view {{ user.view }}
 {% endif %}
 
+{% if user.sshkey is defined %}
+ip ssh pubkey-chain
+username {{ user.name }}
+key-hash {{ user.sshkey }}
+{% endif %}
 
 {% endif %}
 {% endfor %}
