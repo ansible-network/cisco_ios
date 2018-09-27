@@ -5,7 +5,7 @@
 - name: not active - parse `show ip bgp summary`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/bgp_not_active.txt') }}"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_bgp_summary/bgp_not_active.txt') }}"
   register: result
 
 - name: not active - test `show ip bgp summary` parser
@@ -21,7 +21,7 @@
 - name: 03.14.00.S.txt - parse `show ip bgp summary`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/03.14.00.S.txt') }}"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_bgp_summary/03.14.00.S.txt') }}"
   register: result
 
 - name: 03.14.00.S.txt - test `show ip bgp summary` parser
@@ -43,15 +43,12 @@
       - bgp_nbr['72.31.0.13']['ip_version'] == 4
       - "'{{ bgp_nbr['72.31.0.13']['timer'] | string }}' == '10:32:44'"
 
-- name: clear facts
-  meta: clear_facts
-
 ### IOS 15.1(2)T5.txt
 
 - name: 15.1(2)T5.txt - parse `show ip bgp summary`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/15.1(2)T5.txt') }}"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_bgp_summary/15.1(2)T5.txt') }}"
   register: result
 
 - name: 15.1(2)T5.txt - test `show ip bgp summary` parser
@@ -63,15 +60,12 @@
       - bgp_nbr['10.29.19.70']['ip_version'] == 4
       - bgp_nbr['10.29.19.70']['timer'] == '4d22h'
 
-- name: clear facts
-  meta: clear_facts
-
 ### IOS 12.2(33)SXH5.txt
 
 - name: 12.2(33)SXH5.txt - parse `show ip bgp summary`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/show_ip_bgp_summary/12.2(33)SXH5.txt') }}"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_bgp_summary/12.2(33)SXH5.txt') }}"
   register: result
 
 - name: 12.2(33)SXH5.txt - test `show ip bgp summary` parser
@@ -87,9 +81,6 @@
       - bgp_nbr['172.16.32.1']['asn'] == 65123
       - bgp_nbr['172.16.32.1']['ip_version'] == 4
       - "'{{ bgp_nbr['172.16.32.1']['timer'] | string }}' == '28w5d'"
-
-- name: clear facts
-  meta: clear_facts
 
 ### Done
 
