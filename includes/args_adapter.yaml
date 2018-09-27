@@ -1,0 +1,14 @@
+---
+# Playbook to ingest config manager args into ios provider specific args
+#
+
+- name: convert config_manager_text
+  set_fact:
+    ios_config_text: "{{ config_manager_text }}"
+  when: config_manager_text is defined
+
+- name: convert config_manager_file
+  set_fact:
+    ios_config_file: "{{ config_manager_file }}"
+  when: config_manager_file is defined
+

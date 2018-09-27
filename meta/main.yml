@@ -1,11 +1,14 @@
 galaxy_info:
   author: Ansible Network Community (ansible-network)
-  description: Ansible role for managing Cisco IOS devices
+  description: |
+    This role provides an implementation for automating the configuration of
+    Cisco IOS/IOS-XE devices.  It provides implementations of Ansible Network
+    configuration abstractions.
   company: Ansible
 
   license: GPLv3
 
-  min_ansible_version: 2.5
+  min_ansible_version: 2.6
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
@@ -30,8 +33,9 @@ galaxy_info:
     - network
     - cisco
     - ios
+    - iosxe
 
 dependencies:
   - src: https://github.com/ansible-network/network-engine.git
-    version: v2.6.4
+    version: v2.6.5
     name: ansible-network.network-engine
