@@ -16,36 +16,6 @@
 - name: clear facts
   meta: clear_facts
 
-### IOS-XE 03.14.00.S
-
-- name: 03.14.00.S.txt - parse `show ip bgp summary`
-  command_parser:
-    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_bgp_summary/03.14.00.S.txt') }}"
-  register: result
-
-- name: 03.14.00.S.txt - test `show ip bgp summary` parser
-  assert:
-    that:
-      - "'10.15.17.2' in bgp['neighbors']"
-      - "'10.1.19.2' in bgp['neighbors']"
-      - "'72.31.0.13' in bgp['neighbors']"
-      - bgp['neighbors']['10.15.17.2']['state_pfxrcd'] == 1125
-      - bgp['neighbors']['10.15.17.2']['asn'] == 64785
-      - bgp['neighbors']['10.15.17.2']['ip_version'] == 4
-      - bgp['neighbors']['10.15.17.2']['timer'] == '7w1d'
-      - bgp['neighbors']['10.1.19.2']['state_pfxrcd'] == 'Active'
-      - bgp['neighbors']['10.1.19.2']['asn'] == 1234
-      - bgp['neighbors']['10.1.19.2']['ip_version'] == 4
-      - "'{{ bgp['neighbors']['10.1.19.2']['timer'] | string }}' == '00:00:30'"
-      - bgp['neighbors']['72.31.0.13']['state_pfxrcd'] == 'Idle'
-      - bgp['neighbors']['72.31.0.13']['asn'] == 65004
-      - bgp['neighbors']['72.31.0.13']['ip_version'] == 4
-      - "'{{ bgp['neighbors']['72.31.0.13']['timer'] | string }}' == '10:32:44'"
-
-- name: clear facts
-  meta: clear_facts
-
 ### IOS 15.1(2)T5.txt
 
 - name: 15.1(2)T5.txt - parse `show ip bgp summary`
@@ -90,6 +60,33 @@
 
 - name: clear facts
   meta: clear_facts
+
+### IOS-XE 03.14.00.S
+
+- name: 03.14.00.S.txt - parse `show ip bgp summary`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_bgp_summary.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_bgp_summary/03.14.00.S.txt') }}"
+  register: result
+
+- name: 03.14.00.S.txt - test `show ip bgp summary` parser
+  assert:
+    that:
+      - "'10.15.17.2' in bgp['neighbors']"
+      - "'10.1.19.2' in bgp['neighbors']"
+      - "'72.31.0.13' in bgp['neighbors']"
+      - bgp['neighbors']['10.15.17.2']['state_pfxrcd'] == 1125
+      - bgp['neighbors']['10.15.17.2']['asn'] == 64785
+      - bgp['neighbors']['10.15.17.2']['ip_version'] == 4
+      - bgp['neighbors']['10.15.17.2']['timer'] == '7w1d'
+      - bgp['neighbors']['10.1.19.2']['state_pfxrcd'] == 'Active'
+      - bgp['neighbors']['10.1.19.2']['asn'] == 1234
+      - bgp['neighbors']['10.1.19.2']['ip_version'] == 4
+      - "'{{ bgp['neighbors']['10.1.19.2']['timer'] | string }}' == '00:00:30'"
+      - bgp['neighbors']['72.31.0.13']['state_pfxrcd'] == 'Idle'
+      - bgp['neighbors']['72.31.0.13']['asn'] == 65004
+      - bgp['neighbors']['72.31.0.13']['ip_version'] == 4
+      - "'{{ bgp['neighbors']['72.31.0.13']['timer'] | string }}' == '10:32:44'"
 
 ### Done
 

@@ -10,10 +10,10 @@
 
   tasks:
 
-    - name: Include tests for `show ip bgp summary`
-      include_tasks: output/cli/show_ip_bgp_summary/main.yaml
-      vars:
-        bgp: "{{ cisco_ios['vrf']['DEFAULT']['protocols']['bgp'] }}"
+#    - name: Include tests for `show ip bgp summary`
+#      include_tasks: output/cli/show_ip_bgp_summary/main.yaml
+#      vars:
+#        bgp: "{{ cisco_ios['vrf']['DEFAULT']['protocols']['bgp'] }}"
 
     - name: Include tests for `show ip vrf detail`
       include_tasks: output/cli/show_ip_vrf_detail/main.yaml
