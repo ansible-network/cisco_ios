@@ -14,7 +14,6 @@
     match_greedy: true
 
 - name: match vrf section values
-  export: True
   loop: "{{ vrf_section }}"
   register: vrf_section_values
   pattern_group:
@@ -33,13 +32,13 @@
 
     - name: match route distinguisher
       pattern_match:
-        regex: ".*; default RD (\\d+:\\d+)"
+        regex: ".*; default RD (\\d+:\\d+|<not set>)"
         content: "{{ item }}"
       register: rd
 
     - name: match interface section
       pattern_match:
-        regex: "^  Interfaces:([\\s\\S]*)(?:Address Family|VRF Table ID)"
+        regex: "^  Interfaces:([\\s\\S]*)(?:Address family|VRF Table ID)"
         content: "{{ item }}"
         match_all: true
         match_greedy: false
@@ -62,7 +61,6 @@
       register: import_rt_section
 
 - name: match vrf nested section values
-  export: True
   loop: "{{ vrf_section_values }}"
   register: vrf_nested_section_values
   loop_control:
@@ -89,7 +87,7 @@
 
     - name: match interfaces
       pattern_match:
-        regex: "[\\s|\\\n]+(\\S*)[\\s|\\n]"
+        regex: "\\s+(\\S+)\\s"
         content: "{{ vrf_item.interface_section.0.matches }}"
         match_all: true
       register: interface
