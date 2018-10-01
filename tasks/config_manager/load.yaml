@@ -9,7 +9,7 @@
 
 - name: set ios checkpoint filename
   set_fact:
-    ios_checkpoint_filename: "chk_ansible"
+    ios_config_checkpoint_filename: "chk_ansible"
 
 # initiate creating a checkpoint of the existing running-config
 - name: create checkpoint of current configuration
@@ -82,7 +82,7 @@
 # changed if there are lines in the diff that have changed
 - name: generate ios diff
   cli:
-    command: "show archive config differences flash:{{ ios_checkpoint_filename }} flash:{{ ios_active_config }}"
+    command: "show archive config differences flash:{{ ios_config_checkpoint_filename }} flash:{{ ios_active_config }}"
   register: ios_config_diff
   changed_when: "'No changes were found' not in ios_config_diff.stdout"
 
@@ -103,7 +103,7 @@
     command: "delete /force flash:/{{ filename }}"
   loop:
     - "{{ ios_active_config }}"
-    - "{{ ios_checkpoint_filename }}"
+    - "{{ ios_config_checkpoint_filename }}"
   loop_control:
     loop_var: filename
   when: filename in ios_dir_listing.stdout

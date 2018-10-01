@@ -2,6 +2,33 @@
 cisco_ios
 ===============================
 
+.. _cisco_ios_v2.6.1:
+
+v2.6.1
+======
+
+.. _cisco_ios_v2.6.1_New Action Plugins:
+
+New Action Plugins
+------------------
+
+- NEW ``ios_user_manager`` action plugin
+
+.. _cisco_ios_v2.6.1_New Tasks:
+
+New Tasks
+---------
+
+- NEW ``configure_user`` task
+
+.. _cisco_ios_v2.6.1_Bugfixes:
+
+Bugfixes
+--------
+
+- Refactor vrf and bgp output and improve reliability (#29)
+- better support for working with config_manager tasks
+
 devel
 =====
 
