@@ -1,18 +1,8 @@
 ---
 # defaults file for ansible-network.cisco_ios
 #
-ios_working_dir: ~/.ansible/ios
-
-ios_config_file: "{{ config_file | default(None) }}"
-ios_config_text: "{{ config_text | default(None) }}"
-ios_config_replace: "{{ replace | default(False) }}"
-ios_config_working_dir: ~/.ansible/ios
-ios_config_temp_config_file: "tmp_{{ inventory_hostname_short }}"
-ios_config_checkpoint_filename: chk_ansible
-ios_config_remove_temp_files: "{{ remove_temp_files | default(True) }}"
-ios_config_rollback_enabled: "{{ rollback | default(True) }}"
+ios_config_rollback_enabled: True
 ios_config_use_terminal: True
-ios_config_active_config: cfg_ansible
 
 ios_config_source:
   running: show running-config
@@ -20,5 +10,3 @@ ios_config_source:
 
 ios_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
 ios_get_facts_subset: "{{ subset | default(['default']) }}"
-
-ios_vrf_definitions_purge: False

@@ -1,0 +1,30 @@
+{% for user in users %}
+
+{% if user.state is defined and user.state == 'absent' %}
+no username {{ user.name }}
+ip ssh pubkey-chain
+no username {{ user.name }}
+
+{% else %}
+{% if user.password is not defined %}
+username {{ user.name }} nopassword
+{% elif user.password %}
+username {{ user.name }} secret {{ user.password }}
+{% endif %}
+
+{% if user.privilege is defined %}
+username {{ user.name }} privilege {{ user.privilege|string }}
+{% endif %}
+
+{% if user.view is defined %}
+username {{ user.name }} view {{ user.view }}
+{% endif %}
+
+{% if user.sshkey is defined %}
+ip ssh pubkey-chain
+username {{ user.name }}
+key-hash {{ user.sshkey }}
+{% endif %}
+
+{% endif %}
+{% endfor %}

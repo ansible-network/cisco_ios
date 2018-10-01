@@ -2,84 +2,18 @@
 - name: initialize function
   include_tasks: includes/init.yaml
 
-- name: load config file contexts (if necessary)
-  set_fact:
-    config_manager_text: "{{ lookup('config_template', config_manager_file) | join('\n') }}"
-  when: config_manager_file is defined
-
 - name: validate config_manager_text is defined
   fail:
     msg: "missing required arg: config_manager_text"
   when: config_manager_text is undefined
 
-# check if any reminents are left over from a previous run and remove them
-# prior to starting the configuration tasks.
-- name: check if stale temporarary files exist on target device
-  cli:
-    command: dir
-  register: ios_dir_listing
+- name: set ios checkpoint filename
+  set_fact:
+    ios_checkpoint_filename: "chk_ansible"
 
-- name: remove temporary files from target device
-  cli:
-    command: "delete /force flash:/{{ filename }}"
-  when: ios_config_remove_temp_files and filename in ios_dir_listing.stdout
-  loop:
-    - "{{ ios_config_active_config }}"
-    - "{{ ios_config_checkpoint_filename }}"
-    - "{{ ios_config_temp_config_file }}"
-  loop_control:
-    loop_var: filename
-
-# copy the current running-config to the local flash disk on the target device.
-# This will be used both for restoring the current config if a failure happens
-# as well as performing a configuration diff once the new config has been
-# loaded.
-- name: create a checkpoint of the current running-config
-  ios_command:
-    commands:
-      - command: "copy running-config flash:{{ ios_config_checkpoint_filename }}"
-        prompt: ["\\? "]
-        answer: "{{ ios_config_checkpoint_filename }}"
-
-# these next two tasks are responsible for taking the provided configuration,
-# templating it and preparing it for loading onto the target device
-- name: create temp working dir
-  file:
-    path: "{{ ios_config_working_dir }}"
-    state: directory
-  run_once: true
-  check_mode: false
-  changed_when: False
-
-# always set check mode to false here as this task needs to always run
-# in order to fully execute the task list.
-- name: template source config
-  copy:
-    content: "{{ config_manager_text }}"
-    dest: "{{ ios_config_working_dir }}/{{ ios_config_temp_config_file }}"
-  check_mode: false
-  changed_when: False
-
-# in order to transfer the configuration files to the target network
-# device, the scp server feature must be enabled in the current
-# running-config
-- name: enable the ios scp server
-  cli:
-    command: "{{ line }}"
-  loop:
-    - configure terminal
-    - ip scp server enable
-    - end
-  loop_control:
-    loop_var: line
-
-# copy the templates configuration to the target device using scp and
-# store the file on the device local flash drive
-- name: copy configuration to device
-  net_put:
-    src: "{{ ios_config_working_dir }}/{{ ios_config_temp_config_file }}"
-    dest: "flash:/{{ ios_config_temp_config_file }}"
-  changed_when: False
+# initiate creating a checkpoint of the existing running-config
+- name: create checkpoint of current configuration
+  include_tasks: "{{ role_path }}/includes/checkpoint/create.yaml"
 
 # if running in check mode, the configuration should not be loaded on
 # the target device because that could have undesired results, so
@@ -89,60 +23,25 @@
     msg: not loading configuration due to check mode
   when: ansible_check_mode
 
-# the block of tasks here are repsonsible for loading the configuration onto
-# the target device.  There are one of three options here controlled by role
-# variables:
-#
-#  * replace config - use the copy command with replace
-#  * merge config - use the copy command (merge)
-#  * load config - enter config mode and push the config lines
-#
 - name: load configuration onto target device
   block:
     - name: replace current active configuration
-      cli:
-        command: "config replace flash:/{{ ios_config_temp_config_file }} force"
-      when: ios_config_replace
+      include_tasks: "{{ role_path }}/includes/configure/replace.yaml"
+      when: config_manager_replace
+      vars:
+        ios_config_text: "{{ config_manager_text }}"
 
     - name: merge with current active configuration
-      cli:
-        command: "copy flash:/{{ ios_config_temp_config_file }} force"
-      when: not ios_config_replace and not ios_config_use_terminal
+      include_tasks: "{{ role_path }}/includes/configure/merge.yaml"
+      when: not config_manager_replace and not ios_config_use_terminal
+      vars:
+        ios_config_text: "{{ config_manager_text }}"
 
-    - name: load configuration lines into target device
-      block:
-        - name: enter configuration mode
-          cli:
-            command: "configure terminal"
-
-        - name: load configuration lines into target device
-          cli:
-            command: "{{ line }}"
-          loop: "{{ config_manager_text | to_lines }}"
-          loop_control:
-            loop_var: line
-          when: line != 'end'
-          register: ios_config_output
-
-        - name: fail any lines that generated an error
-          fail:
-            msg: "failed to apply configuration: {{ item.line }}"
-          when: item is not skipped and item.stdout | length > 0 and item.stdout[0] == '%'
-          loop: "{{ ios_config_output.results }}"
-
-        - name: exit configuration mode
-          cli:
-            command: end
-
-      rescue:
-        - name: exit configuration mode
-          cli:
-            command: end
-
-        - name: set host failed
-          fail:
-            msg: "error loading configuration lines"
-      when: ios_config_use_terminal and not ios_config_replace
+    - name: load configuration using configure terminal
+      include_tasks: "{{ role_path }}/includes/configure/terminal.yaml"
+      when: not config_manager_replace and ios_config_use_terminal
+      vars:
+        ios_config_text: "{{ config_manager_text }}"
 
   rescue:
       # since the host has failed during the configuration load, the role by
@@ -153,35 +52,8 @@
         msg: "error configuring device, starting rollback"
       when: ios_config_rollback_enabled
 
-    - name: configuration rollback pre hook
-      include_tasks: "{{ ios_configuration_rollback_pre_hook }}"
-      when: ios_configuration_rollback_pre_hook is defined and ios_config_rollback_enabled
-
-    - name: rollback configuration
-      cli:
-        command: "config replace flash:/{{ ios_config_checkpoint_filename }} force"
-      when: ios_config_rollback_enabled
-
-    - name: configuration rollback post hook
-      include_tasks: "{{ ios_configuration_rollback_post_hook }}"
-      when: ios_configuration_rollback_post_hook is defined and ios_config_rollback_enabled
-
-    - name: remove remote temp files
-      cli:
-        command: "delete /force flash:/{{ filename }}"
-      loop:
-        - "{{ ios_config_temp_config_file }}"
-        - "{{ ios_config_checkpoint_filename }}"
-      loop_control:
-        loop_var: filename
-      when: ios_config_remove_temp_files
-
-    - name: remove local temp working dir
-      file:
-        path: "{{ ios_config_working_dir }}"
-        state: absent
-      run_once: true
-      when: ios_config_remove_temp_files
+    - name: initiate configuration rollback
+      include_tasks: "{{ role_path }}/includes/checkpoint/restore.yaml"
 
     - name: display message
       debug:
@@ -192,7 +64,9 @@
       fail:
         msg: "error loading configuration onto target device"
 
-  when: not ansible_check_mode
+- name: set the ios_active_config fact
+  set_fact:
+    ios_active_config: "cfg_ansible"
 
 # copy the updated running-config to the local flash device to be used to
 # generate a configuration diff between the before and after
@@ -200,15 +74,15 @@
 - name: copy running-config to active config
   ios_command:
     commands:
-      - command: "copy running-config flash:{{ ios_config_active_config }}"
+      - command: "copy running-config flash:{{ ios_active_config }}"
         prompt: ["\\? "]
-        answer: "{{ ios_config_active_config }}"
+        answer: "{{ ios_active_config }}"
 
 # generate the configuration diff and display the diff to stdout.  only set
 # changed if there are lines in the diff that have changed
 - name: generate ios diff
   cli:
-    command: "show archive config differences flash:{{ ios_config_checkpoint_filename }} flash:{{ ios_config_active_config }}"
+    command: "show archive config differences flash:{{ ios_checkpoint_filename }} flash:{{ ios_active_config }}"
   register: ios_config_diff
   changed_when: "'No changes were found' not in ios_config_diff.stdout"
 
@@ -228,17 +102,8 @@
   cli:
     command: "delete /force flash:/{{ filename }}"
   loop:
-    - "{{ ios_config_active_config }}"
-    - "{{ ios_config_checkpoint_filename }}"
-    - "{{ ios_config_temp_config_file }}"
+    - "{{ ios_active_config }}"
+    - "{{ ios_checkpoint_filename }}"
   loop_control:
     loop_var: filename
-  when: ios_config_remove_temp_files and filename in ios_dir_listing.stdout
-
-- name: remove local temp working dir
-  file:
-    path: "{{ ios_config_working_dir }}"
-    state: absent
-  run_once: true
-  when: ios_config_remove_temp_files
-  changed_when: False
+  when: filename in ios_dir_listing.stdout
