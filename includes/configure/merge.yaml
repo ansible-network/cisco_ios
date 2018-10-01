@@ -1,0 +1,59 @@
+---
+- name: validate ios_config_text is defined
+  fail:
+    msg: "missing required arg: ios_config_text"
+  when: ios_config_text is undefined
+
+- name: set the ios_config_temp_file name
+  set_fact:
+    ios_config_temp_file: "tmp_ansible"
+
+- name: create temp working dir
+  tempfile:
+    state: directory
+  register: ios_config_temp_dir
+
+- name: write the config text to disk
+  copy:
+    content: "{{ ios_config_text }}"
+    dest: "{{ ios_config_temp_dir.path }}/{{ ios_config_temp_file }}"
+
+- name: get current list of files on remote device
+  cli:
+    command: dir
+  register: ios_dir_listing
+
+- name: remove temporary files from target device
+  cli:
+    command: "delete /force flash:/{{ ios_config_temp_file }}"
+  when: ios_config_temp_file in ios_dir_listing.stdout
+
+- name: enable the ios scp server
+  cli:
+    command: "{{ line }}"
+  loop:
+    - configure terminal
+    - ip scp server enable
+    - end
+  loop_control:
+    loop_var: line
+
+- name: copy configuration to device
+  net_put:
+    src: "{{ ios_config_temp_dir.path }}/{{ ios_config_temp_file }}"
+    dest: "flash:/{{ ios_config_temp_file }}"
+  changed_when: False
+
+- name: merge with current active configuration
+  cli:
+    command: "{{ line }}"
+  loop:
+    - "copy flash:/{{ ios_config_temp_file }} force"
+    - "delete /force flash:/{{ ios_config_temp_file }}"
+  loop_control:
+    loop_var: line
+
+- name: remove local temp working dir
+  file:
+    path: "{{ ios_config_temp_dir.path }}"
+    state: absent

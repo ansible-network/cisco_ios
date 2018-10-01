@@ -1,0 +1,39 @@
+---
+# this block is responsible for loading the configuration on to the target
+# device line by line from config model.
+- name: load configuration onto target device
+  block:
+    - name: load configuration lines into target device
+      block:
+        - name: enter configuration mode
+          cli:
+            command: "configure terminal"
+
+        - name: load configuration lines into target device
+          cli:
+            command: "{{ line.strip() }}"
+          loop: "{{ ios_config_text | to_lines }}"
+          loop_control:
+            loop_var: line
+          when: line != 'end'
+          register: ios_config_output
+
+        - name: fail any lines that generated an error
+          fail:
+            msg: "failed to apply configuration: {{ item.line }}"
+          when: item is not skipped and item.stdout | length > 0 and item.stdout[0] == '%'
+          loop: "{{ ios_config_output.results }}"
+
+        - name: exit configuration mode
+          cli:
+            command: end
+
+      rescue:
+        - name: exit configuration mode
+          cli:
+            command: end
+
+        - name: set host failed
+          fail:
+            msg: "error loading configuration lines"
+  when: not ansible_check_mode

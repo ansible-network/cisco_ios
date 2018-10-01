@@ -37,5 +37,4 @@ galaxy_info:
 
 dependencies:
   - src: https://github.com/ansible-network/network-engine.git
-    version: v2.6.4
     name: ansible-network.network-engine
