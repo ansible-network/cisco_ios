@@ -33,10 +33,12 @@
   groups:
     - all
     - bgp
+    - routing
 
 - command: show lldp neighbors detail
   parser: show_lldp_neighbors_detail.yaml
   groups:
+    - all
     - lldp
 
 - command: show ip vrf detail
@@ -44,4 +46,4 @@
   groups:
     - all
     - vrf
-
+    - routing
