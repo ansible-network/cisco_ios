@@ -1,0 +1,47 @@
+VRF Mgmt-intf (VRF Id = 1); default RD <not set>; default VPNID <not set>
+  New CLI format, supports multiple address-families
+  Flags: 0x1808
+  Interfaces:
+    Gi0                     
+Address family ipv4 unicast (Table ID = 0x1):
+  Flags: 0x0
+  No Export VPN route-target communities
+  No Import VPN route-target communities
+  No import route-map
+  No global export route-map
+  No export route-map
+  VRF label distribution protocol: not configured
+  VRF label allocation mode: per-prefix
+
+VRF Def (VRF Id = 2); default RD 65000:20; default VPNID <not set>
+  Description: Def VPN
+  Old CLI format, supports IPv4 only
+  Flags: 0xC
+  Interfaces:
+    Lo20                     Tu20                     Gi0/0/1.211             
+    Gi0/0/2.1721          
+Address family ipv4 unicast (Table ID = 0x7):
+  Flags: 0x0
+  No Export VPN route-target communities
+  No Import VPN route-target communities
+  No import route-map
+  No global export route-map
+  No export route-map
+  VRF label distribution protocol: not configured
+  VRF label allocation mode: per-prefix
+
+VRF XYzzz0-1-9 (VRF Id = 3); default RD 65000:19; default VPNID <not set>
+  Description: XYzzz0-1-9 VPN
+  Old CLI format, supports IPv4 only
+  Flags: 0xC
+  Interfaces:
+    Lo19                     Tu19                     Gi0/0/1.19              
+Address family ipv4 unicast (Table ID = 0x4):
+  Flags: 0x0
+  No Export VPN route-target communities
+  No Import VPN route-target communities
+  No import route-map
+  No global export route-map
+  No export route-map
+  VRF label distribution protocol: not configured
+  VRF label allocation mode: per-prefix

@@ -1,0 +1,58 @@
+### IOS 12.2(33)SXH5
+
+- name: parse 12.2(33)SXH5 - `show ip vrf detail`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_vrf_detail/12.2(33)SXH5.txt') }}"
+  register: result
+
+- name: test 12.2(33)SXH5 - `show ip vrf detail`
+  assert:
+    that:
+    - "'ABC' in vrfs"
+    - "'XYzzz0-1-9' in vrfs"
+    - "'Def' in vrfs"
+    - vrfs.ABC.rd == '65000:12'
+    - vrfs.ABC.description == 'ABC VPN'
+    - vrfs['ABC']['export_rt'] == ['65000:12']
+    - vrfs['ABC']['import_rt'] == ['65000:12']
+    - vrfs['ABC']['interface'] == ['Te7/3.16']
+    - vrfs['Def']['rd'] == '65000:13'
+    - vrfs['Def']['description'] == 'Def VPN'
+    - vrfs['Def']['export_rt'] == ['65000:13','65000:120','65000:130','123:123']
+    - vrfs['Def']['import_rt'] == ['65000:13','65000:14']
+    - vrfs['Def']['interface'] == ['Vl190','Vl193','Lo10','Vl85','Vl194','Vl19','Vl191','Te7/3.194']
+    - vrfs['XYzzz0-1-9']['rd'] == '65111:100'
+    - vrfs['XYzzz0-1-9']['description'] == 'A random description'
+    - vrfs['XYzzz0-1-9']['export_rt'] == ['65000:100']
+    - vrfs['XYzzz0-1-9']['import_rt'] == ['65000:100']
+    - vrfs['XYzzz0-1-9']['interface'] == ['Vl777','Gi7/3.30']
+
+- name: clear facts
+  meta: clear_facts
+
+### IOS 03.14.00.S
+
+- name: parse 03.14.00.S - `show ip vrf detail`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_vrf_detail/03.14.00.S.txt') }}"
+  register: result
+
+- name: test `03.14.00.S - show ip vrf detail`
+  assert:
+    that:
+      - "'Mgmt-intf' in vrfs"
+      - "'Def' in vrfs"
+      - "'XYzzz0-1-9' in vrfs"
+      - vrfs['Def']['rd'] == '65000:20'
+      - vrfs['Def']['description'] == 'Def VPN'
+      - vrfs['Def']['interface'] == ['Lo20','Tu20','Gi0/0/1.211','Gi0/0/2.1721']
+      - vrfs['XYzzz0-1-9']['rd'] == '65000:19'
+      - vrfs['XYzzz0-1-9']['interface'] == ['Lo19','Tu19','Gi0/0/1.19']
+
+### Done
+
+- name: all tests complete
+  debug:
+    msg: "All tests for `show ip vrf detail` passed"

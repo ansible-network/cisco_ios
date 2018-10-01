@@ -46,22 +46,22 @@
     content: "{{ item }}"
   when: process_state == 'active'
 
-- name: template bgp process state
-  register: ip_bgp_summary
+- name: template bgp values
+  extend: cisco_ios.vrf.DEFAULT.protocols
+  register: bgp
   export: true
   export_as: dict
-  extend: cisco_ios
   json_template:
     template:
       - key: "process_state"
         value: "{{ process_state }}"
 
-- name: template neighbor entries
+- name: template bgp neighbor entries
+  extend: cisco_ios.vrf.DEFAULT.protocols.bgp
   register: neighbors
-  loop: "{{ matched_neighbors }}"
   export: true
   export_as: dict
-  extend: cisco_ios.ip_bgp_summary
+  loop: "{{ matched_neighbors }}"
   when: process_state == 'active'
   json_template:
     template:
