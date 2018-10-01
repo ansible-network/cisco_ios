@@ -1,0 +1,15 @@
+---
+- name: validate ios_config_checkpoint_filename is defined
+  fail:
+    msg: "missing required var: ios_config_checkpoint_filename"
+  when: ios_config_checkpoint_filename is undefined
+
+- name: get current files on disk
+  cli:
+    command: dir
+  register: ios_dir_listing
+
+- name: remove checkpoint file from remote device
+  cli:
+    command: "delete /force flash:/{{ ios_config_checkpoint_filename }}"
+  when: ios_config_checkpoint_filename in ios_dir_listing.stdout
