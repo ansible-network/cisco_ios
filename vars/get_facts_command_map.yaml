@@ -35,6 +35,12 @@
     - bgp
     - routing
 
+- command: show cdp neighbors detail
+  parser: show_cdp_neighbors_detail.yaml
+  groups:
+    - all
+    - cdp
+
 - command: show lldp neighbors detail
   parser: show_lldp_neighbors_detail.yaml
   groups:

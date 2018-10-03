@@ -1,0 +1,56 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show cdp neighbors detail
+    network_os: ios
+
+- name: match sections
+  pattern_match:
+    regex: "^-----.*"
+    match_all: yes
+    match_greedy: yes
+  register: context
+
+- name: parse cdp neighbors
+  pattern_group:
+    - name: parse local port
+      pattern_match:
+        regex: '^Interface: ([^,]*)'
+        content: "{{ item }}"
+      register: local_port
+
+    - name: parse remote prort
+      pattern_match:
+        regex: 'Port ID \(outgoing port\): (.*)$'
+        content: "{{ item }}"
+      register: remote_port
+
+    - name: parse remote host
+      pattern_match:
+        regex: 'Device ID: (.*)$'
+        content: "{{ item }}"
+      register: remote_host
+
+  loop: "{{ context }}"
+  register: matches
+
+- name: build cdp neighbor facts
+  loop: "{{ matches }}"
+  register: cdp
+  export: yes
+  export_as: dict
+  extend: "{{ toplevel | default('cisco_ios') }}"
+  json_template:
+    template:
+      #- key: neighbors
+      - key: "{{ item.local_port.matches.0  | expand_interface_name }}"
+        #elements:
+        object:
+          #- key: port
+          #  value: "{{ item.local_port.matches.0  | expand_interface_name }}"
+          - key: neighbor
+            value: "{{ item.remote_host.matches.0 }}"
+          - key: neighbor_port
+            value: "{{ item.remote_port.matches.0 }}"
+        #repeat_for: "{{ matches }}"
