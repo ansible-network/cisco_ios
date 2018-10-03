@@ -1,0 +1,75 @@
+---
+- name: parser meta data
+  parser_metadata:
+    version: 1.0
+    command: show interfaces transceiver
+    network_os: ios
+
+- name: match sections
+  pattern_match:
+    regex: '(^\S{2}\d+/\d/\d+).*'
+    match_all: yes
+    match_greedy: yes
+  register: context
+
+- name: match interface transceiver
+  pattern_group:
+    - name: match transceiver
+      pattern_match:
+        regex: '(^\S{2}\d+/\d/\d+)'
+        content: "{{ item }}"
+      register: transceiver
+
+    - name: match temperature
+      pattern_match:
+        regex: '(^\S{2}\d+/\d/\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)*\s*(-?\d+\.\d+)\s*(-?\d+\.\d+)*\s*([-\+]*)$'
+        content: "{{ item }}"
+      register: temperature
+
+    - name: match voltage
+      pattern_match:
+        regex: '(^\S{2}\d+/\d/\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)*\s*(-?\d+\.\d+)\s*(-?\d+\.\d+)*\s*([-\+]*)$'
+        content: "{{ item }}"
+      register: voltage
+
+    - name: match TxPower
+      pattern_match:
+        regex: '(^\S{2}\d+/\d/\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)*\s*(-?\d+\.\d+)\s*(-?\d+\.\d+)*\s*([-\+]*)$'
+        content: "{{ item }}"
+      register: txpower
+
+    - name: match RxPower
+      pattern_match:
+        regex: '(^\S{2}\d+/\d/\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)*\s*(-?\d+\.\d+)\s*(-?\d+\.\d+)*\s*([-\+]*)$'
+        content: "{{ item }}"
+      register: rxpower
+
+    - name: match Alarm
+      pattern_match:
+        regex: '(^\S{2}\d+/\d/\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)\s*(\d+\.\d+)*\s*(-?\d+\.\d+)\s*(-?\d+\.\d+)*\s*([-\+]*)$'
+        content: "{{ item }}"
+      register: alarm
+
+  loop: "{{ context }}"
+  register: values
+
+- name: template interface values
+  loop: "{{ values }}"
+  register: transceiver
+  export: yes
+  export_as: dict
+  extend: cisco_ios
+  json_template:
+    template:
+      - key: "{{ item.transceiver.matches.0 | expand_interface_name}}"
+        object:
+          - key: temperature
+            value: "{{ item.temperature.matches.1 }}"
+          - key: voltage
+            value: "{{ item.voltage.matches.2 }}"
+          - key: tx
+            value: "{{ item.txpower.matches.4 }}"
+          - key: rx
+            value: "{{ item.rxpower.matches.5 }}"
+          - key: alarm
+            value: "{{ item.rxpower.matches.6 }}"

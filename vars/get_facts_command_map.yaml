@@ -28,6 +28,12 @@
     - default
     - interfaces
 
+- command: show interface transceiver
+  parser: show_interfaces_transceiver.yaml
+  groups:
+    - all
+    - transceiver
+
 - command: show ip bgp summary
   parser: show_ip_bgp_summary.yaml
   groups:
