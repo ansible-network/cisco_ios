@@ -156,6 +156,14 @@ class ActionModule(ActionBase):
                      "depends_map: - name: %s \n version: 2.6.5" \
                      % (dep['name'], dep['name'])
                return (False, msg)
+           # Galaxy might return empty string when meta does not have version
+           # specified
+           if dep['version'] == ''  and depends_dict is None:
+               msg = "could not find min version from meta for dependant role : %s" \
+                     " you can pass this info as depends_map arg e.g." \
+                     "depends_map: - name: %s \n version: 2.6.5" \
+                     % (dep['name'], dep['name'])
+               return (False, msg)
            for in_depends in depends_dict:
                if in_depends['name'] == dep['name']:
                    if in_depends['version'] is None:
