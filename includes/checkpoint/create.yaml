@@ -1,8 +1,8 @@
 ---
-- name: validate ios_config_checkpoint_filename is defined
+- name: validate ios_checkpoint_filename is defined
   fail:
-    msg: "missing required var: ios_config_checkpoint_filename"
-  when: ios_config_checkpoint_filename is undefined
+    msg: "missing required var: ios_checkpoint_filename"
+  when: ios_checkpoint_filename is undefined
 
 - name: get current files on disk
   cli:
@@ -11,8 +11,8 @@
 
 - name: remove old checkpoint file (if necessary)
   cli:
-    command: "delete /force flash:/{{ ios_config_checkpoint_filename }}"
-  when: ios_config_checkpoint_filename in ios_dir_listing.stdout
+    command: "delete /force flash:/{{ ios_checkpoint_filename }}"
+  when: ios_checkpoint_filename in ios_dir_listing.stdout
 
 # copy the current running-config to the local flash disk on the target device.
 # This will be used both for restoring the current config if a failure happens
@@ -21,6 +21,6 @@
 - name: create a checkpoint of the current running-config
   ios_command:
     commands:
-      - command: "copy running-config flash:{{ ios_config_checkpoint_filename }}"
+      - command: "copy running-config flash:{{ ios_checkpoint_filename }}"
         prompt: ["\\? "]
-        answer: "{{ ios_config_checkpoint_filename }}"
+        answer: "{{ ios_checkpoint_filename }}"
