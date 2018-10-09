@@ -1,8 +1,8 @@
 ---
-- name: validate ios_config_checkpoint_filename is defined
+- name: validate ios_checkpoint_filename is defined
   fail:
-    msg: "missing required var: ios_config_checkpoint_filename"
-  when: ios_config_checkpoint_filename is undefined
+    msg: "missing required var: ios_checkpoint_filename"
+  when: ios_checkpoint_filename is undefined
 
 - name: get current files on disk
   cli:
@@ -11,8 +11,8 @@
 
 - name: verify checkpoint file exists
   fail:
-    msg: "missing checkpoint file {{ ios_config_checkpoing_filename }}"
-  when: ios_config_checkpoint_filename not in ios_dir_listing.stdout
+    msg: "missing checkpoint file {{ ios_checkpoing_filename }}"
+  when: ios_checkpoint_filename not in ios_dir_listing.stdout
 
 - name: checkpoint configuration restore pre hook
   include_tasks: "{{ ios_checkpoint_restore_pre_hook }}"
@@ -20,7 +20,7 @@
 
 - name: restore checkpoint configuration
   cli:
-    command: "config replace flash:/{{ ios_config_checkpoint_filename }} force"
+    command: "config replace flash:/{{ ios_checkpoint_filename }} force"
 
 - name: checkpoint configuration restore post hook
   include_tasks: "{{ ios_checkpoint_restore_post_hook }}"
@@ -28,4 +28,4 @@
 
 - name: remove checkpoint file from remote device
   cli:
-    command: "delete /force flash:/{{ ios_config_checkpoint_filename }}"
+    command: "delete /force flash:/{{ ios_checkpoint_filename }}"
