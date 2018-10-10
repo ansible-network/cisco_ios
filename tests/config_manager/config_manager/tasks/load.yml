@@ -1,0 +1,58 @@
+---
+
+- name: Include vars for load function tests
+  include_vars:
+    file: "{{ playbook_dir }}/../vars/load.yml"
+
+- block:
+    - name: cleanup device configs
+      include_role:
+        name:  "{{ config_manager_role }}"
+      vars:
+        ansible_network_provider: "{{ cisco_ios_role }}"
+        function: load
+        config_manager_text: "{{ setup_configs }}"
+        ios_config_rollback_enabled: false
+  ignore_errors: true
+
+- name: load config via text string
+  include_role:
+    name:  "{{ config_manager_role }}"
+  vars:
+    ansible_network_provider: "{{ cisco_ios_role }}"
+    function: load
+    config_manager_text: "{{ config_text_valid }}"
+  register: result
+
+# FIXME: above task does not return changed == true even if there is diff
+- assert:
+    that:
+      -  result.changed == true
+
+- name: load valid configurations into device using config file
+  include_role:
+    name:  "{{ config_manager_role }}"
+  vars:
+    ansible_network_provider: "{{ cisco_ios_role }}"
+    function: load
+    config_manager_file: "{{ config_files_path }}/csr01_config_valid.j2"
+  register: result
+
+# FIXME: above task does not return changed == true even if there is diff
+- assert:
+    that:
+      -  result.changed == true
+
+- name: test rollback in case of wrong config using file
+  include_role:
+    name:  "{{ config_manager_role }}"
+  vars:
+    ansible_network_provider: "{{ cisco_ios_role }}"
+    function: load
+    config_manager_file: "{{ config_files_path }}/csr01_config_error.j2"
+  register: result
+  ignore_errors: true
+
+- assert:
+    that:
+      -  result.failed == true

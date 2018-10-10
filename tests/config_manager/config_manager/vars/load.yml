@@ -1,0 +1,9 @@
+---
+# Vars specific to load test suite
+#
+
+setup_configs: "no interface loopback 100 \n
+                no router ospf 10 "
+
+config_text_valid: "interface loopback 100 \n
+                     description configured by config_manager role"
