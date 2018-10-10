@@ -1,0 +1,12 @@
+---
+- name: get config for verification
+  include_role:
+    name:  "{{ config_manager_role }}"
+  vars:
+    ansible_network_provider: "{{ cisco_ios_role }}"
+    function: get
+  register: result
+
+- assert:
+    that:
+      - routing == false

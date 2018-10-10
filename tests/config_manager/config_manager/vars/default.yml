@@ -1,0 +1,6 @@
+---
+# Vars for test env of ansible-network.cisco_ios role
+
+config_manager_role: "{{ playbook_dir }}/../../../../../ansible-network.config_manager"
+cisco_ios_role: "{{ playbook_dir }}/../../../../../ansible-network.cisco_ios"
+config_files_path: "{{ playbook_dir }}/../templates/"
