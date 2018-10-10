@@ -151,7 +151,7 @@ class ActionModule(ActionBase):
                # Nothing to be done. Use veriosn from meta
                return (True, '')
            if dep['version'] is None and depends_dict is None:
-               msg = "could not find min version from meta for dependant role : %s" \
+               msg = "could not find min version from meta for dependent role : %s" \
                      " you can pass this info as depends_map arg e.g." \
                      "depends_map: - name: %s \n version: 2.6.5" \
                      % (dep['name'], dep['name'])
@@ -159,7 +159,7 @@ class ActionModule(ActionBase):
            # Galaxy might return empty string when meta does not have version
            # specified
            if dep['version'] == ''  and depends_dict is None:
-               msg = "could not find min version from meta for dependant role : %s" \
+               msg = "could not find min version from meta for dependent role : %s" \
                      " you can pass this info as depends_map arg e.g." \
                      "depends_map: - name: %s \n version: 2.6.5" \
                      % (dep['name'], dep['name'])
