@@ -17,3 +17,18 @@
   fail:
     msg: "expected ansible_network to be `network_cli`, got `{{ ansible_connection }}`"
   when: ansible_connection != 'network_cli'
+
+- name: Validate we have required installed version of dependent roles
+  verify_dependent_role_version:
+      role_path: "{{ role_path }}"
+      depends_map:
+        - name: 'ansible-network.network-engine'
+          version: "{{ ios_network_engine_req_ver_override }}"
+  when: ios_dependent_role_check is defined and ios_dependent_role_check
+        and ios_network_engine_req_ver_override is defined
+
+- name: Validate we have required installed version of dependent roles from meta
+  verify_dependent_role_version:
+      role_path: "{{ role_path }}"
+  when: ios_dependent_role_check is defined and ios_dependent_role_check
+        and ios_network_engine_req_ver_override is not defined
