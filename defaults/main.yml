@@ -10,3 +10,5 @@ ios_config_source:
 
 ios_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
 ios_get_facts_subset: "{{ subset | default(['default']) }}"
+ios_dependent_role_check: True
+ios_network_engine_req_ver_override: '2.6.5'
