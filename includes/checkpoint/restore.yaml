@@ -21,6 +21,7 @@
 - name: restore checkpoint configuration
   cli:
     command: "config replace flash:/{{ ios_checkpoint_filename }} force"
+  register: ios_rollback_results
 
 - name: checkpoint configuration restore post hook
   include_tasks: "{{ ios_checkpoint_restore_post_hook }}"
