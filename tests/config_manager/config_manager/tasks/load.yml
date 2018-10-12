@@ -22,12 +22,14 @@
     ansible_network_provider: "{{ cisco_ios_role }}"
     function: load
     config_manager_text: "{{ config_text_valid }}"
-  register: result
 
-# FIXME: above task does not return changed == true even if there is diff
 - assert:
     that:
-      -  result.changed == true
+      - "'No changes were found' not in ios_config_diff.stdout"
+
+- name: set config_manager_text with all valid config to induce change in running-config
+  set_fact:
+    config_valid: "{{lookup('file', config_files_path + '/csr01_config_valid.j2')}}"
 
 - name: load valid configurations into device using config file
   include_role:
@@ -35,24 +37,26 @@
   vars:
     ansible_network_provider: "{{ cisco_ios_role }}"
     function: load
-    config_manager_file: "{{ config_files_path }}/csr01_config_valid.j2"
-  register: result
-
-# FIXME: above task does not return changed == true even if there is diff
-- assert:
-    that:
-      -  result.changed == true
-
-- name: test rollback in case of wrong config using file
-  include_role:
-    name:  "{{ config_manager_role }}"
-  vars:
-    ansible_network_provider: "{{ cisco_ios_role }}"
-    function: load
-    config_manager_file: "{{ config_files_path }}/csr01_config_error.j2"
-  register: result
-  ignore_errors: true
+    config_manager_text: "{{ config_valid }}"
 
 - assert:
     that:
-      -  result.failed == true
+      - "'No changes were found' not in ios_config_diff.stdout"
+
+- name: set config_manager_text from lookup of a file with few invalid configs to test rollback
+  set_fact:
+    config_with_errors: "{{lookup('file', config_files_path + '/csr01_config_error.j2')}}"
+
+- block: 
+    - name: test rollback in case of wrong config using file
+      include_role:
+        name:  "{{ config_manager_role }}"
+      vars:
+        ansible_network_provider: "{{ cisco_ios_role }}"
+        function: load
+        config_manager_text: "{{ config_with_errors }}"
+      register: result
+  rescue:
+    - assert:
+        that:
+          - "'Rollback Done' in ios_rollback_results.stdout"
