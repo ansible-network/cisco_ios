@@ -20,7 +20,7 @@ short_description: Manage an aggregate of users in IOS device(s)
 description:
     - Allows the `cisco_ios` provider role to manage aggregate of users
       by providing idempotency and other utility functions while running
-      the `configure_user` task 
+      the `configure_user` task
 version_added: "2.7"
 options:
   new_users:
@@ -29,7 +29,7 @@ options:
     required: true
   user_config:
     description:
-      - User config lines extracted from the devices' running-configuration 
+      - User config lines extracted from the devices' running-configuration
     required: true
 author:
   - Nilashish Chakraborty (@NilashishC)
@@ -39,7 +39,7 @@ stdout:
   description: Filtered set of users that should be configured on the device
   returned: always apart from low-level errors (such as action plugin)
   type: list
-  sample: [{"name": "ansible", "privilege": 15}, {"name": "test_user", "privilege": 15, "view": "sh_int"}]  
+  sample: [{"name": "ansible", "privilege": 15}, {"name": "test_user", "privilege": 15, "view": "sh_int"}]
 """
 EXAMPLES = '''
 - ios_user_manager:
