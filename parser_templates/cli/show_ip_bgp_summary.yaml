@@ -75,3 +75,5 @@
             value: "{{ item.timer }}"
           - key: ip_version
             value: "{{ item.version }}"
+          - key: bgp_version
+            value: "{{ item.version }}"
