@@ -2,6 +2,19 @@
 cisco_ios
 ===============================
 
+.. _cisco_ios_v2.6.2:
+
+v2.6.2
+======
+
+.. _cisco_ios_v2.6.2_New Features
+
+New Features
+------------
+
+- NEW Added CPF and Fiber Optic DOM parser
+- NEW Added dependency role plugin check
+
 .. _cisco_ios_v2.6.1:
 
 v2.6.1
