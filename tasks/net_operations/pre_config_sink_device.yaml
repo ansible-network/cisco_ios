@@ -1,0 +1,29 @@
+---
+# IOS providrs for configuring sink before starting traffic test
+
+- name : Configure an access list for catch-all permit
+  ios_config:
+    lines:
+      - permit ip any any log
+    parents: ip access-list extended ansible_sink
+    before: no ip access-list extended ansible_sink
+  register: result
+
+- name: Attach ACl to sink interface
+  ios_config:
+    lines:
+      - ip access-group ansible_sink in
+    parents: interface {{ sink_capture_interface }}
+
+- name: Configure Access-list log update interval (1 msec)
+  ios_config:
+    lines:
+      - ip access-list logging interval 1 
+
+- name: Clear the logs
+  ios_command:
+    commands:
+      - command: 'clear logging'
+        prompt: 'Clear logging buffer'
+        answer: "\r\n"
+  ignore_errors: true
