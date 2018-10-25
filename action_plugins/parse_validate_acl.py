@@ -22,6 +22,9 @@ import os
 import time
 import re
 import hashlib
+import netaddr
+import json
+import socket
 
 from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.connection import Connection
@@ -73,26 +76,18 @@ class ActionModule(ActionBase):
         pd_json = self._parse_acl_with_textfsm(parser_file,
                                     show_acl_output_buffer)
         try:
-            changed = self._write_packet_dict(dest, pd_json) 
+            changed = self._write_packet_dict(dest, pd_json)
         except IOError as exc:
             result['failed'] = True
             result['msg'] = ('Exception received : %s' % exc)
-   
+
         result['changed'] = changed
         if changed:
             result['destination'] = dest
         else:
             result['dest_unchanged'] = dest
-        
-        return result
 
-    def _parse_acl_with_textfsm(self, parser_file, output):
-        import textfsm
-        tmp = open(parser_file)
-        re_table = textfsm.TextFSM(tmp)
-        results = re_table.ParseText(output)
-        print (results)
-        return results
+        return result
 
     def _create_packet_dict(self, cmd_out):
         import warnings
@@ -183,4 +178,93 @@ class ActionModule(ActionBase):
         except IOError as ioexc:
             raise IOError(ioexc)
 
-        return (True) 
+        return (True)
+
+    def _parse_acl_with_textfsm(self, parser_file, output):
+        import textfsm
+        tmp = open(parser_file)
+        re_table = textfsm.TextFSM(tmp)
+        results = re_table.ParseText(output)
+        fsm_results = []
+        for item in results:
+            facts = {}
+            facts.update(dict(zip(re_table.header, item)))
+            fsm_results.append(facts)
+
+        pd = []
+        parsed_acl = []
+        # Convert dictionary of terms into flows dictionary
+        for term in fsm_results:
+            pd_it = {}
+            original_terms = {}
+            for k,v in term.items():
+                if k == 'LINE_NUM' and v == '':
+                    # Empty line with just name
+                    continue
+                elif k == 'LINE_NUM' and v != '':
+                    pd_it["service_line_index"] = v
+                    original_terms["service_line_index"] = v
+                if k == 'PROTOCOL' and v != '':
+                    pd_it["proto"] = v
+                    original_terms['proto'] = v
+                if k == 'ACTION' and v != '':
+                    pd_it["action"] = v
+                    original_terms['action'] = v
+                if k == 'SRC_NETWORK' and v != '':
+                    if 'SRC_WILDCARD' in term:
+                        src_mask = term['SRC_WILDCARD']
+                        src_invert_mask = sum([bin(255 - int(x)).count("1") for x in
+                             src_mask.split(".")])
+                    else:
+                        src_invert_mask = '32'
+                    cidr = "%s/%s" %(v, src_invert_mask)
+                    src_ip = netaddr.IPNetwork(cidr)
+                    size_subnet = src_ip.size
+                    host_index = int(size_subnet/2)
+                    pd_it['src'] = str(src_ip[host_index])
+                    original_terms['src'] = src_ip
+                if k == 'SRC_ANY' and v != '':
+                    pd_it['src'] = "any"
+                    original_terms['src'] = netaddr.IPNetwork('0.0.0.0/0')
+                if k == 'SRC_HOST' and v != '':
+                    pd_it['src'] = v
+                    original_terms['src'] = v
+                if k == 'SRC_PORT' and v != '':
+                    if not v[0].isdigit():
+                        v = str(socket.getservbyname(v))
+                    pd_it['src_port'] = v
+                    original_terms['src_port'] = v
+                if k == 'DST_NETWORK' and v != '':
+                    if 'DST_WILDCARD' in term:
+                        dst_mask = term['DST_WILDCARD']
+                        dst_invert_mask = sum([bin(255 - int(x)).count("1") for x in
+                             dst_mask.split(".")])
+                    else:
+                        dst_invert_mask = '32'
+                    d_cidr = "%s/%s" %(v, dst_invert_mask)
+                    dst_ip = netaddr.IPNetwork(d_cidr)
+                    d_size_subnet = dst_ip.size
+                    d_host_index = int(d_size_subnet/2)
+                    pd_it['dst'] = str(dst_ip[d_host_index])
+                    original_terms['dst'] = dst_ip
+                if k == 'DST_ANY' and v != '':
+                    pd_it['dst'] = "any"
+                    original_terms['dst'] = netaddr.IPNetwork('0.0.0.0/0')
+                if k == 'DST_HOST' and v != '':
+                    pd_it['dst'] = v
+                    original_terms['dst'] = v
+                if k == 'DST_PORT' and v != '':
+                    if not v[0].isdigit():
+                        v = str(socket.getservbyname(v))
+                    pd_it['dst_port'] = v
+                    original_terms['dst_port'] = v
+
+            if pd_it:
+                pd.append(pd_it)
+            if original_terms:
+                parsed_acl.append(original_terms)
+
+        # Store parsed acl on this object for later processing
+        self._parsed_acl = parsed_acl
+        return json.dumps(pd, indent=4)
+
