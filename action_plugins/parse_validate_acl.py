@@ -63,8 +63,6 @@ class ActionModule(ActionBase):
             return {'failed': True, 'msg': 'missing required argument: %s' % exc}
 
         generated_flow_file = unfrackpath(generated_flow_file)
-        if not os.path.exists(generated_flow_file):
-            return {'failed': True, 'msg': 'path: %s does not exist.' % generated_flow_file}
         dest = generated_flow_file
 
         parser = unfrackpath(parser)
