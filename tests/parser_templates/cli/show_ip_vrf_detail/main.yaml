@@ -3,7 +3,7 @@
 - name: parse 12.2(33)SXH5 - `show ip vrf detail`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_vrf_detail/12.2(33)SXH5.txt') }}"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_ip_vrf_detail/12.2(33)SXH5.txt') }}"
   register: result
 
 - name: test 12.2(33)SXH5 - `show ip vrf detail`
@@ -36,7 +36,7 @@
 - name: parse 03.14.00.S - `show ip vrf detail`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_vrf_detail.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/output/cli/show_ip_vrf_detail/03.14.00.S.txt') }}"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_ip_vrf_detail/03.14.00.S.txt') }}"
   register: result
 
 - name: test `03.14.00.S - show ip vrf detail`

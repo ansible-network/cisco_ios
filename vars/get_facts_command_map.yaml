@@ -20,6 +20,7 @@
   groups:
     - all
     - default
+    - version
 
 - command: show interface
   parser: show_interfaces.yaml
