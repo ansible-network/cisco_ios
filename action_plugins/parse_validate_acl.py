@@ -237,10 +237,10 @@ class ActionModule(ActionBase):
                              dst_mask.split(".")])
                     else:
                         dst_invert_mask = '32'
-                    d_cidr = "%s/%s" %(v, dst_invert_mask)
+                    d_cidr = "%s/%s" % (v, dst_invert_mask)
                     dst_ip = netaddr.IPNetwork(d_cidr)
                     d_size_subnet = dst_ip.size
-                    d_host_index = int(d_size_subnet/2)
+                    d_host_index = int(d_size_subnet / 2)
                     pd_it['dst'] = str(dst_ip[d_host_index])
                     original_terms['dst'] = dst_ip
                 if k == 'DST_ANY' and v != '':
