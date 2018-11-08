@@ -70,7 +70,6 @@ class ActionModule(ActionBase):
             return {'failed': True, 'msg': 'path: %s does not exist.' % parser}
         parser_file = parser
 
-        #pd_json = self._create_packet_dict(out)
         pd_json = self._parse_acl_with_textfsm(parser_file,
                                     show_acl_output_buffer)
         try:
@@ -115,14 +114,14 @@ class ActionModule(ActionBase):
                             v = netaddr.IPNetwork(str(m))
                             # Return the host in middle of subnet
                             size_subnet = v.size
-                            host_index = int(size_subnet/2)
+                            host_index = int(size_subnet / 2)
                             pd_it["src"] = str(v[host_index])
                     if key == 'destination-address':
                         for m in match["destination-address"]:
                             v = netaddr.IPNetwork(str(m))
                             # Return the host in middle of subnet
                             size_subnet = v.size
-                            host_index = int(size_subnet/2)
+                            host_index = int(size_subnet / 2)
                             pd_it["dst"] = str(v[host_index])
                     if key == 'protocol':
                         for m in match['protocol']:
@@ -139,12 +138,11 @@ class ActionModule(ActionBase):
                     pd_it["action"] = act
 
             if pd_it is not None:
-                if not "dst" in pd_it:
+                if "dst" not in pd_it:
                     pd_it["dst"] = "any"
-                if not "src" in pd_it:
+                if "src" not in pd_it:
                     pd_it["src"] = "any"
                 pd_it["service_line_index"] = str(index)
-    #+ '-' + str(uuid.uuid4())[:8]
                 pd.append(pd_it)
 
         return json.dumps(pd, indent=4)
@@ -195,7 +193,7 @@ class ActionModule(ActionBase):
         for term in fsm_results:
             pd_it = {}
             original_terms = {}
-            for k,v in term.items():
+            for k, v in term.items():
                 if k == 'LINE_NUM' and v == '':
                     # Empty line with just name
                     continue
@@ -215,10 +213,10 @@ class ActionModule(ActionBase):
                              src_mask.split(".")])
                     else:
                         src_invert_mask = '32'
-                    cidr = "%s/%s" %(v, src_invert_mask)
+                    cidr = "%s/%s" % (v, src_invert_mask)
                     src_ip = netaddr.IPNetwork(cidr)
                     size_subnet = src_ip.size
-                    host_index = int(size_subnet/2)
+                    host_index = int(size_subnet / 2)
                     pd_it['src'] = str(src_ip[host_index])
                     original_terms['src'] = src_ip
                 if k == 'SRC_ANY' and v != '':
@@ -265,4 +263,3 @@ class ActionModule(ActionBase):
         # Store parsed acl on this object for later processing
         self._parsed_acl = parsed_acl
         return json.dumps(pd, indent=4)
-
