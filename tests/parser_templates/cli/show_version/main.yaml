@@ -5,10 +5,7 @@
 - name: 03.14.00.S.txt - parse `show version`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_version.yaml"
-    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_version/03.14.00.S.txt') }}"
-
-- debug:
-    msg: "{{ system }}"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_version/15.5_1_S.txt') }}"
 
 - name: 03.14.00.S.txt - test `show version` parser
   assert:
@@ -16,8 +13,10 @@
       - system.uptime == '21 weeks, 23 hours, 27 minutes'
       - system.uptime_split.years == 0
       - system.uptime_split.weeks == 21
+      - system.uptime_split.days == 0
       - system.uptime_split.hours == 23
       - system.uptime_split.minutes == 27
+      - system.version == '15.5(1)S'
 
 ### Done
 

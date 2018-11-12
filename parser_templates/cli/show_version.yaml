@@ -7,7 +7,7 @@
 
 - name: match softare version
   pattern_match:
-    regex: ", Version (\\S+),"
+    regex: "Cisco IOS Software,.*, Version (\\S+),"
   register: version
 
 - name: match model
@@ -39,6 +39,11 @@
   pattern_match:
     regex: "(\\d+) weeks,"
   register: uptime_weeks
+
+- name: match uptime days
+  pattern_match:
+    regex: "(\\d+) days,"
+  register: uptime_days
 
 - name: match uptime hours
   pattern_match:
@@ -74,6 +79,8 @@
             value: "{{ uptime_years.matches.0 | default(0) }}"
           - key: weeks
             value: "{{ uptime_weeks.matches.0 | default(0) }}"
+          - key: days
+            value: "{{ uptime_days.matches.0 | default(0) }}"
           - key: hours
             value: "{{ uptime_hours.matches.0 | default(0) }}"
           - key: minutes
