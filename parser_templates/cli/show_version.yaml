@@ -7,7 +7,7 @@
 
 - name: match softare version
   pattern_match:
-    regex: "Cisco IOS Software,.*, Version (\\S+),"
+    regex: "Cisco IOS Software.*, Version (\\S+),"
   register: version
 
 - name: match model
