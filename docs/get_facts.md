@@ -29,7 +29,7 @@ top level key.
 
 By default all available facts will be returned by the `get_facts` function.
 If you only want to return a subset of the facts, you can specify the `subset`
-variable and set one or more sub keys to return.  
+variable as a list of keys to return. 
 
 For instance, the below will return only `interfaces` and `system` facts.
 
@@ -40,7 +40,6 @@ For instance, the below will return only `interfaces` and `system` facts.
     - name ansible-network.cisco_ios
       function: get_facts
       subset: 
-        - interfaces
         - system
 ```
 
