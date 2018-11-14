@@ -1,0 +1,14 @@
+---
+# IOS providrs for handling acl parsing
+#
+- name: get output of command 'show ip access-list <id>'
+  cli_command:
+    command: show ip access-lists {{ acl_id }}
+  register: acl_out_buffer
+
+
+- name : parse acl and validate. create flow info if acl does not have any discrepancy
+  parse_validate_acl:
+      show_acl_output_buffer: "{{ acl_out_buffer.stdout }}"
+      parser: "{{ role_path }}/parser_templates/net_operations/show_ip_access_list.yaml"
+      generated_flow_file: "{{ generated_flow_file }}"
