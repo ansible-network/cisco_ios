@@ -40,7 +40,7 @@
 
 - name: "fetch template for configuring user(s)"
   set_fact:
-    config_manager_file: 'configure_user.j2'
+    config_manager_text: "{{ lookup('config_template', 'configure_user.j2') }}"
   when: users
   delegate_to: localhost
 
