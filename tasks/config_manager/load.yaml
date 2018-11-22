@@ -27,7 +27,7 @@
   block:
     - name: replace current active configuration
       include_tasks: "{{ role_path }}/includes/configure/replace.yaml"
-      when: config_manager_replace
+      when: config_manager_replace and config_manager_replace == 'True'
       vars:
         ios_config_text: "{{ config_manager_text }}"
 
