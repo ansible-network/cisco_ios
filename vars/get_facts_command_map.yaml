@@ -9,7 +9,7 @@
 #   * command - the cli command to execute on the target device
 #   * parser - the filename of the parser relative to parse_templates/cli
 #   * engine - one of `command_parser` (default) or `textfsm_parser`
-#   * name - name of dictionary key to store new ansible_facts, only relevant for `textfsm_parer` engine
+#   * name - name of dictionary key to store new ansible_facts, only relevant for `textfsm_parser` engine
 #   * groups - a list of one or more groups the commadn belongs to
 #   * pre_hook - path to the set of tasks to execute before running the command
 #   * post_hook - path to the set of tasks to execute after running the command
