@@ -13,6 +13,7 @@
     ios_command: "{{ item.command }}"
     ios_parser: "cli/{{ item.parser }}"
     ios_parser_engine: "{{ item.engine | default('command_parser') }}"
+    ios_facts_key: "{{ item.name | default(None) }}"
     ios_run_cli_command_pre_hook: "{{ item.pre_hook | default(None) }}"
     ios_run_cli_command_post_hook: "{{ item.post_hook | default(None) }}"
   loop: "{{ lookup('file', ios_get_facts_command_map) | from_yaml }}"
