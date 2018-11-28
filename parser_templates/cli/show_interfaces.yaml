@@ -7,7 +7,7 @@
 
 - name: match sections
   pattern_match:
-    regex: "^\\S+ is up,"
+    regex: "^\\S+ is (up|down|administratively down),"
     match_all: yes
     match_greedy: yes
   register: context
