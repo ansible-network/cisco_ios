@@ -295,7 +295,6 @@ commands:
     - router bgp 500
     - neighbor 182.168.10.1 remote-as 500
 """
-
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.network.ios.ios import get_config, load_config
 from ansible.module_utils.cisco_ios.config.bgp import get_bgp_as
