@@ -26,8 +26,8 @@
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 from ansible.module_utils.network.common.utils import to_list
-from ansible.module_utils.network.ios.config import ConfigBase
-from ansible.module_utils.network.ios.config.bgp.timer import BgpTimer
+from ansible.module_utils.cisco_ios.config import ConfigBase
+from ansible.module_utils.cisco_ios.config.bgp.timer import BgpTimer
 
 
 class BgpNeighbor(ConfigBase):

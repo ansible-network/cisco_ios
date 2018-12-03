@@ -298,8 +298,8 @@ commands:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.network.ios.ios import get_config, load_config
-from ansible.module_utils.network.ios.config.bgp import get_bgp_as
-from ansible.module_utils.network.ios.config.bgp.process import BgpProcess
+from ansible.module_utils.cisco_ios.config.bgp import get_bgp_as
+from ansible.module_utils.cisco_ios.config.bgp.process import BgpProcess
 from ansible.module_utils.network.ios.ios import ios_argument_spec
 
 

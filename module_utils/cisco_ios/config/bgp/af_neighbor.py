@@ -26,13 +26,13 @@
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 from ansible.module_utils.network.common.utils import to_list
-from ansible.module_utils.network.ios.config.bgp.neighbor import BgpNeighbor
+from ansible.module_utils.cisco_ios.config.bgp.neighbor import BgpNeighbor
 
 
 class BgpAFNeighbor(BgpNeighbor):
 
     argument_spec = {
-        'activate': dict(type='bool')
+        'activate': dict(type='bool'),
         'remove_private_as': dict(type='bool'),
         'route_map': dict(),
         'route_map_dir': dict(choices=['in', 'out'], default='in'),
