@@ -1,0 +1,33 @@
+
+- name: 03.16.08.S.txt - parse `show interfaces`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_interfaces.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_interfaces/03.16.08.S.txt') }}"
+  register: result
+
+- name: 03.16.08.S.txt - test `show interfaces` parser
+  assert:
+    that:
+      - "'GigabitEthernet0' in interfaces"
+      - "'GigabitEthernet0/0/1' in interfaces"
+      - "'GigabitEthernet0/0/3.2001' in interfaces"
+      - "'GigabitEthernet0/0/5' in interfaces"
+      - "'Tunnel0' in interfaces"
+      - "'Virtual-Access1' in interfaces"
+      - interfaces['GigabitEthernet0']['admin-status'] == 'enabled'
+      - interfaces['GigabitEthernet0/0/1']['admin-status'] == 'enabled'
+      - interfaces['Tunnel0']['admin-status'] == 'enabled'
+      - interfaces['Tunnel0']['oper-status'] == 'down'
+      - interfaces['GigabitEthernet0']['counters']['in-broadcast-pkts'] == '4891144'
+      - interfaces['GigabitEthernet0']['counters']['in-multicast-pkts'] == None
+      - interfaces['Virtual-Access1']['mtu'] == '1500'
+      - interfaces['Tunnel2']['description'] == 'tunnel for gloabl routing for SJC'
+      - interfaces['GigabitEthernet0/0/5']['type'] == '6XGE-BUILT-IN'
+      - interfaces['Tunnel0']['type'] == 'Tunnel'
+      - "{{ interfaces|length == 14 }}"
+
+### Done
+
+- name: all tests complete
+  debug:
+    msg: "All tests for `show interfaces` passed"

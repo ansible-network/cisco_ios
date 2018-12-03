@@ -22,7 +22,7 @@
 
     - name: match hardware
       pattern_match:
-        regex: "Hardware is (\\S+)"
+        regex: "Hardware is (.*(?=,)|.*(?=\\r))"
         content: "{{ item }}"
       register: type
 
@@ -34,7 +34,7 @@
 
     - name: match interface description
       pattern_match:
-        regex: "Description: (.+)"
+        regex: "Description: (.+(?=\\r))"
         content: "{{ item }}"
       register: description
 
