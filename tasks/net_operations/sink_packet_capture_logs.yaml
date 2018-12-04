@@ -1,0 +1,29 @@
+---
+# IOS providrs for handling packet dict generation
+#
+- name: Delay 10 seconds for log file to be updated
+  wait_for: timeout=10
+
+- name : Get logs from device
+  ios_command:
+      commands: "show logging"
+  register: result
+
+- name: write logs to disk
+  copy: content="{{ result.stdout[0] }}" dest='/tmp/ansible_acl_logs.txt'
+
+- name: parse logs file with help of textfsm
+  textfsm_parser:
+    content: "{{ lookup('file', '/tmp/ansible_acl_logs.txt') }}"
+    file: "{{role_path }}/parser_templates/net_operations/show_logs_acl_logs.yaml"
+    name: flows_dict
+  register: result
+  tags: textfsm
+
+- name: write parsed packets info to disk
+  copy: content="{{ result.ansible_facts.flows_dict | to_nice_json }}" dest="{{ sink_path_flow_output }}"
+
+- debug:
+    msg: "{{ result }}"
+  tags: debug
+

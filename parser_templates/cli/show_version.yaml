@@ -7,7 +7,7 @@
 
 - name: match softare version
   pattern_match:
-    regex: ", Version (\\S+),"
+    regex: "Cisco IOS Software.*, Version (\\S+),"
   register: version
 
 - name: match model
@@ -30,6 +30,31 @@
     regex: "uptime is (.+)"
   register: uptime
 
+- name: match uptime years
+  pattern_match:
+    regex: "uptime is (\\d+) years,"
+  register: uptime_years
+
+- name: match uptime weeks
+  pattern_match:
+    regex: "(\\d+) weeks,"
+  register: uptime_weeks
+
+- name: match uptime days
+  pattern_match:
+    regex: "(\\d+) days,"
+  register: uptime_days
+
+- name: match uptime hours
+  pattern_match:
+    regex: "(\\d+) hours,"
+  register: uptime_hours
+
+- name: match uptime minutes
+  pattern_match:
+    regex: "(\\d+) minutes"
+  register: uptime_minutes
+
 - name: match configuration register
   pattern_match:
     regex: "register is (.+)"
@@ -48,6 +73,18 @@
         value: "{{ model.matches.0 }}"
       - key: uptime
         value: "{{ uptime.matches.0 }}"
+      - key: uptime_split
+        object:
+          - key: years
+            value: "{{ uptime_years.matches.0 | default(0) }}"
+          - key: weeks
+            value: "{{ uptime_weeks.matches.0 | default(0) }}"
+          - key: days
+            value: "{{ uptime_days.matches.0 | default(0) }}"
+          - key: hours
+            value: "{{ uptime_hours.matches.0 | default(0) }}"
+          - key: minutes
+            value: "{{ uptime_minutes.matches.0 | default(0) }}"
       - key: configuration_register
         value: "{{ confreg.matches.0 }}"
   register: system

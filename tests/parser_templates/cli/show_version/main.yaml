@@ -1,0 +1,43 @@
+---
+
+### IOS-XE 15.5.1
+
+- name: 15.5.1.txt - parse `show version`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_version.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_version/15.5.1.txt') }}"
+
+- name: 15.5.1.txt - test `show version` parser
+  assert:
+    that:
+      - system.uptime == '21 weeks, 23 hours, 27 minutes'
+      - system.uptime_split.years == 0
+      - system.uptime_split.weeks == 21
+      - system.uptime_split.days == 0
+      - system.uptime_split.hours == 23
+      - system.uptime_split.minutes == 27
+      - system.version == '15.5(1)S'
+
+### IOS-XE 16.6.4
+
+- name: 16.6.4.txt - parse `show version`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_version.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_version/16.6.4.txt') }}"
+
+- name: 16.6.4.txt - test `show version` parser
+  assert:
+    that:
+      - system.uptime == '6 days, 2 hours, 23 minutes'
+      - system.uptime_split.years == 0
+      - system.uptime_split.weeks == 0
+      - system.uptime_split.days == 6
+      - system.uptime_split.hours == 2
+      - system.uptime_split.minutes == 23
+      - system.version == '16.6.4'
+
+### Done
+
+- name: all tests complete
+  debug:
+    msg: "All tests for `show version` passed"

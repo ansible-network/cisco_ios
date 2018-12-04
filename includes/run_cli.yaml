@@ -8,6 +8,7 @@
     command: "{{ ios_command }}"
     parser: "{{ parser }}"
     engine: "{{ ios_parser_engine | default(None) }}"
+    name: "{{ ios_name | default(None) }} "
   with_first_found:
     - files:
         - "{{ ios_parser }}"

@@ -1,0 +1,9 @@
+Value src (\d+.\d+.\d+.\d+)
+Value dst (\d+.\d+.\d+.\d+)
+Value proto (\S+)
+Value src_port (\d+)
+Value dst_port (\d+)
+Value num_packets (\d+)
+
+Start
+  ^.*permitted ${proto} ${src}\(${src_port}\)(?:\s|-|>)*${dst}\(${dst_port}\), ${num_packets} packet.* -> Record

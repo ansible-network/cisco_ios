@@ -2,6 +2,26 @@
 cisco_ios
 ===============================
 
+.. _cisco_ios_v2.6.3:
+
+v2.6.3
+======
+
+.. _cisco_ios_v2.6.3_New Features
+
+New Features
+------------
+
+- NEW provider tasks and parsers for net_operations role
+
+.. _cisco_ios_v2.6.3_Bugfixes:
+
+Bugfixes
+--------
+
+- configure_user task should use config_manager_file instead of config_manager_text
+- uptime facts from cisco IOS has separate keys for year, week, days hours and time
+
 .. _cisco_ios_v2.6.2:
 
 v2.6.2
