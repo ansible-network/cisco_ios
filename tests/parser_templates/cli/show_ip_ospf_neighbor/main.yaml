@@ -27,12 +27,12 @@
 - name: 15.4(3r)M1.txt - test `show ip ospf neighbor` parser
   assert:
     that:
-      - "'ansi06a1.redhat' in cisco_ios.ospf['neighbors']"
-      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['address'] == '130.200.191.21'
-      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['state'] == 'FULL'
-      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['role'] == '-'
-      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['timer'] == '00:00:37'
-      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['interface'] == 'Tunnel821'
+      - "'130.200.191.21' in cisco_ios.ospf['neighbors']"
+      - cisco_ios.ospf['neighbors']['130.200.191.21']['neighbor_id'] == 'ansi06a1.redhat'
+      - cisco_ios.ospf['neighbors']['130.200.191.21']['state'] == 'FULL'
+      - cisco_ios.ospf['neighbors']['130.200.191.21']['role'] == '-'
+      - cisco_ios.ospf['neighbors']['130.200.191.21']['timer'] == '00:00:37'
+      - cisco_ios.ospf['neighbors']['130.200.191.21']['interface'] == 'Tunnel821'
 
 ### Done
 

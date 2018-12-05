@@ -65,10 +65,10 @@
   when: process_state == 'active'
   json_template:
     template:
-      - key: "{{ item.neighbor }}"
+      - key: "{{ item.ip }}"
         object:
-          - key: address
-            value: "{{ item.ip | trim }}"
+          - key: neighbor_id
+            value: "{{ item.neighbor | trim }}"
           - key: state
             value: "{{ item.state | trim }}"
           - key: role
