@@ -1,0 +1,5 @@
+
+Neighbor ID     Pri   State           Dead Time   Address         Interface
+ansi06a1.redhat   0   FULL/  -        00:00:37    130.200.191.21   Tunnel821
+ansi07a2.redhat   0   FULL/  -        00:00:32    25.131.8.25   Tunnel825
+rdurtr03ab.ansi   0   FULL/  -        00:00:36    191.11.131.5    Tunnel85
