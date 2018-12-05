@@ -1,0 +1,41 @@
+---
+
+### OSPF not active
+
+- name: not active - parse `show ip ospf neighbor`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_ospf_neighbor.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_ip_ospf_neighbor/ospf_not_active.txt') }}"
+  register: result
+
+- name: not active - test `show ip ospf neighbor` parser
+  assert:
+    that:
+      - cisco_ios.ospf['process_state'] == 'not active'
+
+- name: clear facts
+  meta: clear_facts
+
+### IOS 15.4(3r)M1.txt
+
+- name: 15.4(3r)M1.txt - parse `show ip ospf neighbor`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_ospf_neighbor.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_ip_ospf_neighbor/15.4(3r)M1.txt') }}"
+  register: result
+
+- name: 15.4(3r)M1.txt - test `show ip ospf neighbor` parser
+  assert:
+    that:
+      - "'ansi06a1.redhat' in cisco_ios.ospf['neighbors']"
+      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['address'] == '130.200.191.21'
+      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['state'] == 'FULL'
+      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['role'] == '-'
+      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['timer'] == '00:00:37'
+      - cisco_ios.ospf['neighbors']['ansi06a1.redhat']['interface'] == 'Tunnel821'
+
+### Done
+
+- name: all tests complete
+  debug:
+    msg: "All tests for `show ip ospf summary` passed"

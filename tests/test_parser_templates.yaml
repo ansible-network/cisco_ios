@@ -8,6 +8,7 @@
 
   tasks:
 
+<<<<<<< HEAD
     - name: Include tests for `show interfaces`
       include_tasks: parser_templates/cli/show_interfaces/main.yaml
       vars:
@@ -17,13 +18,24 @@
       include_tasks: parser_templates/cli/show_ip_bgp_summary/main.yaml
       vars:
         bgp: "{{ cisco_ios['vrf']['DEFAULT']['protocols']['bgp'] }}"
+=======
+    #- name: Include tests for `show ip bgp summary`
+    #  include_tasks: parser_templates/cli/show_ip_bgp_summary/main.yaml
+    #  vars:
+    #    bgp: "{{ cisco_ios['vrf']['DEFAULT']['protocols']['bgp'] }}"
+>>>>>>> add ospf parser
 
-    - name: Include tests for `show ip vrf detail`
-      include_tasks: parser_templates/cli/show_ip_vrf_detail/main.yaml
-      vars:
-        vrfs: "{{ cisco_ios['vrf'] }}"
+    #- name: Include tests for `show ip vrf detail`
+    #  include_tasks: parser_templates/cli/show_ip_vrf_detail/main.yaml
+    #  vars:
+    #    vrfs: "{{ cisco_ios['vrf'] }}"
 
-    - name: Include tests for `show version`
-      include_tasks: parser_templates/cli/show_version/main.yaml
+    - name: Include tests for `show ip ospf neighbor`
+      include_tasks: parser_templates/cli/show_ip_ospf_neighbor/main.yaml
       vars:
-        system: "{{ cisco_ios['system'] }}"
+        system: "{{ cisco_ios['vrf']['DEFAULT']['protocols']['ospf'] }}"
+
+    #- name: Include tests for `show version`
+    #  include_tasks: parser_templates/cli/show_version/main.yaml
+    #  vars:
+    #    system: "{{ cisco_ios['system'] }}"
