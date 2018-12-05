@@ -42,7 +42,7 @@
   register: matched_neighbors
   loop: "{{ lines }}"
   pattern_match:
-    regex: "(?P<neighbor>^[0-9a-z.]+)\\s+(?P<pri>\\d)\\s+(?P<state>([A-Z]|.)+)/(?P<role>([A-Z]|.)+)\\s(?P<timer>[0-9][0-9]:[0-5][0-9]:[0-5][0-9])\\s(?P<ip>.+\\s)\\s(?P<interface>.+)"
+    regex: "(?P<neighbor>^[0-9a-z.]+)\\s+(?P<pri>\\d)\\s+(?P<state>([A-Z]|.)+)/(?P<role>([A-Z]|.)+)\\s(?P<timer>[0-9][0-9]:[0-5][0-9]:[0-5][0-9])\\s(?P<ip>.+\\s)(?P<interface>[A-Z].+)"
     content: "{{ item }}"
   when: process_state == 'active'
 
