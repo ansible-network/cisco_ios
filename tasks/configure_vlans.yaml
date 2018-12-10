@@ -1,0 +1,47 @@
+---
+- name: "check for required fact - interface"
+  fail:
+    msg: "missing required fact: Interface"
+  with_items: "{{ vlans }}"
+  when: ( vlan.interface is not defined )
+  loop_control:
+    loop_var: vlan
+  delegate_to: localhost
+
+- name: "check for required fact - vlan ID"
+  fail:
+    msg: "missing required fact: Vlan ID"
+  with_items: "{{ vlans }}"
+  when: ( vlan.id is not defined )
+  loop_control:
+    loop_var: vlan
+  delegate_to: localhost
+
+- name: "check if vlan ID is greater than 1"
+  fail:
+    msg: "vlan_id is less than 1 (valid-range: 1-4094)"
+  with_items: "{{ vlans }}"
+  loop_control:
+    loop_var: vlan
+  when:
+    - vlan.id < 1
+  delegate_to: localhost
+
+- name: "check if vlan ID is less than 4094"
+  fail:
+    msg: "vlan_id is greater than 4094 (valid-range: 1-4094)"
+  with_items: "{{ vlans }}"
+  loop_control:
+    loop_var: vlan
+  when:
+    - vlan.id > 4094
+  delegate_to: localhost
+
+- name: "fetch template for configuring vlan(s)"
+  set_fact:
+    config_manager_text: "{{ lookup('config_template', 'configure_vlans.j2') }}"
+  when: vlans
+  delegate_to: localhost
+
+- include_tasks: config_manager/load.yaml
+  when: vlans
