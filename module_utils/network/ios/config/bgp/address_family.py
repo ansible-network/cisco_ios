@@ -116,11 +116,11 @@ class BgpAddressFamily(ConfigBase):
                 commands.append(resp)
         return commands
 
-    def _set_af_neighbors(self, config=None):
+    def _set_neighbors(self, config=None):
         commands = list()
-        for entry in self.af_neighbors:
-            af_nbr = BgpAFNeighbor(**entry)
-            resp = af_nbr.render(config)
+        for entry in self.neighbors:
+            nbr = BgpNeighbor(**entry)
+            resp = nbr.render(config)
             if resp:
                 commands.extend(resp)
         return commands
