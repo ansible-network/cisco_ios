@@ -29,10 +29,11 @@ from ansible.module_utils.network.ios.config import ConfigBase
 
 
 class BgpRedistribute(ConfigBase):
+    PROTOCOLS = ['ospf', 'ospfv3', 'eigrp', 'isis', 'static', 'connected', 'odr', 'lisp', 'mobile', 'rip']
     argument_spec = {
-        'protocol': dict(required=True),
-        'id': dict(type='int'),
-        'metric': dict(),
+        'protocol': dict(choices=PROTOCOLS, required=True),
+        'id': dict(),
+        'metric': dict(type='int'),
         'route_map': dict(),
         'state': dict(choices=['present', 'absent'], default='present')
     }
@@ -42,8 +43,8 @@ class BgpRedistribute(ConfigBase):
     def render(self, config=None):
         cmd = 'redistribute %s' % self.protocol
 
-        if self.id:
-            cmd += ' %s' % str(self.id)
+        if self.id and self.protocol in self.PROTOCOLS[0:4]:
+            cmd += ' %s' % self.id
 
         if self.metric:
             cmd += ' metric %s' % str(self.metric)
