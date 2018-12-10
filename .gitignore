@@ -1,5 +1,6 @@
 # IDE
 .vscode/
+.idea/
 
 # Ansible
 *.log

@@ -35,7 +35,7 @@ notes:
 options:
   bgp_as:
     description:
-      - Specifies the BGP Autonomous System number to configure on the device
+      - Specifies the BGP Autonomous System (AS) number to configure on the device
     type: int
     required: true
   router_id:
@@ -44,7 +44,7 @@ options:
     default: null
   log_neighbor_changes:
     description:
-      - Enable/Disable logging neighbor up/down and reset reason
+      - Enable/disable logging neighbor up/down and reset reason
     type: bool
   neighbors:
     description:
@@ -63,6 +63,10 @@ options:
         description:
           - Specify a neighbor as a route reflector client
         type: bool
+      route_server_client:
+        description:
+          - Specify a neighbor as a route server client
+        type: bool
       update_source:
         description:
           - Source of the routing updates
@@ -79,10 +83,11 @@ options:
       ebgp_multihop:
         description:
           - Specifies the maximum hop count for EBGP neighbors not on directly connected networks
+          - The range is from 0 to 255.
         type: int
       peer_group:
         description:
-          - Name of peer-group of which the neighbor is a member
+          - Name of the peer group that the neighbor is a member of
       timers:
         description:
           - Specifies BGP neighbor timer related configurations
@@ -105,6 +110,36 @@ options:
               - The minimum acceptable hold-time must be less than, or equal to, the interval specified in the holdtime argument.
               - The range is from 0 to 65535.
             type: int
+      activate:
+        description:
+          - Enable the address family for this neighbor
+        type: bool
+      remove_private_as:
+        description:
+          - Remove the private AS number from outbound updates
+        type: bool
+      route_map:
+        description:
+          - Specify the route map to apply to this neighbor
+      route_map_dir:
+        description:
+          - Specify the direction of the route map to be applied
+        choices:
+          - in
+          - out
+        default: in
+      weight:
+        description:
+          - Specify default weight for routes from this neighbor
+        type: int
+      next_hop_self:
+        description:
+          - Enable/disable the next hop calculation for this neighbor
+        type: bool
+      next_hop_unchanged:
+        description:
+          - Enable/disable propagation of next hop unchanged for iBGP paths to this neighbor
+        type: bool
       state:
         description:
           - Specifies the state of the BGP neighbor
@@ -122,10 +157,10 @@ options:
         required: True
       mask:
         description:
-          - Subnet Mask for the Network to announce
+          - Subnet mask for the network to announce
       route_map:
         description:
-          - Route-map to modify the attributes
+          - Route map to modify the attributes
       state:
         description:
           - Specifies the state of network
@@ -188,56 +223,17 @@ options:
             required: True
           mask:
             description:
-              - Subnet Mask for the Network to announce
+              - Subnet mask for the network to announce
           route_map:
             description:
-              - Route-map to modify the attributes
+              - Route map to modify the attributes
           state:
             description:
               - Specifies the state of network
             default: present
             choices:
               - present
-              - absent
-      af_neighbors:
-        description:
-          - Specifies Address Family neighbor related configurations
-          - This option extends the top-level parameter - neighbors 
-        suboptions:
-          activate:
-            description:
-              - Enable the Address Family for this Neighbor
-            type: bool
-          remove_private_as:
-            description:
-              - Remove private AS number from outbound updates
-            type: bool
-          route_map:
-            description:
-              - Specify the route map to apply to this neighbor
-          route_map_dir:
-            description:
-              - Specify the direction of route map to be applied
-            choices:
-              - in
-              - out
-            default: in
-          route_server_client:
-            description:
-              - Configure a neighbor as Route Server client
-            type: bool
-          weight:
-            description:
-              - Specify default weight for routes from this neighbor
-            type: int
-          next_hop_self:
-            description:
-              - Enable/Disable the next hop calculation for this neighbor
-            type: bool
-          next_hop_unchanged:
-            description:
-              - Enable/Disable propagation of next hop unchanged for iBGP paths to this neighbor
-            type: bool
+              - absent      
       auto_summary:
         description:
           - Enable automatic network number summarization
@@ -271,13 +267,15 @@ EXAMPLES = """
     router_id: 1.1.1.1
     log_neighbor_changes: True
     neighbors:
-      - neighbor: 182.168.10.1
-        remote_as: 500
-      - neighbor: 192.168.20.1
+      - neighbor: 192.168.10.1
+        remote_as: 65530
+      - neighbor: 2.2.2.2
         remote_as: 500
     networks:
-      - network: 10.0.0.0/8
-      - network: 11.0.0.0/8
+      - network: 10.0.0.0
+        route_map: RMAP_1
+      - network: 192.168.2.0
+        mask: 255.255.254.0
     state: present
 
 - name: remove bgp as 65000 from config
@@ -292,13 +290,19 @@ commands:
   returned: always
   type: list
   sample:
-    - router bgp 500
-    - neighbor 182.168.10.1 remote-as 500
+    - router bgp 65000
+    - bgp router-id 1.1.1.1
+    - bgp log-neighbor-changes
+    - neighbor 192.168.10.1 remote-as 65000
+    - neighbor 182.168.10.1 timers 300 360 360
+    - neighbor 2.2.2.2 remote-as 500
+    - network 10.0.0.0 route-map RMAP_1
+    - network 192.168.2.0 mask 255.255.254.0 
 """
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.network.ios.ios import get_config, load_config
-from ansible.module_utils.cisco_ios.config.bgp import get_bgp_as
-from ansible.module_utils.cisco_ios.config.bgp.process import BgpProcess
+from ansible.module_utils.network.ios.config.bgp import get_bgp_as
+from ansible.module_utils.network.ios.config.bgp.process import BgpProcess
 from ansible.module_utils.network.ios.ios import ios_argument_spec
 
 

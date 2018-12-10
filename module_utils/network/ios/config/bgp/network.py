@@ -25,29 +25,24 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-from ansible.module_utils.cisco_ios.config import ConfigBase
+from ansible.module_utils.network.ios.config import ConfigBase
 
 
-class BgpRedistribute(ConfigBase):
+class BgpNetwork(ConfigBase):
+
     argument_spec = {
-        'protocol': dict(required=True),
-        'id': dict(type='int'),
-        'metric': dict(),
+        'network': dict(required=True),
         'route_map': dict(),
+        'mask': dict(),
         'state': dict(choices=['present', 'absent'], default='present')
     }
 
-    identifier = ('protocol', )
+    identifier = ('network', )
 
     def render(self, config=None):
-        cmd = 'redistribute %s' % self.protocol
-
-        if self.id:
-            cmd += ' %s' % str(self.id)
-
-        if self.metric:
-            cmd += ' metric %s' % str(self.metric)
-
+        cmd = 'network %s' % self.network
+        if self.mask:
+            cmd += ' mask %s' % self.mask
         if self.route_map:
             cmd += ' route-map %s' % self.route_map
 

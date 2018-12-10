@@ -26,8 +26,8 @@
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 from ansible.module_utils.network.common.utils import to_list
-from ansible.module_utils.cisco_ios.config import ConfigBase
-from ansible.module_utils.cisco_ios.config.bgp.timer import BgpTimer
+from ansible.module_utils.network.ios.config import ConfigBase
+from ansible.module_utils.network.ios.config.bgp.timer import BgpTimer
 
 
 class BgpNeighbor(ConfigBase):
@@ -43,6 +43,14 @@ class BgpNeighbor(ConfigBase):
         'ebgp_multihop': dict(type='int'),
         'timers': dict(type='dict', elements='dict', options=BgpTimer.argument_spec),
         'peer_group': dict(),
+        'activate': dict(type='bool'),
+        'remove_private_as': dict(type='bool'),
+        'route_map': dict(),
+        'route_map_dir': dict(choices=['in', 'out'], default='in'),
+        'route_server_client': dict(type='bool'),
+        'weight': dict(type='int'),
+        'next_hop_self': dict(type='bool'),
+        'next_hop_unchanged': dict(type='bool'),
         'state': dict(choices=['present', 'absent'], default='present')
     }
 
@@ -86,6 +94,13 @@ class BgpNeighbor(ConfigBase):
         if not config or cmd not in config:
             return cmd
 
+    def _set_route_server_client(self, config=None):
+        cmd = 'neighbor %s route-server-client' % self.neighbor
+        if self.route_server_client is False:
+            cmd = 'no %s' % cmd
+        if not config or cmd not in config:
+            return cmd
+
     def _set_update_source(self, config=None):
         cmd = 'neighbor %s update-source %s' % (self.neighbor, self.update_source)
         if not config or cmd not in config:
@@ -111,3 +126,41 @@ class BgpNeighbor(ConfigBase):
         resp = timer.render(self.neighbor, config)
         if resp:
             return resp
+
+    def _set_activate(self, config=None):
+        cmd = 'neighbor %s activate' % self.neighbor
+        if self.activate is False:
+            cmd = 'no %s' % cmd
+        if not config or cmd not in config:
+            return cmd
+
+    def _set_remove_private_as(self, config=None):
+        cmd = 'neighbor %s remove-private-as' % self.neighbor
+        if self.remove_private_as is False:
+            cmd = 'no %s' % cmd
+        if not config or cmd not in config:
+            return cmd
+
+    def _set_route_map(self, config=None):
+        cmd = 'neighbor %s route-map %s %s' % (self.neighbor, self.route_map, self.route_map_dir)
+        if not config or cmd not in config:
+            return cmd
+
+    def _set_weight(self, config=None):
+        cmd = 'neighbor %s weight %s' % (self.neighbor, self.weight)
+        if not config or cmd not in config:
+            return cmd
+
+    def _set_next_hop_self(self, config=None):
+        cmd = 'neighbor %s activate' % self.neighbor
+        if self.activate is False:
+            cmd = 'no %s' % cmd
+        if not config or cmd not in config:
+            return cmd
+
+    def _set_next_hop_unchanged(self, config=None):
+        cmd = 'neighbor %s activate' % self.neighbor
+        if self.activate is False:
+            cmd = 'no %s' % cmd
+        if not config or cmd not in config:
+            return cmd

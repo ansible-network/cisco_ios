@@ -26,11 +26,11 @@
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 from ansible.module_utils.network.common.utils import to_list
-from ansible.module_utils.cisco_ios.config import ConfigBase
-from ansible.module_utils.cisco_ios.config.bgp import get_bgp_as
-from ansible.module_utils.cisco_ios.config.bgp.redistribute import BgpRedistribute
-from ansible.module_utils.cisco_ios.config.bgp.network import BgpNetwork
-from ansible.module_utils.cisco_ios.config.bgp.af_neighbor import BgpAFNeighbor
+from ansible.module_utils.network.ios.config import ConfigBase
+from ansible.module_utils.network.ios.config.bgp import get_bgp_as
+from ansible.module_utils.network.ios.config.bgp.redistribute import BgpRedistribute
+from ansible.module_utils.network.ios.config.bgp.network import BgpNetwork
+from ansible.module_utils.network.ios.config.bgp.neighbor import BgpNeighbor
 
 
 class BgpAddressFamily(ConfigBase):
@@ -40,7 +40,7 @@ class BgpAddressFamily(ConfigBase):
         'cast': dict(choices=['flowspec', 'labeled-unicast', 'multicast', 'unicast'], default='unicast'),
         'networks': dict(type='list', elements='dict', options=BgpNetwork.argument_spec),
         'redistribute': dict(type='list', elements='dict', options=BgpRedistribute.argument_spec),
-        'af_neighbors': dict(type='list', elements='dict', options=BgpAFNeighbor.argument_spec),
+        'neighbors': dict(type='list', elements='dict', options=BgpNeighbor.argument_spec),
         'auto_summary': dict(type='bool'),
         'synchronization': dict(type='bool'),
         'state': dict(choices=['present', 'absent'], default='present')
