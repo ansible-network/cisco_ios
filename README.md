@@ -19,6 +19,7 @@ Please see the documentation link for each function for details on how to use
 the function in an Ansible playbook.
 
 * get_facts [[source]](https://github.com/ansible-network/cisco_ios/blob/devel/tasks/get_facts.yaml) [[docs]](https://github.com/ansible-network/cisco_ios/blob/devel/docs/get_facts.md)
+* configure_lldp [[source]](https://github.com/ansible-network/cisco_ios/blob/devel/tasks/configure_lldp.yaml) [[docs]](https://github.com/ansible-network/cisco_ios/blob/devel/docs/configure_lldp.md)
 
 ### Config Manager
 * config_manager/get [[source]](https://github.com/ansible-network/cisco_ios/blob/devel/tasks/config_manager/get.yaml) [[docs]](https://github.com/ansible-network/cisco_ios/blob/devel/docs/config_manager/get.md)
