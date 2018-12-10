@@ -1,0 +1,9 @@
+---
+- name: "fetch template for configuring lldp"
+  set_fact:
+    config_manager_text: "{{ lookup('config_template', 'configure_lldp.j2') }}"
+  when: lldp
+  delegate_to: localhost
+
+- include_tasks: config_manager/load.yaml
+  when: lldp
