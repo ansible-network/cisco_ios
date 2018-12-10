@@ -15,7 +15,7 @@
           loop: "{{ ios_config_text | to_lines }}"
           loop_control:
             loop_var: line
-          when: line != 'end'
+          when: line != 'end' and line.strip() != ''
           register: ios_config_output
 
         - name: fail any lines that generated an error
