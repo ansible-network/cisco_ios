@@ -1,0 +1,9 @@
+---
+- name: "fetch template for configuring system property(s)"
+  set_fact:
+    config_manager_text: "{{ lookup('config_template', 'configure_system_properties.j2') }}"
+  when: sys_props
+  delegate_to: localhost
+
+- include_tasks: config_manager/load.yaml
+  when: sys_props
