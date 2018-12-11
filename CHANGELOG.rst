@@ -2,6 +2,27 @@
 cisco_ios
 ===============================
 
+.. _cisco_ios_v2.6.4:
+
+v2.6.4
+======
+
+.. _cisco_ios_v2.6.4_New Features
+
+New Features
+------------
+
+- This is first release from stable-2.6 branch. 2.6.x releases will be maintenance
+releases going forward.
+
+.. _cisco_ios_v2.6.4_Bugfixes:
+
+Bugfixes
+--------
+
+- fix for 'interfaces' facts (PR #55)
+- fix for handling config text with lines containing only whitespace chars (PR #64)
+
 .. _cisco_ios_v2.6.3:
 
 v2.6.3
