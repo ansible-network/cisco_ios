@@ -89,7 +89,6 @@ class ActionModule(ActionBase):
         found_banner_start = 0
         banner_meta = []
         for linenum, line in enumerate(config_lines):
-            #print (line)
             if not found_banner_start:
                 banner_start = re.search(r'^banner\s+(\w+)\s+(.*)', line)
                 if banner_start:
@@ -98,20 +97,17 @@ class ActionModule(ActionBase):
                         banner_delimiter = banner_start.group(2)
                         banner_delimiter = banner_delimiter.strip()
                         banner_delimiter_esc = re.escape(banner_delimiter)
-                    except exception as e:
+                    except Exception as e:
                         continue
                     banner_start_index = linenum
                     found_banner_start = 1
                     continue
-                    print (banner_cmd, banner_delimiter)
     
             if found_banner_start:
                 # Search for delimiter found in current banner start
                 regex = r'%s' % banner_delimiter_esc
                 banner_end = re.search(regex, line)
-                #print (regex, line)
                 if banner_end:
-                    #print (banner_end.group(0))
                     found_banner_start = 0
                     kwargs = {
                         'banner_cmd' : banner_cmd,
@@ -130,7 +126,6 @@ class ActionModule(ActionBase):
             for index, conf_line in enumerate(banner_conf_lines):
                 banner_lines.append(conf_line)
             banner_lines.append('%s' % banner['banner_delimiter'])
-            #banners[banner['banner_cmd']] = banner_lines
     
         # Delete banner lines from config
         for banner in banner_meta:
