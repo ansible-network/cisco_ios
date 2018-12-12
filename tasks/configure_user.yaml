@@ -2,7 +2,7 @@
 - name: "check if user(s) to configure is provided"
   fail:
     msg: "no user provided to configure"
-  when:  users is not defined
+  when: users is not defined
   delegate_to: localhost
 
 - name: "check for required fact - name"
@@ -32,7 +32,7 @@
     user_config: "{{ user_config.stdout }}"
   register: filtered_users
   delegate_to: localhost
- 
+
 - name: "set users to be configured"
   set_fact:
     users: "{{ filtered_users.stdout }}"

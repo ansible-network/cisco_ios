@@ -1,5 +1,4 @@
 ---
-
 - add_host:
     name: initiator
     ansible_host: "{{ cloud_vpn_initiator_public_ip }}"
@@ -16,4 +15,3 @@
 - name: Pause for SSH daemon to settle and accept connections
   pause:
     seconds: "{{ cloud_vpn_pause_before_config_seconds }}"
-

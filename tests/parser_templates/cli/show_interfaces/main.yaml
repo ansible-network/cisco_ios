@@ -1,4 +1,3 @@
-
 - name: 03.16.08.S.txt - parse `show interfaces`
   command_parser:
     file: "{{ playbook_dir }}/../parser_templates/cli/show_interfaces.yaml"
