@@ -1,6 +1,6 @@
 ---
 - hosts: csr01
-  gather_facts: no
+  gather_facts: false
   tasks:
     - name: Include vars
       include_vars:

@@ -8,8 +8,8 @@
 - name: match sections
   pattern_match:
     regex: "^\\S+ is (up|down|administratively down),"
-    match_all: yes
-    match_greedy: yes
+    match_all: true
+    match_greedy: true
   register: context
 
 - name: match interface values
@@ -80,7 +80,7 @@
 - name: template interface values
   loop: "{{ values }}"
   register: interfaces
-  export: yes
+  export: true
   export_as: dict
   extend: cisco_ios
   json_template:

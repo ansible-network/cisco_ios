@@ -2,8 +2,8 @@
 - name: match sections
   pattern_match:
     regex: "interface"
-    match_all: yes
-    match_greedy: yes
+    match_all: true
+    match_greedy: true
   register: section
 
 - name: match interface config values
@@ -29,7 +29,7 @@
     - name: match ip_helper
       pattern_match:
         regex: "ip helper-address (.*)"
-        match_all: yes
+        match_all: true
         content: "{{ item }}"
       register: ip_helper
 
@@ -54,7 +54,7 @@
     - name: match ip_address
       pattern_match:
         regex: "ip address (.*)"
-        match_all: yes
+        match_all: true
         content: "{{ item }}"
       register: ip_address
   loop: "{{ section }}"
@@ -63,7 +63,7 @@
 - name: template interface values
   loop: "{{ values }}"
   register: interface-config
-  export: yes
+  export: true
   export_as: dict
   extend: cisco_ios.config
   json_template:
