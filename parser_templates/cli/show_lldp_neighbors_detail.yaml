@@ -50,5 +50,3 @@
           - key: neighbor_port
             value: "{{ item.remote_port.matches.0 }}"
         repeat_for: "{{ matches }}"
-
-

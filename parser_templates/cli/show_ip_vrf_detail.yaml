@@ -136,4 +136,3 @@
             elements: "{{ interface_item.matches }}"
             repeat_for: "{{ vrf_nested_item.interface }}"
             repeat_var: interface_item
-

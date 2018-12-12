@@ -11,4 +11,3 @@
   set_fact:
     ios_config_file: "{{ config_manager_file }}"
   when: config_manager_file is defined
-
