@@ -8,8 +8,8 @@
 - name: match sections
   pattern_match:
     regex: "^-----.*"
-    match_all: yes
-    match_greedy: yes
+    match_all: true
+    match_greedy: true
   register: context
 
 - name: parse lldp neighbors
@@ -37,7 +37,7 @@
 
 - name: build lldp neighbor facts
   register: lldp
-  export: yes
+  export: true
   extend: "{{ toplevel | default('cisco_ios') }}"
   json_template:
     template:

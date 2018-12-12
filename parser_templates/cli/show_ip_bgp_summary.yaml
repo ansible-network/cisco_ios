@@ -25,8 +25,8 @@
   register: context
   pattern_match:
     regex: "Neighbor.+"
-    match_all: yes
-    match_greedy: yes
+    match_all: true
+    match_greedy: true
   when: process_state == 'active'
 
 - name: match lines
@@ -34,8 +34,8 @@
   pattern_match:
     regex: "^[0-9a-f.]+"
     content: "{{ context.0 }}"
-    match_all: yes
-    match_greedy: yes
+    match_all: true
+    match_greedy: true
   when: process_state == 'active'
 
 - name: match neighbors

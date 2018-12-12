@@ -107,7 +107,7 @@
       register: import_rt
 
 - name: template export json object
-  export: True
+  export: true
   loop: "{{ vrf_nested_section_values }}"
   loop_control:
     loop_var: vrf_nested_item

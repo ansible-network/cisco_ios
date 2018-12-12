@@ -1,5 +1,3 @@
-#!/usr/bin/env ansible-playbook
-
 ---
 # Main Entrypoint
 - import_playbook: config_manager/test.yml

@@ -25,9 +25,9 @@
         loop_var: task
 
   rescue:
-      # since the host has failed during the configuration load, the role by
-      # default will initiate a restore sequence.  the restore sequence will
-      # load the previous running-config with the replace option enabled.
+    # since the host has failed during the configuration load, the role by
+    # default will initiate a restore sequence.  the restore sequence will
+    # load the previous running-config with the replace option enabled.
     - name: display message
       debug:
         msg: "error configuring device, starting rollback"

@@ -8,8 +8,8 @@
 - name: match sections
   pattern_match:
     regex: "^-----.*"
-    match_all: yes
-    match_greedy: yes
+    match_all: true
+    match_greedy: true
   register: context
 
 - name: parse cdp neighbors
@@ -38,19 +38,14 @@
 - name: build cdp neighbor facts
   loop: "{{ matches }}"
   register: cdp
-  export: yes
+  export: true
   export_as: dict
   extend: "{{ toplevel | default('cisco_ios') }}"
   json_template:
     template:
-      #- key: neighbors
       - key: "{{ item.local_port.matches.0  | expand_interface_name }}"
-        #elements:
         object:
-          #- key: port
-          #  value: "{{ item.local_port.matches.0  | expand_interface_name }}"
           - key: neighbor
             value: "{{ item.remote_host.matches.0 }}"
           - key: neighbor_port
             value: "{{ item.remote_port.matches.0 }}"
-        #repeat_for: "{{ matches }}"

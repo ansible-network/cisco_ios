@@ -8,8 +8,8 @@
 - name: match sections
   pattern_match:
     regex: '(^\S{2}\d+/\d/\d+).*'
-    match_all: yes
-    match_greedy: yes
+    match_all: true
+    match_greedy: true
   register: context
 
 - name: match interface transceiver
@@ -56,7 +56,7 @@
 - name: template interface values
   loop: "{{ values }}"
   register: transceiver
-  export: yes
+  export: true
   export_as: dict
   extend: cisco_ios
   json_template:
