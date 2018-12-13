@@ -63,6 +63,8 @@ class BgpAddressFamily(ConfigBase):
 
         if self.state == 'absent':
             if context in config:
+                # Empty the fetch config since operation is replace
+                config = ""
                 commands.append('no %s' % context)
 
         if self.state == 'present':
