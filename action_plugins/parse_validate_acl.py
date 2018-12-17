@@ -43,8 +43,6 @@ except ImportError:
 class ActionModule(ActionBase):
 
     def run(self, tmp=None, task_vars=None):
-        socket_path = None
-
         result = super(ActionModule, self).run(task_vars=task_vars)
 
         try:
@@ -88,7 +86,7 @@ class ActionModule(ActionBase):
 
     def _create_packet_dict(self, cmd_out):
         import warnings
-        with warnings.catch_warnings(record=True) as w:
+        with warnings.catch_warnings(record=True):
             warnings.simplefilter("always")
             from trigger.acl import parse
         import netaddr
@@ -103,7 +101,7 @@ class ActionModule(ActionBase):
             pd_it = {}
             try:
                 p = parse(line)
-            except Exception as e:
+            except Exception:
                 continue
 
             if p.terms:

@@ -84,7 +84,6 @@ class ActionModule(ActionBase):
         return result
 
     def _extract_banners(self, config):
-        banners = {}
         config_lines = config.split('\n')
         found_banner_start = 0
         banner_meta = []
@@ -97,7 +96,7 @@ class ActionModule(ActionBase):
                         banner_delimiter = banner_start.group(2)
                         banner_delimiter = banner_delimiter.strip()
                         banner_delimiter_esc = re.escape(banner_delimiter)
-                    except Exception as e:
+                    except Exception:
                         continue
                     banner_start_index = linenum
                     found_banner_start = 1

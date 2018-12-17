@@ -51,9 +51,6 @@ class ActionModule(ActionBase):
         except KeyError as exc:
             return {'failed': True, 'msg': 'missing required argument: %s' % exc}
 
-        # Get max version if specified
-        max_version = self._task.args.get('max_version')
-
         # Get dependancy version dict if not encoded in meta
         depends_dict = self._task.args.get('depends_map')
 
@@ -96,7 +93,7 @@ class ActionModule(ActionBase):
                 f = open(meta_path, 'r')
                 metadata = yaml.safe_load(f)
                 role_dependencies = metadata.get('dependencies') or []
-            except (OSError, IOError) as IOe:
+            except (OSError, IOError):
                 display.vvv("Unable to load metadata for %s" % role_path)
                 return False
             finally:
@@ -186,7 +183,7 @@ class ActionModule(ActionBase):
             try:
                 f = open(info_path, 'r')
                 install_info = yaml.safe_load(f)
-            except (OSError, IOError) as IOe:
+            except (OSError, IOError):
                 display.vvv(
                     "Unable to load galaxy install info for %s" % role_path)
                 return "unknown"
