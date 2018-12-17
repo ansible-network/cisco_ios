@@ -68,8 +68,9 @@ class ActionModule(ActionBase):
                 return result
             default_roles_path = copy.copy(C.DEFAULT_ROLES_PATH)
             default_roles_path.append(role_root_dir)
-            (rc, msg) = self._find_dependant_role_version(self._depends,
-                                                      default_roles_path)
+            (rc, msg) = self._find_dependant_role_version(
+                self._depends, default_roles_path)
+
             if rc == 'Error':
                 result['failed'] = True
                 result['msg'] = msg
@@ -128,10 +129,10 @@ class ActionModule(ActionBase):
                               "please check version if you downloded it from scm" % roles['name']
                         return ("Warning", msg)
                     if install_ver < roles['version']:
-                       msg = "Error! : role: %s installed version :%s is less than " \
-                             "required version: %s" % ( roles['name'],
-                              install_ver, roles['version'] )
-                       return ("Error" , msg)
+                        msg = "Error! : role: %s installed version :%s is less than " \
+                              "required version: %s" % (roles['name'],
+                                                        install_ver, roles['version'])
+                        return ("Error", msg)
             if not found:
                 msg = "role : %s is not installed in role search path: %s" \
                       % (roles['name'], search_role_path)
@@ -147,34 +148,34 @@ class ActionModule(ActionBase):
         else:
             depends_list = depends
         for dep in depends_list:
-           if dep['version'] and depends_dict is None:
-               # Nothing to be done. Use veriosn from meta
-               return (True, '')
-           if dep['version'] is None and depends_dict is None:
-               msg = "could not find min version from meta for dependent role : %s" \
-                     " you can pass this info as depends_map arg e.g." \
-                     "depends_map: - name: %s \n version: 2.6.5" \
-                     % (dep['name'], dep['name'])
-               return (False, msg)
-           # Galaxy might return empty string when meta does not have version
-           # specified
-           if dep['version'] == ''  and depends_dict is None:
-               msg = "could not find min version from meta for dependent role : %s" \
-                     " you can pass this info as depends_map arg e.g." \
-                     "depends_map: - name: %s \n version: 2.6.5" \
-                     % (dep['name'], dep['name'])
-               return (False, msg)
-           for in_depends in depends_dict:
-               if in_depends['name'] == dep['name']:
-                   if in_depends['version'] is None:
-                       msg = 'min_version for role_name: %s is Unknown' % dep['name']
-                       return (False, msg)
-                   else:
-                       ver = to_text(in_depends['version'])
-                       # if version is defined without 'v<>' add 'v' for
-                       # compliance with galaxy versioning
-                       galaxy_compliant_ver = re.sub(r'^(\d+\..*)', r'v\1', ver)
-                       dep['version'] = galaxy_compliant_ver
+            if dep['version'] and depends_dict is None:
+                # Nothing to be done. Use veriosn from meta
+                return (True, '')
+            if dep['version'] is None and depends_dict is None:
+                msg = "could not find min version from meta for dependent role : %s" \
+                      " you can pass this info as depends_map arg e.g." \
+                      "depends_map: - name: %s \n version: 2.6.5" \
+                      % (dep['name'], dep['name'])
+                return (False, msg)
+            # Galaxy might return empty string when meta does not have version
+            # specified
+            if dep['version'] == '' and depends_dict is None:
+                msg = "could not find min version from meta for dependent role : %s" \
+                      " you can pass this info as depends_map arg e.g." \
+                      "depends_map: - name: %s \n version: 2.6.5" \
+                      % (dep['name'], dep['name'])
+                return (False, msg)
+            for in_depends in depends_dict:
+                if in_depends['name'] == dep['name']:
+                    if in_depends['version'] is None:
+                        msg = 'min_version for role_name: %s is Unknown' % dep['name']
+                        return (False, msg)
+                    else:
+                        ver = to_text(in_depends['version'])
+                        # if version is defined without 'v<>' add 'v' for
+                        # compliance with galaxy versioning
+                        galaxy_compliant_ver = re.sub(r'^(\d+\..*)', r'v\1', ver)
+                        dep['version'] = galaxy_compliant_ver
         return (True, '')
 
     def _get_role_version(self, role_path):
@@ -186,8 +187,8 @@ class ActionModule(ActionBase):
                 f = open(info_path, 'r')
                 install_info = yaml.safe_load(f)
             except (OSError, IOError) as IOe:
-                display.vvv("Unable to load galaxy install info for %s" %
-                        role_path)
+                display.vvv(
+                    "Unable to load galaxy install info for %s" % role_path)
                 return "unknown"
             finally:
                 f.close()

@@ -70,7 +70,7 @@ class UserManager:
                 'view': self._parse_view(cfg)
             }
 
-            filtered = { k: v for k, v in obj.items() if v is not None }
+            filtered = {k: v for k, v in obj.items() if v is not None}
             obj.clear()
             obj.update(filtered)
 

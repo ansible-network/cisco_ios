@@ -70,8 +70,8 @@ class ActionModule(ActionBase):
             return {'failed': True, 'msg': 'path: %s does not exist.' % parser}
         parser_file = parser
 
-        pd_json = self._parse_acl_with_textfsm(parser_file,
-                                    show_acl_output_buffer)
+        pd_json = self._parse_acl_with_textfsm(
+            parser_file, show_acl_output_buffer)
         try:
             changed = self._write_packet_dict(dest, pd_json)
         except IOError as exc:
@@ -165,7 +165,7 @@ class ActionModule(ActionBase):
             sha1.update(new_content_b)
             checksum_new = sha1.digest()
             if checksum_old == checksum_new:
-               return (False)
+                return (False)
 
         try:
             with open(dest, 'w') as f:
@@ -209,7 +209,7 @@ class ActionModule(ActionBase):
                     if 'SRC_WILDCARD' in term:
                         src_mask = term['SRC_WILDCARD']
                         src_invert_mask = sum([bin(255 - int(x)).count("1") for x in
-                             src_mask.split(".")])
+                                              src_mask.split(".")])
                     else:
                         src_invert_mask = '32'
                     cidr = "%s/%s" % (v, src_invert_mask)
@@ -233,7 +233,7 @@ class ActionModule(ActionBase):
                     if 'DST_WILDCARD' in term:
                         dst_mask = term['DST_WILDCARD']
                         dst_invert_mask = sum([bin(255 - int(x)).count("1") for x in
-                             dst_mask.split(".")])
+                                              dst_mask.split(".")])
                     else:
                         dst_invert_mask = '32'
                     d_cidr = "%s/%s" % (v, dst_invert_mask)

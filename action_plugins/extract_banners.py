@@ -110,8 +110,8 @@ class ActionModule(ActionBase):
                 if banner_end:
                     found_banner_start = 0
                     kwargs = {
-                        'banner_cmd' : banner_cmd,
-                        'banner_delimiter' : banner_delimiter,
+                        'banner_cmd': banner_cmd,
+                        'banner_delimiter': banner_delimiter,
                         'banner_start_index': banner_start_index,
                         'banner_end_index': linenum,
                     }
