@@ -137,7 +137,6 @@ class ActionModule(ActionBase):
                 return ("Error", msg)
 
         return ("Success", 'Success: All dependent roles meet min version requirements')
-                  
 
     def _check_depends(self, depends, depends_dict):
         depends_list = []
