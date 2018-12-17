@@ -12,7 +12,7 @@
 
 - name: match model
   pattern_match:
-    regex: "cisco (.+) \\("
+    regex: "[Cc]isco (.+) \\("
   register: model
 
 - name: match hostname
