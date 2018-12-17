@@ -16,6 +16,7 @@ import hashlib
 
 from ansible.plugins.action import ActionBase
 
+
 class UserManager:
 
     def __init__(self, new_users, user_config_data):

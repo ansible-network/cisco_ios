@@ -43,6 +43,7 @@ RETURN = """
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection
 
+
 def main():
     """ main entry point for Ansible module
     """

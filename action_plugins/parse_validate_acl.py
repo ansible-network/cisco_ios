@@ -147,7 +147,6 @@ class ActionModule(ActionBase):
 
         return json.dumps(pd, indent=4)
 
-
     def _write_packet_dict(self, dest, contents):
         # Check for Idempotency
         if os.path.exists(dest):
