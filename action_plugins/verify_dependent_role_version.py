@@ -37,6 +37,7 @@ except ImportError:
     from ansible.utils.display import Display
     display = Display()
 
+
 class ActionModule(ActionBase):
 
     def run(self, tmp=None, task_vars=None):
@@ -175,7 +176,6 @@ class ActionModule(ActionBase):
                        galaxy_compliant_ver = re.sub(r'^(\d+\..*)', r'v\1', ver)
                        dep['version'] = galaxy_compliant_ver
         return (True, '')
-
 
     def _get_role_version(self, role_path):
         version = "unknown"
