@@ -17,6 +17,7 @@
       - system.uptime_split.hours == 23
       - system.uptime_split.minutes == 27
       - system.version == '15.5(1)S'
+      - system.reload_reason == 'Reload Command'
 
 ### IOS-XE 16.6.4
 
@@ -35,6 +36,7 @@
       - system.uptime_split.hours == 2
       - system.uptime_split.minutes == 23
       - system.version == '16.6.4'
+      - system.reload_reason == 'PowerOn'
 
 ### Done
 

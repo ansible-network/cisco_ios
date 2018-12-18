@@ -25,6 +25,11 @@
     regex: "^System image file is (\\S+)"
   register: image
 
+- name: match reload reason
+  pattern_match:
+    regex: "Last reload reason: (.+)"
+  register: reload_reason
+
 - name: match uptime
   pattern_match:
     regex: "uptime is (.+)"
@@ -71,6 +76,8 @@
         value: "{{ image.matches.0 }}"
       - key: model
         value: "{{ model.matches.0 }}"
+      - key: reload_reason
+        value: "{{ reload_reason.matches.0 }}"
       - key: uptime
         value: "{{ uptime.matches.0 }}"
       - key: uptime_split
