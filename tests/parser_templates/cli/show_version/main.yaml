@@ -11,12 +11,13 @@
   assert:
     that:
       - system.uptime == '21 weeks, 23 hours, 27 minutes'
-      - system.uptime_split.years == 0
-      - system.uptime_split.weeks == 21
-      - system.uptime_split.days == 0
-      - system.uptime_split.hours == 23
-      - system.uptime_split.minutes == 27
+      - system.uptime_split.years | int == 0
+      - system.uptime_split.weeks | int == 21
+      - system.uptime_split.days | int == 0
+      - system.uptime_split.hours | int == 23
+      - system.uptime_split.minutes | int == 27
       - system.version == '15.5(1)S'
+      - system.model is not none
 
 ### IOS-XE 16.6.4
 
@@ -29,12 +30,31 @@
   assert:
     that:
       - system.uptime == '6 days, 2 hours, 23 minutes'
-      - system.uptime_split.years == 0
-      - system.uptime_split.weeks == 0
-      - system.uptime_split.days == 6
-      - system.uptime_split.hours == 2
-      - system.uptime_split.minutes == 23
+      - system.uptime_split.years | int == 0
+      - system.uptime_split.weeks | int == 0
+      - system.uptime_split.days | int == 6
+      - system.uptime_split.hours | int == 2
+      - system.uptime_split.minutes | int == 23
       - system.version == '16.6.4'
+      - system.model is not none
+
+### IOS 15.1(4)M4
+- name: 15.1(4)M4 - parse `show version`
+  command_parser:
+    file: "{{ playbook_dir }}/../parser_templates/cli/show_version.yaml"
+    content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_version/15.1.4.txt') }}"
+
+- name: 15.1.4.txt - test `show version` parser
+  assert:
+    that:
+      - system.uptime == '9 weeks, 5 days, 17 hours, 53 minutes'
+      - system.uptime_split.years | int == 0
+      - system.uptime_split.weeks | int == 9
+      - system.uptime_split.days | int == 5
+      - system.uptime_split.hours | int == 17
+      - system.uptime_split.minutes | int == 53
+      - system.version == '15.1(4)M4'
+      - system.model is not none
 
 ### Done
 
