@@ -30,7 +30,7 @@ options:
 """
 
 EXAMPLES = """
-- name: extract multiline banners 
+- name: extract multiline banners
   extract_banners:
     config: "{{ ios_config_text }}"
 
@@ -84,7 +84,6 @@ class ActionModule(ActionBase):
         return result
 
     def _extract_banners(self, config):
-        banners = {}
         config_lines = config.split('\n')
         found_banner_start = 0
         banner_meta = []
@@ -97,12 +96,12 @@ class ActionModule(ActionBase):
                         banner_delimiter = banner_start.group(2)
                         banner_delimiter = banner_delimiter.strip()
                         banner_delimiter_esc = re.escape(banner_delimiter)
-                    except Exception as e:
+                    except Exception:
                         continue
                     banner_start_index = linenum
                     found_banner_start = 1
                     continue
-    
+
             if found_banner_start:
                 # Search for delimiter found in current banner start
                 regex = r'%s' % banner_delimiter_esc
@@ -110,13 +109,13 @@ class ActionModule(ActionBase):
                 if banner_end:
                     found_banner_start = 0
                     kwargs = {
-                        'banner_cmd' : banner_cmd,
-                        'banner_delimiter' : banner_delimiter,
+                        'banner_cmd': banner_cmd,
+                        'banner_delimiter': banner_delimiter,
                         'banner_start_index': banner_start_index,
                         'banner_end_index': linenum,
                     }
                     banner_meta.append(kwargs)
-    
+
         # Build banners from extracted data
         banner_lines = []
         for banner in banner_meta:
@@ -126,13 +125,13 @@ class ActionModule(ActionBase):
             for index, conf_line in enumerate(banner_conf_lines):
                 banner_lines.append(conf_line)
             banner_lines.append('%s' % banner['banner_delimiter'])
-    
+
         # Delete banner lines from config
         for banner in banner_meta:
             banner_lines_range = range(banner['banner_start_index'],
                                        banner['banner_end_index'] + 1)
             for index in banner_lines_range:
                 config_lines[index] = '! banner removed'
-   
+
         configs = '\n'.join(config_lines)
         return (banner_lines, configs)
