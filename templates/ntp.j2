@@ -9,8 +9,8 @@ ntp:
     - 
 
 #}
-{% if ansible_facts.ntp_servers is defined %}
-{% set current_ntp_config = ansible_facts.ntp_servers %}
+{% if ntp_servers is defined %}
+{% set current_ntp_config = ntp_servers %}
 {% endif %}
 {% if (ntp.source is defined) and (ntp.source) %}
 ntp source {{ ntp.source }}
@@ -18,7 +18,7 @@ ntp source {{ ntp.source }}
 {% if current_ntp_config is defined %}
 {%     for existing_server in current_ntp_config %}
 {%         if existing_server['SERVER'] not in ntp.servers %}
-no ntp server {{ existing_server }}
+no ntp server {{ existing_server['SERVER'] }}
 {%         endif %}
 {%     endfor %}
 {% endif %}
