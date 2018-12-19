@@ -1,5 +1,3 @@
-#!/usr/bin/env ansible-playbook
-
 ---
 - hosts: localhost
   gather_facts: false
@@ -9,6 +7,11 @@
     - "{{ playbook_dir }}/../../ansible-network.network-engine"
 
   tasks:
+
+    - name: Include tests for `show interfaces`
+      include_tasks: parser_templates/cli/show_interfaces/main.yaml
+      vars:
+        interfaces: "{{ cisco_ios['interfaces'] }}"
 
     - name: Include tests for `show ip bgp summary`
       include_tasks: parser_templates/cli/show_ip_bgp_summary/main.yaml

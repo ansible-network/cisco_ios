@@ -21,6 +21,7 @@
   groups:
     - all
     - default
+    - system
 
 - command: show interface
   parser: show_interfaces.yaml

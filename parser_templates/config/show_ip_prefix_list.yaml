@@ -2,8 +2,8 @@
 - name: match sections
   pattern_match:
     regex: "^ip"
-    match_all: yes
-    match_greedy: yes
+    match_all: true
+    match_greedy: true
   register: context
 
 - name: match prefix values
@@ -18,7 +18,7 @@
       pattern_match:
         regex: "seq (\\d+) (permit|deny) (\\S+)(?: (le|ge) (\\d+))*"
         content: "{{ item }}"
-        match_all: yes
+        match_all: true
       register: entry
   loop: "{{ context }}"
   register: entries
@@ -43,7 +43,7 @@
         repeat_for: "{{ item.entry }}"
         repeat_var: it
   register: prefix_list_list
-  export: yes
+  export: true
   loop: "{{ entries }}"
 
 - name: template entries
@@ -66,7 +66,7 @@
             repeat_for: "{{ item.entry }}"
             repeat_var: it
   loop: "{{ entries }}"
-  export: yes
+  export: true
   export_as: dict
   extend: cisco_ios.config
   register: prefix_list_dict
@@ -83,5 +83,5 @@
         repeat_for: "{{ item.entry }}"
         repeat_var: it
   register: prefix_list_basic
-  export: yes
+  export: true
   loop: "{{ entries }}"

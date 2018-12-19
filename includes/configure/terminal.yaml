@@ -5,24 +5,26 @@
   block:
     - name: load configuration lines into target device
       block:
+        - name: extract banners from configs if present
+          extract_banners:
+            config: "{{ ios_config_text }}"
+          register: result
+
+        - name: load configuration lines into target device except banner
+          cli_config:
+            config: "{{ result['config'] }}"
+          register: ios_config_output
+
         - name: enter configuration mode
           cli:
             command: "configure terminal"
 
-        - name: load configuration lines into target device
-          cli:
-            command: "{{ line.strip() }}"
-          loop: "{{ ios_config_text | to_lines }}"
-          loop_control:
-            loop_var: line
-          when: line != 'end' and line != ''
-          register: ios_config_output
-
-        - name: fail any lines that generated an error
-          fail:
-            msg: "failed to apply configuration: {{ item.line }}"
-          when: item is not skipped and item.stdout | length > 0 and item.stdout[0] == '%'
-          loop: "{{ ios_config_output.results }}"
+        - name: load banner lines into target device
+          cli_command:
+            command: "{{ item }}"
+            sendonly: true
+          with_items: "{{ result['banners'] }}"
+          register: banner_config_output
 
         - name: exit configuration mode
           cli:

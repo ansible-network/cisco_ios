@@ -1,8 +1,8 @@
 ---
 # defaults file for ansible-network.cisco_ios
 #
-ios_config_rollback_enabled: True
-ios_config_use_terminal: True
+ios_config_rollback_enabled: true
+ios_config_use_terminal: true
 
 ios_config_source:
   running: show running-config
@@ -10,5 +10,5 @@ ios_config_source:
 
 ios_get_facts_command_map: "{{ role_path }}/vars/get_facts_command_map.yaml"
 ios_get_facts_subset: "{{ subset | default(['default']) }}"
-ios_dependent_role_check: True
-ios_network_engine_req_ver_override: '2.6.5'
+ios_dependent_role_check: true
+ios_network_engine_req_ver_override: '2.7.2'

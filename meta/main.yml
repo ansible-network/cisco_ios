@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Ansible Network Community (ansible-network)
   description: |
@@ -8,7 +9,7 @@ galaxy_info:
 
   license: GPLv3
 
-  min_ansible_version: 2.6
+  min_ansible_version: 2.7
 
   # If this a Container Enabled role, provide the minimum Ansible Container version.
   # min_ansible_container_version:
@@ -19,7 +20,7 @@ galaxy_info:
   # this branch. If Travis integration is configured, only notifications for this
   # branch will be accepted. Otherwise, in all cases, the repo's default branch
   # (usually master) will be used.
-  #github_branch:
+  # github_branch:
 
   #
   # platforms is a list of platforms, and each platform has a name and a list of versions.

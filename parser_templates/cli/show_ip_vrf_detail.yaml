@@ -107,7 +107,7 @@
       register: import_rt
 
 - name: template export json object
-  export: True
+  export: true
   loop: "{{ vrf_nested_section_values }}"
   loop_control:
     loop_var: vrf_nested_item
@@ -136,4 +136,3 @@
             elements: "{{ interface_item.matches }}"
             repeat_for: "{{ vrf_nested_item.interface }}"
             repeat_var: interface_item
-

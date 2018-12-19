@@ -42,7 +42,7 @@
   net_put:
     src: "{{ ios_config_temp_dir.path }}/{{ ios_config_temp_file }}"
     dest: "flash:/{{ ios_config_temp_file }}"
-  changed_when: False
+  changed_when: false
 
 - name: replace current active configuration
   cli:
