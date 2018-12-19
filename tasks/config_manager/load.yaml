@@ -78,25 +78,22 @@
 # copy the updated running-config to the local flash device to be used to
 # generate a configuration diff between the before and after
 # running-configurations.
-- name: copy running-config to active config
-  ios_command:
-    commands:
-      - command: "copy running-config flash:{{ ios_active_config }}"
-        prompt: ["\\? "]
-        answer: "{{ ios_active_config }}"
+# - name: copy running-config to active config
+#   ios_command:
+#     commands: "copy running-config flash:{{ ios_active_config }}\r"
 
-# generate the configuration diff and display the diff to stdout.  only set
-# changed if there are lines in the diff that have changed
-- name: generate ios diff
-  cli:
-    command: "show archive config differences flash:{{ ios_checkpoint_filename }} flash:{{ ios_active_config }}"
-  register: ios_config_diff
-  changed_when: "'No changes were found' not in ios_config_diff.stdout"
+# # generate the configuration diff and display the diff to stdout.  only set
+# # changed if there are lines in the diff that have changed
+# - name: generate ios diff
+#   cli:
+#     command: "show archive config differences flash:{{ ios_checkpoint_filename }} flash:{{ ios_active_config }}"
+#   register: ios_config_diff
+#   changed_when: "'No changes were found' not in ios_config_diff.stdout"
 
-- name: display config diff
-  debug:
-    msg: "{{ ios_config_diff.stdout.splitlines() }}"
-  when: not ansible_check_mode
+# - name: display config diff
+#   debug:
+#     msg: "{{ ios_config_diff.stdout.splitlines() }}"
+#   when: not ansible_check_mode
 
 # refresh the list of files currently on the target network device flash
 # drive and remote all temp files
@@ -109,7 +106,7 @@
   cli:
     command: "delete /force flash:/{{ filename }}"
   loop:
-    - "{{ ios_active_config }}"
+    # - "{{ ios_active_config }}"
     - "{{ ios_checkpoint_filename }}"
   loop_control:
     loop_var: filename
