@@ -61,3 +61,11 @@
     - all
     - vrf
     - routing
+
+- command: show ntp config
+  engine: textfsm_parser
+  parser: show_ntp_config.template
+  name: ntp_servers
+  groups:
+    - all
+    - ntp

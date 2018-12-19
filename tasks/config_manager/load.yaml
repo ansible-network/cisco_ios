@@ -2,6 +2,13 @@
 - name: initialize function
   include_tasks: includes/init.yaml
 
+# if the configuration is provide via a list of templates, load the configuration contents and
+# hand off config_manager_text.
+- name: load config file templates
+  set_fact:
+    config_manager_text: "{{ lookup('template', 'config_sections.j2') }}"
+  when: config_manager_templates is defined
+
 - name: validate config_manager_text is defined
   fail:
     msg: "missing required arg: config_manager_text"
