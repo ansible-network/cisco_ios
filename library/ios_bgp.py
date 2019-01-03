@@ -350,7 +350,7 @@ commands:
     - neighbor 2.2.2.2 remote-as 500
     - network 10.0.0.0 route-map RMAP_1
     - network 192.168.2.0 mask 255.255.254.0
-    - address-family ipv4 
+    - address-family ipv4
     - redistribute ospf 223 metric 70
     - exit-address-family
 """
