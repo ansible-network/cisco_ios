@@ -25,7 +25,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-import re, q
+import re
 
 from ansible.module_utils.six import iteritems
 from ansible.module_utils.network.common.utils import to_list
@@ -36,6 +36,7 @@ from ansible.module_utils.network.ios.providers.cli.config.bgp.address_family im
 
 REDISTRIBUTE_PROTOCOLS = frozenset(['ospf', 'ospfv3', 'eigrp', 'isis',
                                     'static', 'connected', 'odr', 'lisp', 'mobile', 'rip'])
+
 
 @register_provider('ios', 'ios_bgp')
 class Provider(CliProvider):
