@@ -296,7 +296,6 @@ options:
       - merge
       - replace
       - delete
-extends_documentation_fragment: ios
 """
 
 EXAMPLES = """
