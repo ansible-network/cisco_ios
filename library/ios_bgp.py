@@ -186,7 +186,7 @@ options:
             description:
               - Specify networks to announce via BGP
             suboptions:
-              prefixcd :
+              prefix:
                 description:
                   - Network ID to announce via BGP
                 required: True
@@ -275,7 +275,7 @@ options:
               next_hop_unchanged:
                 description:
                   - Enable/disable propagation of next hop unchanged for iBGP paths to this neighbor
-                type: bool   
+                type: bool
           auto_summary:
             description:
               - Enable automatic network number summarization
