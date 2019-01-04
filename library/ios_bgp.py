@@ -26,75 +26,75 @@ DOCUMENTATION = """
 module: ios_bgp
 version_added: "2.8"
 author: "Nilashish Chakraborty (@nilashishc)"
-short_description: Configure global BGP protocol settings on Cisco IOS
+short_description: Configure global BGP protocol settings on Cisco IOS.
 description:
   - This module provides configuration management of global BGP parameters
-    on devices running Cisco IOS
+    on devices running Cisco IOS.
 notes:
-  - Tested against Cisco IOS Version 15.6(3)M2
+  - Tested against Cisco IOS Version 15.6(3)M2.
 options:
   config:
     description:
-      - Specifies the BGP related configuration
+      - Specifies the BGP related configuration.
     suboptions:
       bgp_as:
         description:
-          - Specifies the BGP Autonomous System (AS) number to configure on the device
+          - Specifies the BGP Autonomous System (AS) number to configure on the device.
         type: int
         required: true
       router_id:
         description:
-          - Configures the BGP routing process router-id value
+          - Configures the BGP routing process router-id value.
         default: null
       log_neighbor_changes:
         description:
-          - Enable/disable logging neighbor up/down and reset reason
+          - Enable/disable logging neighbor up/down and reset reason.
         type: bool
       neighbors:
         description:
-          - Specifies BGP neighbor related configurations
+          - Specifies BGP neighbor related configurations.
         suboptions:
           neighbor:
             description:
-              - Neighbor router address
+              - Neighbor router address.
             required: True
           remote_as:
             description:
-              - Remote AS of the BGP neighbor to configure
+              - Remote AS of the BGP neighbor to configure.
             type: int
             required: True
           route_reflector_client:
             description:
-              - Specify a neighbor as a route reflector client
+              - Specify a neighbor as a route reflector client.
             type: bool
           route_server_client:
             description:
-              - Specify a neighbor as a route server client
+              - Specify a neighbor as a route server client.
             type: bool
           update_source:
             description:
-              - Source of the routing updates
+              - Source of the routing updates.
           password:
             description:
-              - Password to authenticate BGP peer connection
+              - Password to authenticate BGP peer connection.
           enabled:
             description:
-              - Administratively shutdown or enable a neighbor
+              - Administratively shutdown or enable a neighbor.
             type: bool
           description:
             description:
-              - Neighbor specific description
+              - Neighbor specific description.
           ebgp_multihop:
             description:
-              - Specifies the maximum hop count for EBGP neighbors not on directly connected networks
+              - Specifies the maximum hop count for EBGP neighbors not on directly connected networks.
               - The range is from 0 to 255.
             type: int
           peer_group:
             description:
-              - Name of the peer group that the neighbor is a member of
+              - Name of the peer group that the neighbor is a member of.
           timers:
             description:
-              - Specifies BGP neighbor timer related configurations
+              - Specifies BGP neighbor timer related configurations.
             suboptions:
               keepalive:
                 description:
@@ -116,48 +116,48 @@ options:
                 type: int
           activate:
             description:
-              - Enable the address family for this neighbor
+              - Enable the address family for this neighbor.
             type: bool
           remove_private_as:
             description:
-              - Remove the private AS number from outbound updates
+              - Remove the private AS number from outbound updates.
             type: bool
           next_hop_self:
             description:
-              - Enable/disable the next hop calculation for this neighbor
+              - Enable/disable the next hop calculation for this neighbor.
             type: bool
           next_hop_unchanged:
             description:
-              - Enable/disable propagation of next hop unchanged for iBGP paths to this neighbor
+              - Enable/disable propagation of next hop unchanged for iBGP paths to this neighbor.
             type: bool
       networks:
         description:
-          - Specify networks to announce via BGP
+          - Specify networks to announce via BGP.
         suboptions:
           prefix:
             description:
-              - Network ID to announce via BGP
+              - Network ID to announce via BGP.
             required: True
           masklen:
             description:
-              - Subnet mask for the network to announce
+              - Subnet mask for the network to announce.
           route_map:
             description:
-              - Route map to modify the attributes
+              - Route map to modify the attributes.
       address_family:
         description:
-          - Specifies BGP address family related configurations
+          - Specifies BGP address family related configurations.
         suboptions:
           afi:
             description:
-              - Type of address family to configure
+              - Type of address family to configure.
             choices:
               - ipv4
               - ipv6
             required: True
           safi:
             description:
-              - Specifies the type of cast for the address family
+              - Specifies the type of cast for the address family.
             choices:
               - flowspec
               - unicast
@@ -166,81 +166,81 @@ options:
             default: unicast
           redistribute:
             description:
-              - Specifies the redistribute information from another routing protocol
+              - Specifies the redistribute information from another routing protocol.
             suboptions:
               protocol:
                 description:
-                  - Specifies the protocol for configuring redistribute information
+                  - Specifies the protocol for configuring redistribute information.
                 required: True
               id:
                 description:
-                  - Identifier for the routing protocol for configuring redistribute information
-                  - Not valid for protocol - RIP
+                  - Identifier for the routing protocol for configuring redistribute information.
+                  - Not valid for protocol - RIP.
               metric:
                 description:
-                  - Specifies the metric for redistributed routes
+                  - Specifies the metric for redistributed routes.
               route_map:
                 description:
-                  - Specifies the route map reference
+                  - Specifies the route map reference.
           networks:
             description:
-              - Specify networks to announce via BGP
+              - Specify networks to announce via BGP.
             suboptions:
               prefix:
                 description:
-                  - Network ID to announce via BGP
+                  - Network ID to announce via BGP.
                 required: True
               mask:
                 description:
-                  - Subnet mask for the network to announce
+                  - Subnet mask for the network to announce.
               route_map:
                 description:
-                  - Route map to modify the attributes
+                  - Route map to modify the attributes.
           neighbors:
             description:
-              - Specifies BGP neighbor related configurations
+              - Specifies BGP neighbor related configurations.
             suboptions:
               neighbor:
                 description:
-                  - Neighbor router address
+                  - Neighbor router address.
                 required: True
               remote_as:
                 description:
-                  - Remote AS of the BGP neighbor to configure
+                  - Remote AS of the BGP neighbor to configure.
                 type: int
                 required: True
               route_reflector_client:
                 description:
-                  - Specify a neighbor as a route reflector client
+                  - Specify a neighbor as a route reflector client.
                 type: bool
               route_server_client:
                 description:
-                  - Specify a neighbor as a route server client
+                  - Specify a neighbor as a route server client.
                 type: bool
               update_source:
                 description:
-                  - Source of the routing updates
+                  - Source of the routing updates.
               password:
                 description:
-                  - Password to authenticate BGP peer connection
+                  - Password to authenticate BGP peer connection.
               enabled:
                 description:
-                  - Administratively shutdown or enable a neighbor
+                  - Administratively shutdown or enable a neighbor.
                 type: bool
               description:
                 description:
-                  - Neighbor specific description
+                  - Neighbor specific description.
               ebgp_multihop:
                 description:
-                  - Specifies the maximum hop count for EBGP neighbors not on directly connected networks
+                  - Specifies the maximum hop count for EBGP neighbors not on directly connected networks.
                   - The range is from 0 to 255.
                 type: int
               peer_group:
                 description:
-                  - Name of the peer group that the neighbor is a member of
+                  - Name of the peer group that the neighbor is a member of.
               timers:
                 description:
-                  - Specifies BGP neighbor timer related configurations
+                  - Specifies BGP neighbor timer related configurations.
                 suboptions:
                   keepalive:
                     description:
@@ -262,35 +262,35 @@ options:
                     type: int
               activate:
                 description:
-                  - Enable the address family for this neighbor
+                  - Enable the address family for this neighbor.
                 type: bool
               remove_private_as:
                 description:
-                  - Remove the private AS number from outbound updates
+                  - Remove the private AS number from outbound updates.
                 type: bool
               next_hop_self:
                 description:
-                  - Enable/disable the next hop calculation for this neighbor
+                  - Enable/disable the next hop calculation for this neighbor.
                 type: bool
               next_hop_unchanged:
                 description:
-                  - Enable/disable propagation of next hop unchanged for iBGP paths to this neighbor
+                  - Enable/disable propagation of next hop unchanged for iBGP paths to this neighbor.
                 type: bool
           auto_summary:
             description:
-              - Enable automatic network number summarization
+              - Enable automatic network number summarization.
             type: bool
           synchronization:
             description:
-              - Enable IGP synchronization
+              - Enable IGP synchronization.
             type: bool
   operation:
     description:
-      - Specifies the operation to be performed on the BGP process configured on the device
+      - Specifies the operation to be performed on the BGP process configured on the device.
       - Merge will configure the device based on the options specified and negate the configurations that are
-        not specified for that option(i.e, networks, neighbors, etc.) in the task but present in running-configuration
-      - Replace will remove the existing BGP configuration on the device and re-configure it with the options specified
-      - Delete will remove the existing BGP configuration from the device
+        not specified for that option(i.e, networks, neighbors, etc.) in the task but present in running-configuration.
+      - Replace will remove the existing BGP configuration on the device and re-configure it with the options specified.
+      - Delete will remove the existing BGP configuration from the device.
     default: merge
     choices:
       - merge
