@@ -299,7 +299,7 @@ options:
 """
 
 EXAMPLES = """
-- name: configure global bgp as 65000
+- name: configure global bgp as 65535
   ios_bgp:
     config:
       bgp_as: 65535
@@ -315,9 +315,9 @@ EXAMPLES = """
         - neighbor: 2.2.2.2
           remote_as: 500
       networks:
-        - network: 10.0.0.0
+        - prefix: 10.0.0.0
           route_map: RMAP_1
-        - network: 192.168.2.0
+        - prefix: 192.168.2.0
           mask: 255.255.254.0
       address_family:
         - afi: ipv4
