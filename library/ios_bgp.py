@@ -40,6 +40,7 @@ options:
       bgp_as:
         description:
           - Specifies the BGP Autonomous System (AS) number to configure on the device.
+          - Both 16-bit and 32-bit Autonomous System (AS) numbers are supported.
         type: int
         required: true
       router_id:
@@ -299,21 +300,21 @@ options:
 """
 
 EXAMPLES = """
-- name: configure global bgp as 65535
+- name: configure global bgp as 64496
   ios_bgp:
     config:
-      bgp_as: 65535
-      router_id: 1.1.1.1
+      bgp_as: 64496
+      router_id: 192.0.2.1
       log_neighbor_changes: True
       neighbors:
         - neighbor: 192.168.10.1
-          remote_as: 65535
+          remote_as: 64497
           timers:
             keepalive: 300
             holdtime: 360
             min_neighbor_holdtime: 360
-        - neighbor: 2.2.2.2
-          remote_as: 500
+        - neighbor: 198.51.100.2
+          remote_as: 64498
       networks:
         - prefix: 10.0.0.0
           route_map: RMAP_1
@@ -327,11 +328,10 @@ EXAMPLES = """
               id: 223
               metric: 10
     operation: merge
-
-- name: remove bgp as 65000 from config
+- name: remove bgp as 64496 from config
   ios_bgp:
     config:
-      bgp_as: 65000
+      bgp_as: 64496
     operation: delete
 """
 
@@ -341,12 +341,12 @@ commands:
   returned: always
   type: list
   sample:
-    - router bgp 65535
-    - bgp router-id 1.1.1.1
+    - router bgp 64496
+    - bgp router-id 192.0.2.1
     - bgp log-neighbor-changes
-    - neighbor 192.168.10.1 remote-as 65535
+    - neighbor 192.168.10.1 remote-as 64497
     - neighbor 192.168.10.1 timers 300 360 360
-    - neighbor 2.2.2.2 remote-as 500
+    - neighbor 198.51.100.2 remote-as 64498
     - network 10.0.0.0 route-map RMAP_1
     - network 192.168.2.0 mask 255.255.254.0
     - address-family ipv4
