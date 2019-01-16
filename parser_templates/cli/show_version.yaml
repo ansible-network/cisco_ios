@@ -25,6 +25,16 @@
     regex: "^System image file is (\\S+)"
   register: image
 
+- name: match restart conditions
+  pattern_match:
+    regex: "^System restarted at (?P<time>\\d+:\\d+:\\d+) (?P<tz>\\S+)"
+  register: restart_conditions
+
+- name: match reload reason
+  pattern_match:
+    regex: "^Last reload reason: (\\S+)"
+  register: reload_reason
+
 - name: match uptime
   pattern_match:
     regex: "uptime is (.+)"
@@ -32,27 +42,27 @@
 
 - name: match uptime years
   pattern_match:
-    regex: "uptime is (\\d+) years,"
+    regex: "uptime is (\\d+) year"
   register: uptime_years
 
 - name: match uptime weeks
   pattern_match:
-    regex: "(\\d+) weeks,"
+    regex: "(\\d+) week"
   register: uptime_weeks
 
 - name: match uptime days
   pattern_match:
-    regex: "(\\d+) days,"
+    regex: "(\\d+) day"
   register: uptime_days
 
 - name: match uptime hours
   pattern_match:
-    regex: "(\\d+) hours,"
+    regex: "(\\d+) hour"
   register: uptime_hours
 
 - name: match uptime minutes
   pattern_match:
-    regex: "(\\d+) minutes"
+    regex: "(\\d+) minute"
   register: uptime_minutes
 
 - name: match configuration register
@@ -71,20 +81,26 @@
         value: "{{ image.matches.0 }}"
       - key: model
         value: "{{ model.matches.0 }}"
+      - key: restart_time
+        value: "{{ restart_conditions.time }}"
+      - key: restart_tz
+        value: "{{ restart_conditions.tz }}"
+      - key: reload_reason
+        value: "{{ reload_reason.matches.0 | lower }}"
       - key: uptime
         value: "{{ uptime.matches.0 }}"
       - key: uptime_split
         object:
           - key: years
-            value: "{{ uptime_years.matches.0 | default(0) }}"
+            value: "{{ uptime_years.matches.0 | default(0) | int }}"
           - key: weeks
-            value: "{{ uptime_weeks.matches.0 | default(0) }}"
+            value: "{{ uptime_weeks.matches.0 | default(0) | int  }}"
           - key: days
-            value: "{{ uptime_days.matches.0 | default(0) }}"
+            value: "{{ uptime_days.matches.0 | default(0) | int  }}"
           - key: hours
-            value: "{{ uptime_hours.matches.0 | default(0) }}"
+            value: "{{ uptime_hours.matches.0 | default(0) | int  }}"
           - key: minutes
-            value: "{{ uptime_minutes.matches.0 | default(0) }}"
+            value: "{{ uptime_minutes.matches.0 | default(0) | int  }}"
       - key: configuration_register
         value: "{{ confreg.matches.0 }}"
   register: system
