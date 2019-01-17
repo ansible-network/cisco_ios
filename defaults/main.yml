@@ -3,6 +3,7 @@
 #
 ios_config_rollback_enabled: true
 ios_config_use_terminal: true
+ios_config_remove_temp_files: "{{ remove_temp_files | default(True) }}"
 
 ios_config_source:
   running: show running-config

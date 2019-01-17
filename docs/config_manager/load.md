@@ -24,7 +24,7 @@ Below is an example of calling the `config_manager/load` function from the playb
   roles:
     - name ansible_network.cisco_ios
       function: config_manager/load
-      config_file: files/ios.cfg
+      config_manager_text: "{{ lookup('file', 'ios.cfg') }}"
 ```
 
 The above playbook will load the specified configuration file onto each device
@@ -34,7 +34,7 @@ in the `cisco_ios` host group.
 The `config_manager/load` function also supports replacing the current active
 configuration with the configuration file located on the Ansible controller.
 In order to replace the device's active configuration, set the value of the
-`config_replace` setting to `True`.
+`config_manager_replace` setting to `True`.
 
 ```
 - hosts: cisco_ios
@@ -42,76 +42,21 @@ In order to replace the device's active configuration, set the value of the
   roles:
     - name ansible_network.cisco_ios
       function: config_manager/load
-      config_file: files/ios.cfg
-      replace: yes
+      config_manager_text: "{{ lookup('file', 'ios.cfg') }}"
+      config_manager_replace: yes
 ```
 
-## How to load configuration text
-The `config_manager/load` function also supports passing the configuration text
-directly into the task list for loading onto the target device instead of
-having to provide a file name. 
-
-In order to pass the configuration as a text string, use the `config_text`
-argument instead such as below.
-
-```
-- hosts: cisco_ios
-
-  roles:
-    - name ansible_network.cisco_ios
-      function: config_manager/load
-      config_text: "{{ lookup('file', 'ios01.cfg') }}"
-      replace: yes
-```
-
-
-
-## Implement using tasks
-The `config_manager/load` function can also be implemented in the `tasks` for execution
-during the play run using either the `include_role` or `import_role` modules as
-shown below.
-
-```
-- hosts: cisco_ios
-
-  tasks:
-    - name: load configuration onto ios device
-      include_role:
-        name: ansible_network.cisco_ios
-        tasks_from: config_manager/load
-      vars:
-        config_file: files/ios.cfg
-        replace: yes
-```
 
 ## Arguments
 
-### ios_config_file
+### config_manager_text
 
-Specifies the relative or absolute path to the IOS configuration file to load
-into the target the device.  The contents of the file should be IOS
-configuration statements.  This argument is mutually exclusive with
-`config_text`.
+This value accepts the text form of the configuration to be loaded on to the remote device. 
+The configuration file should be the native set of commands used to configure the remote device.
 
-The defautl value is `None`
+The default value is `null`
 
-#### Aliases
-
-* config_file
-
-### ios_config_text
-
-Specifies the configuration text to load into the remote device.  The text
-should be provided as a single configuration string with line breaks between
-lines.  This argument is mutually exclusive with the `config_file` argument.
-
-The default value is `None`
-
-#### Aliases
-
-* config_text
-
-### ios_config_replace
+### config_manager_replace
 
 Specifies whether or not the source configuration should replace the current
 active configuration on the target IOS device.  When this value is set to
@@ -120,10 +65,6 @@ this value is set to True, the source configuration will replace the current
 active configuration
 
 The default value is `False`
-
-#### Aliases
-
-* replace
 
 ### ios_config_remove_temp_files
 
@@ -134,10 +75,6 @@ accepts a boolean value.
 
 The default value is `True`
 
-##### Aliases
-
-* remove_temp_files
-
 ### ios_config_rollback_enabled
 
 Configures whether or not automatic rollback is enabled during the execution of
@@ -147,9 +84,3 @@ the rollback operation is not performed automatically.
 
 The default value is `True`
 
-#### Aliases
-
-* rollback_enabled
-
-## Notes
-None
