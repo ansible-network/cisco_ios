@@ -27,19 +27,19 @@
   block:
     - name: replace current active configuration
       include_tasks: "{{ role_path }}/includes/configure/replace.yaml"
-      when: config_manager_replace
+      when: ios_config_replace
       vars:
         ios_config_text: "{{ config_manager_text }}"
 
     - name: merge with current active configuration
       include_tasks: "{{ role_path }}/includes/configure/merge.yaml"
-      when: not config_manager_replace and not ios_config_use_terminal
+      when: not ios_config_replace and not ios_config_use_terminal
       vars:
         ios_config_text: "{{ config_manager_text }}"
 
     - name: load configuration using configure terminal
       include_tasks: "{{ role_path }}/includes/configure/terminal.yaml"
-      when: not config_manager_replace and ios_config_use_terminal
+      when: not ios_config_replace and ios_config_use_terminal
       vars:
         ios_config_text: "{{ config_manager_text }}"
 
