@@ -43,7 +43,7 @@ In order to replace the device's active configuration, set the value of the
     - name ansible_network.cisco_ios
       function: config_manager/load
       config_manager_text: "{{ lookup('file', 'ios.cfg') }}"
-      config_manager_replace: yes
+      config_manager_replace: true
 ```
 
 
