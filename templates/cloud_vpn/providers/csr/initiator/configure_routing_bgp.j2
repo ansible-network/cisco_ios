@@ -1,0 +1,13 @@
+router bgp {{ cloud_vpn_initiator_bgp_asn }}
+   neighbor {{ cloud_vpn_responder_tunnel_ip }} remote-as {{ cloud_vpn_responder_bgp_asn }}
+   neighbor {{ cloud_vpn_responder_tunnel_ip }} activate
+   neighbor {{ cloud_vpn_responder_tunnel_ip }} timers 10 30 30
+   address-family ipv4 unicast
+      neighbor {{ cloud_vpn_responder_tunnel_ip }} remote-as {{ cloud_vpn_responder_bgp_asn }}
+      neighbor {{ cloud_vpn_responder_tunnel_ip }} timers 10 30 30
+      neighbor {{ cloud_vpn_responder_tunnel_ip }} default-originate
+      neighbor {{ cloud_vpn_responder_tunnel_ip }} activate
+      neighbor {{ cloud_vpn_responder_tunnel_ip }} soft-reconfiguration inbound
+      network 0.0.0.0
+   exit
+exit

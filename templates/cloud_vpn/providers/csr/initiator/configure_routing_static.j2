@@ -1,0 +1,1 @@
+ip route {{ cloud_vpn_responder_cidr | ipaddr('network') }} {{ cloud_vpn_responder_cidr | ipaddr('netmask') }} Tunnel1 track 100
