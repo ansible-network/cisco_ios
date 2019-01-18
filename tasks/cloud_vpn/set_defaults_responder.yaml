@@ -1,3 +1,0 @@
----
-- name: Run provider set defaults responder tasks
-  include_tasks: "{{ role_path }}/tasks/cloud_vpn/providers/{{ cloud_vpn_responder_provider }}/responder/set_defaults.yaml"
