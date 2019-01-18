@@ -1,0 +1,5 @@
+---
+
+cloud_vpn_initiator_user: ec2-user
+cloud_vpn_initiator_ansible_connection: network_cli
+cloud_vpn_initiator_outside_interface: GigabitEthernet1
