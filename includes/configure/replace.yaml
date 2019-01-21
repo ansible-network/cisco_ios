@@ -26,7 +26,7 @@
 - name: remove temporary files from target device
   cli:
     command: "delete /force flash:/{{ ios_config_temp_file }}"
-  when: ios_config_temp_file in ios_dir_listing.stdout
+  when: ios_config_temp_file in ios_dir_listing.stdout and ios_config_remove_temp_files
 
 - name: enable the ios scp server
   cli:
