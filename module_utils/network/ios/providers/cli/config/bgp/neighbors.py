@@ -59,8 +59,10 @@ class Neighbors(CliProvider):
             commands.extend(neighbor_commands)
             safe_list.append(context)
 
-        if config and safe_list:
-            commands.extend(self._negate_config(config, safe_list))
+        if self.params['operation'] == 'replace':
+            if config and safe_list:
+                commands.extend(self._negate_config(config, safe_list))
+
         return commands
 
     def _negate_config(self, config, safe_list=None):

@@ -25,7 +25,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-import re
+import re, q
 
 from ansible.module_utils.six import iteritems
 from ansible.module_utils.network.common.utils import to_list
@@ -42,6 +42,7 @@ REDISTRIBUTE_PROTOCOLS = frozenset(['ospf', 'ospfv3', 'eigrp', 'isis',
 class Provider(CliProvider):
 
     def render(self, config=None):
+
         commands = list()
 
         operation = self.params['operation']
@@ -52,11 +53,19 @@ class Provider(CliProvider):
                 commands.append('no %s' % context)
 
         else:
+            existing_as = None
+            if config:
+                match = re.search(r'router bgp (\d+)', config, re.M)
+                existing_as = match.group(1)
+
             if operation == 'replace':
-                if config:
-                    match = re.search(r'router bgp (\d+)', config, re.M)
-                    if match:
-                        commands.append('no router bgp %s' % match.group(1))
+                if existing_as and int(existing_as) != self.get_value('config.bgp_as'):
+                    commands.append('no router bgp %s' % existing_as)
+                    config = None
+
+            elif operation == 'override':
+                if existing_as:
+                    commands.append('no router bgp %s' % existing_as)
                 config = None
 
             context_commands = list()
@@ -110,10 +119,11 @@ class Provider(CliProvider):
             if not config or cmd not in config:
                 commands.append(cmd)
 
-        if config:
-            matches = re.findall(r'network (.*)', config, re.M)
-            for entry in set(matches).difference(safe_list):
-                commands.append('no network %s' % entry)
+        if self.params['operation'] == 'replace':
+            if config:
+                matches = re.findall(r'network (.*)', config, re.M)
+                for entry in set(matches).difference(safe_list):
+                    commands.append('no network %s' % entry)
 
         return commands
 

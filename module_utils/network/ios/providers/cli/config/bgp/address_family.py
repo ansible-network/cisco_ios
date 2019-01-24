@@ -67,9 +67,10 @@ class AddressFamily(CliProvider):
 
             safe_list.append(context)
 
-        if config:
-            resp = self._negate_config(config, safe_list)
-            commands.extend(resp)
+        if self.params['operation'] == 'replace':
+            if config:
+                resp = self._negate_config(config, safe_list)
+                commands.extend(resp)
 
         return commands
 
@@ -113,10 +114,11 @@ class AddressFamily(CliProvider):
             if not config or cmd not in config:
                 commands.append(cmd)
 
-        if config:
-            matches = re.findall(r'network (.*)', config, re.M)
-            for entry in set(matches).difference(safe_list):
-                commands.append('no network %s' % entry)
+        if self.params['operation'] == 'replace':
+            if config:
+                matches = re.findall(r'network (.*)', config, re.M)
+                for entry in set(matches).difference(safe_list):
+                    commands.append('no network %s' % entry)
 
         return commands
 
@@ -125,12 +127,13 @@ class AddressFamily(CliProvider):
         safe_list = list()
 
         for entry in item['redistribute']:
-            safe_list.append(entry['protocol'])
+            option = entry['protocol']
 
             cmd = 'redistribute %s' % entry['protocol']
 
             if entry['id'] and entry['protocol'] in ('ospf', 'ospfv3', 'eigrp'):
                 cmd += ' %s' % entry['id']
+                option += ' %s' % entry['id']
 
             if entry['metric']:
                 cmd += ' metric %s' % entry['metric']
@@ -141,11 +144,13 @@ class AddressFamily(CliProvider):
             if not config or cmd not in config:
                 commands.append(cmd)
 
-        if config:
-            matches = re.findall(r'redistribute (\S+)', config, re.M)
-            for entry in set(matches).difference(safe_list):
-                commands.append('no redistribute %s' % entry)
+            safe_list.append(option)
 
+        if self.params['operation'] == 'replace':
+            if config:
+                matches = re.findall(r'redistribute (\S+ \S+)', config, re.M)
+                for entry in set(matches).difference(safe_list):
+                    commands.append('no redistribute %s' % entry)
         return commands
 
     def _render_neighbors(self, item, config):

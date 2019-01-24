@@ -288,14 +288,17 @@ options:
   operation:
     description:
       - Specifies the operation to be performed on the BGP process configured on the device.
-      - Merge will configure the device based on the options specified and negate the configurations that are
-        not specified for that option(i.e, networks, neighbors, etc.) in the task but present in running-configuration.
-      - Replace will remove the existing BGP configuration on the device and re-configure it with the options specified.
-      - Delete will remove the existing BGP configuration from the device.
+      - In case of merge, the input configuration will be merged with the existing BGP configuration on the device.
+      - In case of replace, if there is a diff between the existing configuration and the input configuration, the
+        existing configuration will be replaced by the input configuration.
+      - In case of override, all the existing BGP configuration will be removed from the device and replaced with
+        the input configuration.
+      - In case of delete the existing BGP configuration will be removed from the device.
     default: merge
     choices:
       - merge
       - replace
+      - override
       - delete
 """
 
@@ -328,6 +331,7 @@ EXAMPLES = """
               id: 223
               metric: 10
     operation: merge
+
 - name: remove bgp as 64496 from config
   ios_bgp:
     config:
@@ -419,7 +423,7 @@ def main():
 
     argument_spec = {
         'config': dict(type='dict', elements='dict', options=config_spec),
-        'operation': dict(default='merge', choices=['merge', 'replace', 'delete'])
+        'operation': dict(default='merge', choices=['merge', 'replace', 'delete', 'override'])
     }
 
     module = NetworkModule(argument_spec=argument_spec,
