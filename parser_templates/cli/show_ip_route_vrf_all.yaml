@@ -60,7 +60,7 @@
             repeat_var: nested_item
             object: "{{
               {
-              nested_item.prefix+nested_item.mask:
+                nested_item.prefix+nested_item.mask:
                 {
                   'subnet': nested_item.prefix,
                   'mask': nested_item.mask,
@@ -73,20 +73,6 @@
 
 
 
-
-#            object:
-#              - key: "{{ nested_item.prefix+nested_item.mask }}"
-#                object:
-#                  - key: subnet
-#                    value: "{{ nested_item.prefix }}"
-#                  - key: mask 
-#                    value: "{{ nested_item.mask }}"
-#                  - key: protocol
-#                    value: "{{ nested_item.prot | expand_routing_protocol_name }}"
-#                  - key: dist_metric
-#                    value: "{{ nested_item.metric }}"
-#                  - key: nexthop
-#                    value: "{{ ([nested_item.next_hop_nbr]+[nested_item.next_hop_int, nested_item.next_hop_int_sum]) | reject('equalto', '') | list }}"
 
 
 

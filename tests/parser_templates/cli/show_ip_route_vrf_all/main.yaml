@@ -12,7 +12,7 @@
     that:
       - "'ABC' in vrfs"
       - "'routing_table' in vrfs.ABC"
-      #- vrfs.ABC['routing_table']['0.0.0.0/0']['next_hop'] == '10.20.190.33'
+      - "'10.20.190.33' in vrfs['ABC']['routing_table']['0.0.0.0/0']['next_hop']"
       - "'Test' in vrfs"
       - vrfs['Test']['default_route'] == "not set"
 
