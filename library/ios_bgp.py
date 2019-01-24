@@ -139,7 +139,7 @@ options:
             description:
               - Network ID to announce via BGP.
             required: True
-          masklen:
+          mask:
             description:
               - Subnet mask for the network to announce.
           route_map:
