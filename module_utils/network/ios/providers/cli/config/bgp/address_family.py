@@ -148,7 +148,9 @@ class AddressFamily(CliProvider):
 
         if self.params['operation'] == 'replace':
             if config:
-                matches = re.findall(r'redistribute (\S+ \S+)', config, re.M)
+                matches = re.findall(r'redistribute (\S+)(?:\s*)(\d*)', config, re.M)
+                for i in range(0, len(matches)):
+                    matches[i] = ' '.join(matches[i]).strip()
                 for entry in set(matches).difference(safe_list):
                     commands.append('no redistribute %s' % entry)
         return commands
