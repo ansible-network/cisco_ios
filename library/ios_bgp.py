@@ -172,6 +172,17 @@ options:
               protocol:
                 description:
                   - Specifies the protocol for configuring redistribute information.
+                options:
+                  - ospf
+                  - ospfv3 
+                  - eigrp 
+                  - isis
+                  - static
+                  - connected
+                  - odr
+                  - lisp
+                  - mobile
+                  - rip
                 required: True
               id:
                 description:
