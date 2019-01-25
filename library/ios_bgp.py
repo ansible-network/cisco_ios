@@ -174,8 +174,8 @@ options:
                   - Specifies the protocol for configuring redistribute information.
                 options:
                   - ospf
-                  - ospfv3 
-                  - eigrp 
+                  - ospfv3
+                  - eigrp
                   - isis
                   - static
                   - connected
