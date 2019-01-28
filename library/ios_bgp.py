@@ -301,7 +301,7 @@ options:
       - Specifies the operation to be performed on the BGP process configured on the device.
       - In case of merge, the input configuration will be merged with the existing BGP configuration on the device.
       - In case of replace, if there is a diff between the existing configuration and the input configuration, the
-        existing configuration will be replaced by the input configuration.
+        existing configuration will be replaced by the input configuration for every option that has the diff.
       - In case of override, all the existing BGP configuration will be removed from the device and replaced with
         the input configuration.
       - In case of delete the existing BGP configuration will be removed from the device.
