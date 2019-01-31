@@ -25,7 +25,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
-import re
+import re, q
 
 from ansible.module_utils.six import iteritems
 from ansible.module_utils.network.common.utils import to_list
@@ -39,7 +39,6 @@ class Neighbors(CliProvider):
         safe_list = list()
         if not nbr_list:
             nbr_list = self.get_value('config.neighbors')
-
         for item in nbr_list:
             neighbor_commands = list()
             context = 'neighbor %s' % item['neighbor']
@@ -79,21 +78,21 @@ class Neighbors(CliProvider):
 
     def _render_enabled(self, item, config=None):
         cmd = 'neighbor %s shutdown' % item['neighbor']
-        if self.enabled is True:
+        if item['enabled'] is True:
             cmd = 'no %s' % cmd
         if not config or cmd not in config:
             return cmd
 
     def _render_route_reflector_client(self, item, config=None):
         cmd = 'neighbor %s route-reflector-client' % item['neighbor']
-        if self.route_reflector_client is False:
+        if item['route_reflector_client'] is False:
             cmd = 'no %s' % cmd
         if not config or cmd not in config:
             return cmd
 
     def _render_route_server_client(self, item, config=None):
         cmd = 'neighbor %s route-server-client' % item['neighbor']
-        if self.route_server_client is False:
+        if item['route_server_client'] is False:
             cmd = 'no %s' % cmd
         if not config or cmd not in config:
             return cmd
@@ -120,28 +119,28 @@ class Neighbors(CliProvider):
 
     def _render_activate(self, item, config=None):
         cmd = 'neighbor %s activate' % item['neighbor']
-        if self.activate is False:
+        if item['activate'] is False:
             cmd = 'no %s' % cmd
         if not config or cmd not in config:
             return cmd
 
     def _render_remove_private_as(self, item, config=None):
         cmd = 'neighbor %s remove-private-as' % item['neighbor']
-        if self.remove_private_as is False:
+        if item['remove_private_as'] is False:
             cmd = 'no %s' % cmd
         if not config or cmd not in config:
             return cmd
 
     def _render_next_hop_self(self, item, config=None):
-        cmd = 'neighbor %s activate' % item['neighbor']
-        if self.activate is False:
+        cmd = 'neighbor %s next-hop-self' % item['neighbor']
+        if item['next_hop_self'] is False:
             cmd = 'no %s' % cmd
         if not config or cmd not in config:
             return cmd
 
     def _render_next_hop_unchanged(self, item, config=None):
-        cmd = 'neighbor %s activate' % item['neighbor']
-        if self.activate is False:
+        cmd = 'neighbor %s next-hop-unchanged' % item['neighbor']
+        if item['next_hop_unchanged'] is False:
             cmd = 'no %s' % cmd
         if not config or cmd not in config:
             return cmd
