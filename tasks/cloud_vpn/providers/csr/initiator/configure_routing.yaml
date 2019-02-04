@@ -2,5 +2,12 @@
 
 - name: Push routing configuration to CSR device
   ios_config:
-    src: "cloud_vpn/providers/csr/initiator/{{ cloud_vpn_responder_provider }}/configure_routing_{{ cloud_vpn_routing }}.j2"
+    src: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      files:
+        - "configure_routing_{{ cloud_vpn_routing }}.j2"
+      paths:
+        - "templates/cloud_vpn/providers/csr/initiator/{{ cloud_vpn_responder_provider }}"
+        - templates/cloud_vpn/providers/csr/initiator
   delegate_to: initiator
