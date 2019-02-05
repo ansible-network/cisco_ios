@@ -1,6 +1,21 @@
-===============================
-cisco_ios
-===============================
+=========================
+Ansible Network cisco_ios
+=========================
+.. _cisco_ios_v2.7.1:
+
+v2.7.1
+======
+
+.. _cisco_ios_v2.7.1_Minor Changes:
+
+Minor Changes
+-------------
+
+- Adds parser for reload reason. `ios-#87 <https://github.com/ansible-network/cisco_ios/pull/87>`_.
+- Fixed message ``missing required arg: config_manager_text``. `ios-#88 <https://github.com/ansible-network/cisco_ios/pull/88>`_.
+- Remove set defaults task files. `ios-#89 <https://github.com/ansible-network/cisco_ios/pull/89>`_.
+- Use default template if no specific peer provider folder is present. `ios-#90 <https://github.com/ansible-network/cisco_ios/pull/90>`_.
+- Add unconfigure task hooks. `ios-#92 <https://github.com/ansible-network/cisco_ios/pull/92>`_.
 
 .. _cisco_ios_v2.7.0:
 
