@@ -12,7 +12,7 @@
 
 - name: match model
   pattern_match:
-    regex: "[Cc]isco (.+) \\("
+    regex: "[Cc]isco (\\S+) .* with .+ bytes of memory.$"
   register: model
 
 - name: match hostname
