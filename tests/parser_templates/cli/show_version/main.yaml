@@ -18,6 +18,9 @@
       - system.uptime_split.minutes | int == 53
       - system.version == '15.1(4)M4'
       - system.model == 'CISCO2921/K9'
+      - system.reload_reason == 'reload'
+      - system.restart_time == '18:49:38'
+      - system.restart_tz == 'UTC'
 
 ### IOS-XE 15.5.1
 
@@ -37,6 +40,9 @@
       - system.uptime_split.minutes | int == 27
       - system.version == '15.5(1)S'
       - system.model == 'ISR4431/K9'
+      - system.reload_reason == 'reload'
+      - system.restart_time == '09:58:28'
+      - system.restart_tz == 'UTC'
 
 ### IOS-XE 16.6.4
 
@@ -56,6 +62,9 @@
       - system.uptime_split.minutes | int == 23
       - system.version == '16.6.4'
       - system.model == 'ISR4431/K9'
+      - system.reload_reason == 'poweron'
+      - system.restart_time == '08:29:02'
+      - system.restart_tz == 'UTC'
 
 ### Done
 
