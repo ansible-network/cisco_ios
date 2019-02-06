@@ -1,0 +1,66 @@
+---
+- name: show_ip_route
+  parser_metadata:
+    version: 1.0
+    command: "show ip route"
+    network_os: ios
+
+# Caveat: This parser only returns the first next hop, for prefixes with multiple possible destinations.
+
+- name: match route section
+  export: True
+  register: global_section
+  pattern_match:
+    regex: "^Gateway of last resort is (([0-9.])+)"
+    match_all: true
+    match_greedy: true
+
+- name: match vrf section values
+  loop: "{{ global_section }}"
+  register: route_section_values
+  pattern_group:
+    
+    - name: match default route
+      pattern_match:
+        regex: "^Gateway of last resort is (([0-9.])+)"
+        content: "{{ item }}"
+      register: default_route
+
+    - name: match prefixes
+      pattern_match:
+        regex: "^(?P<prot>L|C|S|R|M|B|D|EX|O|IA|N1|N2|E1|E2|i|su|L1|L2|ia|U|o|P|H|l|a)(?P<prot_args>\\s|\\*|\\+\\|\\%)\\s+(?P<prefix>\\d{1,3}.\\d{1,3}.\\d{1,3}.\\d{1,3})(?P<mask>|\\/\\d{,2})(?:|\\s+\\[(?P<metric>\\d+/\\d+)\\]) (?P<source>is directly connected, (?P<next_hop_int>\\S+$)|is a summary, \\S+, (?P<next_hop_int_sum>\\S+$)|via (?P<next_hop_nbr>\\S+)(?:, |$))"
+        content: "{{ item }}"
+        match_all: true
+      register: match_prefixes
+
+- name: template vrf-instances
+  register: vrf
+  extend: cisco_ios
+  export: True
+  export_as: dict
+  loop: "{{ route_section_values }}"
+  loop_control:
+    loop_var: route_item
+  json_template:
+    template:
+      - key: DEFAULT
+        object:
+          - key: default_route
+            value: "{{ route_item.default_route.matches.0 }}"
+          - key: routing_table
+            repeat_for: "{{ route_item.match_prefixes }}"
+            repeat_var: nested_item
+            object: "{{
+              {
+              nested_item.prefix+nested_item.mask:
+                {
+                  'subnet': nested_item.prefix,
+                  'mask': nested_item.mask,
+                  'protocol': nested_item.prot,
+                  'dist_metric': nested_item.metric,
+                  'next_hop': ([nested_item.next_hop_nbr]+[nested_item.next_hop_int, nested_item.next_hop_int_sum]) | reject('equalto', '') | list
+                }
+              }
+            }}"
+
+
