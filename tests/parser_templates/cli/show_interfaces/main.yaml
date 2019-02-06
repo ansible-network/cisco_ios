@@ -18,9 +18,9 @@
       - interfaces['GigabitEthernet0/0/1']['admin-status'] == 'enabled'
       - interfaces['Tunnel0']['admin-status'] == 'enabled'
       - interfaces['Tunnel0']['oper-status'] == 'down'
-      - interfaces['GigabitEthernet0']['counters']['in-broadcast-pkts'] == 4891144
+      - interfaces['GigabitEthernet0']['counters']['in-broadcast-pkts'] == '4891144'
       - interfaces['GigabitEthernet0']['counters']['in-multicast-pkts'] == None
-      - interfaces['Virtual-Access1']['mtu'] == 1500
+      - interfaces['Virtual-Access1']['mtu'] == '1500'
       - interfaces['Tunnel2']['description'] == 'tunnel for gloabl routing for SJC'
       - interfaces['GigabitEthernet0/0/5']['type'] == '6XGE-BUILT-IN'
       - interfaces['Tunnel0']['type'] == 'Tunnel'

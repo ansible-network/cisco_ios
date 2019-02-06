@@ -1,0 +1,2 @@
+---
+- import_playbook: test_parser_templates.yaml
