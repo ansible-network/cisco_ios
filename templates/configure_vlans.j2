@@ -1,0 +1,16 @@
+{% for vlan in vlans %}
+
+{% if vlan.state is defined and vlan.state == 'absent' %}
+interface {{ vlan.interface }}
+no vlan-id dot1q {{ vlan.id }}
+
+{% else %}
+
+interface {{ vlan.interface }}
+vlan-id dot1q {{ vlan.id }}
+bridge-group {{ vlan.bridge_group | default(omit) }}
+description {{ vlan.description | default(omit) }}
+pppoe {{ vlan.ppoe | default(omit) }}
+
+{% endif %}
+{% endfor %}
