@@ -1,0 +1,58 @@
+{% for sys_prop in sys_props %}
+
+{% if sys_prop.state is defined and sys_prop.state == 'absent' %}
+
+{% if sys_prop.hostname is defined %}
+no hostname {{ sys_prop.hostname }}
+{% endif %}
+
+{% if sys_prop.domain_name is defined %}
+no domain {{ sys_prop.domain_name }}
+{% endif %}
+
+{% if sys_prop.ip_domain_name is defined %}
+no ip domain name {{ sys_prop.ip_name_server }}
+{% endif %}
+
+{% if sys_prop.ip_name_server is defined %}
+no ip name-server {{ sys_prop.ip_name_server }}
+{% endif %}
+
+{% if sys_prop.vrf_name is defined %}
+no vrf definition {{ sys_prop.vrf_name }}
+{% endif %}
+
+
+{% else %}
+
+
+{% if sys_prop.hostname is defined %}
+hostname {{ sys_prop.hostname }}
+{% endif %}
+
+{% if sys_prop.domain_name is defined %}
+domain {{ sys_prop.domain_name }}
+{% endif %}
+
+{% if sys_prop.ip_domain_name is defined %}
+ip domain name {{ sys_prop.ip_domain_name }}
+{% endif %}
+
+{% if sys_prop.ip_name_server is defined %}
+ip name-server {{ sys_prop.ip_name_server }}
+{% endif %}
+
+{% if sys_prop.vrf_name is defined %}
+vrf definition {{ sys_prop.vrf_name }}
+address-family {{ sys_prop.vrf_address_family | default(omit) }}
+ipv4 {{ sys_prop.vrf_ipv4 | default(omit) }}
+description {{ sys_prop.vrf_description | default(omit) }}
+route-target {{ sys_prop.vrf_route_target | default(omit) }}
+vnet tag {{ sys_prop.vrf_vnet | default(omit) }}
+vpn {{ sys_prop.vrf_vpn | default(omit) }}
+rd {{ sys_prop.vrf_rd | default(omit) }}
+{% endif %}
+
+
+{% endif %}
+{% endfor %}
