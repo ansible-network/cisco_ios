@@ -1,0 +1,33 @@
+{% for item in lldp %}
+
+{% if item.state is defined and item.state == 'absent' %}
+no lldp run
+{% if item.interface is defined %}
+interface {{ item.interface | default(omit) }}
+no lldp run
+{% endif %}
+
+{% else %}
+
+lldp run
+lldp holdtime {{ item.holdtime | default(omit) }}
+lldp reinit {{ item.reinit | default(omit) }}
+lldp timer {{ item.timer | default(omit) }}
+lldp tlv-select {{ item.tlv_select | default(omit) }}
+
+{% if item.interface is defined %}
+interface {{ item.interface }}
+{% if item.receive == 'enable' %}
+lldp receive
+{% else %}
+no lldp receive
+{% endif %}
+{% if item.transmit == 'enable' %}
+lldp transmit
+{% else %}
+no lldp transmit
+{% endif %}
+{% endif %}
+
+{% endif %}
+{% endfor %}
