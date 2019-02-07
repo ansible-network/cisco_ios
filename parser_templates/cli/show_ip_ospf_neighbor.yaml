@@ -1,0 +1,79 @@
+---
+
+- name: show_ip_ospf_neighbor
+  parser_metadata:
+    version: 1.0
+    command: show ip ospf neighbor
+    network_os: ios
+
+- name: match not active
+  register: not_active
+  pattern_match:
+    regex: ".+"
+    match_all: true
+
+- name: set_vars ospf state not active
+  set_vars:
+    process_state: "not active"
+
+- name: set_vars ospf state active
+  set_vars:
+    process_state: "active"
+  when: "not_active.0.matches | length > 0"
+
+- name: match sections
+  register: context
+  pattern_match:
+    regex: "Neighbor.+"
+    match_all: yes
+    match_greedy: yes
+  when: process_state == 'active'
+
+- name: match lines
+  register: lines
+  pattern_match:
+    regex: "^[0-9a-z.].+"
+    content: "{{ context.0 }}"
+    match_all: yes
+    match_greedy: yes
+  when: process_state == 'active'
+
+- name: match neighbors
+  register: matched_neighbors
+  loop: "{{ lines }}"
+  pattern_match:
+    regex: "(?P<neighbor>^[0-9a-z.]+)\\s+(?P<pri>\\d)\\s+(?P<state>([A-Z]|.)+)/(?P<role>([A-Z]|.)+)\\s(?P<timer>[0-9][0-9]:[0-5][0-9]:[0-5][0-9])\\s(?P<ip>.+\\s)(?P<interface>[A-Z].+)"
+    content: "{{ item }}"
+  when: process_state == 'active'
+
+- name: template ospf values
+  extend: cisco_ios
+  register: ospf
+  export: true
+  export_as: dict
+  json_template:
+    template:
+      - key: "process_state"
+        value: "{{ process_state }}"
+
+- name: template ospf neighbor entries
+  extend: cisco_ios.ospf
+  register: neighbors
+  export: true
+  export_as: dict
+  loop: "{{ matched_neighbors }}"
+  when: process_state == 'active'
+  json_template:
+    template:
+      - key: "{{ item.ip | trim }}"
+        object:
+          - key: neighbor_id
+            value: "{{ item.neighbor | trim }}"
+          - key: state
+            value: "{{ item.state | trim }}"
+          - key: role
+            value: "{{ item.role | trim }}"
+          - key: timer
+            value: "{{ item.timer | trim}}"
+          - key: interface
+            value: "{{ item.interface | trim }}"

@@ -61,3 +61,10 @@
     - all
     - vrf
     - routing
+
+- command: show ip ospf neighbor
+  parser: show_ip_ospf_neighbor.yaml
+  groups:
+    - all
+    - ospf
+    - routing
