@@ -1,0 +1,27 @@
+{# 
+get_facts with subset ntp will get current ntp servers for removal 
+if they aren't in your variable list.
+
+-- required vars --
+ntp:
+  source:
+  servers:
+    - 
+
+#}
+{% if ntp_servers is defined %}
+{% set current_ntp_config = ntp_servers %}
+{% endif %}
+{% if (ntp.source is defined) and (ntp.source) %}
+ntp source {{ ntp.source }}
+{% endif %}
+{% if current_ntp_config is defined %}
+{%     for existing_server in current_ntp_config %}
+{%         if existing_server['SERVER'] not in ntp.servers %}
+no ntp server {{ existing_server['SERVER'] }}
+{%         endif %}
+{%     endfor %}
+{% endif %}
+{% for server in ntp.servers %}
+ntp server {{ server }}
+{% endfor %}
