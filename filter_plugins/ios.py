@@ -31,7 +31,7 @@ def expand_interface_name(name):
         name = name.replace(matched, INTERFACE_NAMES[matched])
     return name
 
-  
+
 def expand_routing_protocol_name(name):
     match = re.match(r'([\S]*)', name)
     if match and match.group(1) in ROUTING_PROTOCOLS:
