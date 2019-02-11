@@ -10,22 +10,12 @@
 
   tasks:
 
-    - name: Include tests for `show interfaces`
-      include_tasks: parser_templates/cli/show_interfaces/main.yaml
-      vars:
-        interfaces: "{{ cisco_ios['interfaces'] }}"
-
-    - name: Include tests for `show ip bgp summary`
-      include_tasks: parser_templates/cli/show_ip_bgp_summary/main.yaml
-      vars:
-        bgp: "{{ cisco_ios['vrf']['DEFAULT']['protocols']['bgp'] }}"
-
-    - name: Include tests for `show ip vrf detail`
-      include_tasks: parser_templates/cli/show_ip_vrf_detail/main.yaml
+    - name: Include tests for `show ip route vrf all`
+      include_tasks: parser_templates/cli/show_ip_route_vrf_all/main.yaml
       vars:
         vrfs: "{{ cisco_ios['vrf'] }}"
 
-    - name: Include tests for `show version`
-      include_tasks: parser_templates/cli/show_version/main.yaml
+    - name: Include tests for `show ip route`
+      include_tasks: parser_templates/cli/show_ip_route/main.yaml
       vars:
-        system: "{{ cisco_ios['system'] }}"
+        vrfs: "{{ cisco_ios['vrf'] }}"
