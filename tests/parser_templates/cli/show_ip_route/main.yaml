@@ -1,3 +1,4 @@
+---
 ### IOS 12.2(33)SXH1
 
 - name: 12.2(33)SXH1 - parse `show ip route`
@@ -5,14 +6,10 @@
     file: "{{ playbook_dir }}/../parser_templates/cli/show_ip_route.yaml"
     content: "{{ lookup('file', '{{ playbook_dir }}/parser_templates/cli/show_ip_route/12.2(33)SXH1.txt') }}"
   register: result
-  
 
 - name: 12.2(33)SXH7 - test `show ip route`
   assert:
     that:
-#      - "'ABC' in vrfs"
-#      - "'routing_table' in vrfs.ABC"
-#      - vrfs.ABC['routing_table']['0.0.0.0/0']['next_hop'][0] == '10.20.190.33'
       - "'DEFAULT' in vrfs"
       - "'routing_table' in vrfs.DEFAULT"
 

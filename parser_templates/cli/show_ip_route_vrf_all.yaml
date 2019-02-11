@@ -8,7 +8,7 @@
 # Caveat: This parser only returns the first next hop, for prefixes with multiple possible destinations.
 
 - name: match vrf section
-  export: True
+  export: true
   register: vrf_section
   pattern_match:
     regex: "^Routing Table: (\\S+)"
@@ -19,7 +19,6 @@
   loop: "{{ vrf_section }}"
   register: vrf_section_values
   pattern_group:
-    
     - name: match name
       pattern_match:
         regex: "^Routing Table: (\\S+)"
@@ -42,7 +41,7 @@
 - name: template vrf-instances
   register: vrf
   extend: cisco_ios
-  export: True
+  export: true
   export_as: dict
   loop: "{{ vrf_section_values }}"
   loop_control:
@@ -67,12 +66,6 @@
                   'protocol': nested_item.prot | expand_routing_protocol_name,
                   'dist_metric': nested_item.metric,
                   'next_hop': ([nested_item.next_hop_nbr]+[nested_item.next_hop_int, nested_item.next_hop_int_sum]) | reject('equalto', '') | list
-                }              
-              }
+                 }
+               }
             }}"
-
-
-
-
-
-

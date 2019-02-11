@@ -8,7 +8,7 @@
 # Caveat: This parser only returns the first next hop, for prefixes with multiple possible destinations.
 
 - name: match route section
-  export: True
+  export: true
   register: global_section
   pattern_match:
     regex: "^Gateway of last resort is (([0-9.])+)"
@@ -19,7 +19,6 @@
   loop: "{{ global_section }}"
   register: route_section_values
   pattern_group:
-    
     - name: match default route
       pattern_match:
         regex: "^Gateway of last resort is (([0-9.])+)"
@@ -36,7 +35,7 @@
 - name: template vrf-instances
   register: vrf
   extend: cisco_ios
-  export: True
+  export: true
   export_as: dict
   loop: "{{ route_section_values }}"
   loop_control:
@@ -62,5 +61,3 @@
                 }
               }
             }}"
-
-
