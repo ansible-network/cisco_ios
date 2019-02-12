@@ -1,0 +1,32 @@
+Codes: L - local, C - connected, S - static, R - RIP, M - mobile, B - BGP
+       D - EIGRP, EX - EIGRP external, O - OSPF, IA - OSPF inter area 
+       N1 - OSPF NSSA external type 1, N2 - OSPF NSSA external type 2
+       E1 - OSPF external type 1, E2 - OSPF external type 2
+       i - IS-IS, su - IS-IS summary, L1 - IS-IS level-1, L2 - IS-IS level-2
+       ia - IS-IS inter area, * - candidate default, U - per-user static route
+       o - ODR, P - periodic downloaded static route, H - NHRP, l - LISP
+       a - application route
+       + - replicated route, % - next hop override, p - overrides from PfR
+
+Gateway of last resort is 10.31.0.106 to network 0.0.0.0
+
+B*    0.0.0.0/0 [20/0] via 10.31.0.106, 6d17h
+      10.0.0.0/8 is variably subnetted, 2 subnets, 2 masks
+C        10.242.61.0/24 is directly connected, GigabitEthernet0/0/1.11
+L        10.242.61.1/32 is directly connected, GigabitEthernet0/0/1.11
+      10.19.0.0/32 is subnetted, 5 subnets
+B        10.19.50.1 [20/0] via 10.31.0.106, 6d17h
+B        10.19.50.2 [20/0] via 10.31.0.106, 6d17h
+B        10.19.50.3 [20/0] via 10.31.0.106, 6d17h
+B        10.19.50.129 [20/0] via 10.31.0.106, 6d17h
+B        10.19.50.130 [20/0] via 10.31.0.106, 6d17h
+      10.29.0.0/16 is variably subnetted, 6 subnets, 2 masks
+B        10.29.160.26/31 [200/0], 6d17h, Null0
+C        10.29.160.26/32 is directly connected, Loopback3
+C        10.29.160.27/32 is directly connected, Loopback4
+B        10.29.192.26/31 [200/0], 6d17h, Null0
+C        10.29.192.26/32 is directly connected, Loopback1
+C        10.29.192.27/32 is directly connected, Loopback2
+      10.31.0.0/16 is variably subnetted, 2 subnets, 2 masks
+C        10.31.0.104/29 is directly connected, GigabitEthernet0/0/0
+L        10.31.0.105/32 is directly connected, GigabitEthernet0/0/0
