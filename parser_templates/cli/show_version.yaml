@@ -12,7 +12,7 @@
 
 - name: match model
   pattern_match:
-    regex: "[Cc]isco (.+) \\("
+    regex: "[Cc]isco (\\S+) .* with .+ bytes of memory.$"
   register: model
 
 - name: match hostname
@@ -24,11 +24,6 @@
   pattern_match:
     regex: "^System image file is (\\S+)"
   register: image
-
-- name: match restart conditions
-  pattern_match:
-    regex: "^System restarted at (?P<time>\\d+:\\d+:\\d+) (?P<tz>\\S+)"
-  register: restart_conditions
 
 - name: match reload reason
   pattern_match:
@@ -81,10 +76,6 @@
         value: "{{ image.matches.0 }}"
       - key: model
         value: "{{ model.matches.0 }}"
-      - key: restart_time
-        value: "{{ restart_conditions.time }}"
-      - key: restart_tz
-        value: "{{ restart_conditions.tz }}"
       - key: reload_reason
         value: "{{ reload_reason.matches.0 | lower }}"
       - key: uptime
