@@ -58,7 +58,7 @@
 
     - name: match input broadcast
       pattern_match:
-        regex: "Received (\\d+) broadcasts \\(\\d+"
+        regex: "Received (\\d+) broadcasts \\((\\d+)"
         content: "{{ item }}"
       register: in_bcast_mcast
 
