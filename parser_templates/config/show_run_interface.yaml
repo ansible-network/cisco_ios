@@ -62,7 +62,7 @@
 
 - name: template interface values
   loop: "{{ values }}"
-  register: interface-config
+  register: interface_config
   export: true
   export_as: dict
   extend: cisco_ios.config
