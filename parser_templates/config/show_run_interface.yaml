@@ -72,7 +72,7 @@
         object:
           - key: name
             value: "{{ item.name.matches.0 }}"
-          - key: ip_addess
+          - key: ip_address
             value: "{{ item.ip_address | map(attribute='matches') | list }}"
           - key: description
             value: "{{ item.description.matches.0 }}"
