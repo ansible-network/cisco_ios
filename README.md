@@ -2,7 +2,7 @@
 
 This Ansible Network role provides a set of platform dependent fuctions that
 are designed to work with Cisco IOS network devices.  The functions included
-int his role inlcuding both configuration and fact collection.
+in this role include both configuration and fact collection.
 
 ## Requirements
 
